@@ -246,6 +246,7 @@ function user_register_validation(array &$form, \Drupal\Core\Form\FormStateInter
   }
 }
 
+/*
 function devboxui_page_attachments(array &$attachments) {
   $current_path = \Drupal::service('path.current')->getPath();
   $alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
@@ -272,6 +273,7 @@ function devboxui_page_attachments(array &$attachments) {
     'devboxui_gtag_inline',
   ];
 }
+*/
 
 /**
  * AJAX callback to get image configurations.

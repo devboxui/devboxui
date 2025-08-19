@@ -1,0 +1,25 @@
+uuid: 86390f3c-79b0-4c2c-b3c6-9e65debb33af
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+id: google_tag
+label: 'Google Tag'
+code: |-
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HF31Z5LYX2');
+noscript: ''
+noscriptRegion: {  }
+jquery: false
+header: false
+preprocess: false
+conditions:
+  request_path:
+    id: request_path
+    negate: true
+    pages: "/admin*\r\n/batch*"
+contexts: {  }
+conditions_require_all: true

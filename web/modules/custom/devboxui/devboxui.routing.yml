@@ -1,0 +1,7 @@
+devboxui.vps_pricing_comparison:
+  path: '/vps-pricing-comparison'
+  defaults:
+    _controller: '\Drupal\devboxui\Controller\PricingController::pricingTable'
+    _title: 'VPS Pricing Comparison'
+  requirements:
+    _role: 'administrator'

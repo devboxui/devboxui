@@ -5,3 +5,14 @@ gtag:
       attributes:
         async: true
       header: true
+datatables:
+  version: 1.x
+  css:
+    theme:
+      https://cdn.datatables.net/2.3.2/css/jquery.dataTables.min.css: { type: external }
+  js:
+    https://cdn.datatables.net/2.3.2/js/jquery.dataTables.min.js: { type: external }
+    js/datatables-init.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
