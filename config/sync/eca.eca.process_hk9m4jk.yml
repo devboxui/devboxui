@@ -1,0 +1,172 @@
+uuid: a9e9d183-2edb-405d-a3ab-fd38640a7d7d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.user.user.field_regenerate_keys
+    - field.field.user.user.field_ssh_private_key
+    - field.field.user.user.field_ssh_public_key
+    - field.storage.user.field_regenerate_keys
+    - field.storage.user.field_ssh_private_key
+    - field.storage.user.field_ssh_public_key
+  module:
+    - devboxui
+    - eca_content
+    - eca_form
+    - user
+id: process_hk9m4jk
+modeller: bpmn_io
+label: 'User actions'
+version: v1
+weight: 0
+events:
+  Event_0265sth:
+    plugin: 'content_entity:insert'
+    label: 'User created'
+    configuration:
+      type: 'user user'
+    successors:
+      -
+        id: Activity_0xqm9kf
+        condition: ''
+  Event_0xdzqub:
+    plugin: 'form:form_build'
+    label: 'User form loaded'
+    configuration:
+      form_id: ''
+      entity_type_id: user
+      bundle: ''
+      operation: ''
+    successors:
+      -
+        id: Activity_0u6dkvn
+        condition: ''
+      -
+        id: Activity_1brafs7
+        condition: ''
+  Event_1cf31fg:
+    plugin: 'form:form_submit'
+    label: 'User updated'
+    configuration:
+      form_id: ''
+      entity_type_id: user
+      bundle: ''
+      operation: ''
+    successors:
+      -
+        id: Activity_0sv4tg6
+        condition: Flow_0vaofij
+      -
+        id: Activity_0zoelgf
+        condition: Flow_1u38rmi
+conditions:
+  Flow_0vaofij:
+    plugin: eca_entity_field_value
+    configuration:
+      negate: false
+      case: false
+      expected_value: '1'
+      field_name: field_regenerate_keys
+      operator: equal
+      type: value
+      entity: user
+  Flow_1u38rmi:
+    plugin: eca_entity_field_value
+    configuration:
+      negate: false
+      case: false
+      expected_value: '0'
+      field_name: field_regenerate_keys
+      operator: equal
+      type: value
+      entity: user
+gateways: {  }
+actions:
+  Activity_0xqm9kf:
+    plugin: devboxui_save_user_ssh_keys
+    label: 'Create SSH keys'
+    configuration:
+      object: user
+    successors:
+      -
+        id: Activity_0feou1q
+        condition: ''
+  Activity_0u6dkvn:
+    plugin: eca_form_field_disable
+    label: 'Disable SSH private key field'
+    configuration:
+      flag: true
+      field_name: field_ssh_private_key
+    successors:
+      -
+        id: Activity_0g0jzy1
+        condition: ''
+  Activity_0g0jzy1:
+    plugin: eca_form_field_disable
+    label: 'Disable SSH public key field'
+    configuration:
+      flag: true
+      field_name: field_ssh_public_key
+    successors: {  }
+  Activity_0sv4tg6:
+    plugin: devboxui_save_user_ssh_keys
+    label: 'Recreate SSH keys'
+    configuration:
+      object: user
+    successors:
+      -
+        id: Activity_1qgojd4
+        condition: ''
+  Activity_1sqdc8f:
+    plugin: action_message_action
+    label: 'Confirmation message'
+    configuration:
+      replace_tokens: false
+      message: 'SSH keys regenerated successfully!'
+    successors: {  }
+  Activity_1qgojd4:
+    plugin: eca_set_field_value
+    label: 'Set "Regenerate keys" to unchecked'
+    configuration:
+      field_name: field_regenerate_keys
+      field_value: '0'
+      method: 'set:clear'
+      strip_tags: false
+      trim: false
+      save_entity: true
+      object: user
+    successors:
+      -
+        id: Activity_0wubzbm
+        condition: ''
+  Activity_0wubzbm:
+    plugin: devboxui_upload_keys_to_provider
+    label: 'Upload keys to providers'
+    configuration:
+      object: user
+    successors:
+      -
+        id: Activity_1sqdc8f
+        condition: ''
+  Activity_0feou1q:
+    plugin: devboxui_upload_keys_to_provider
+    label: 'Upload keys to providers'
+    configuration:
+      object: user
+    successors: {  }
+  Activity_0zoelgf:
+    plugin: devboxui_upload_keys_to_provider
+    label: 'Upload keys to providers'
+    configuration:
+      object: user
+    successors: {  }
+  Activity_1brafs7:
+    plugin: eca_form_field_add_state
+    label: 'Hide username'
+    configuration:
+      selector: ''
+      state: invisible
+      condition: empty
+      value: ''
+      field_name: name
+    successors: {  }

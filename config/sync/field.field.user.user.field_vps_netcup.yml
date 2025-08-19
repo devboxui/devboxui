@@ -1,0 +1,20 @@
+uuid: 60bd96d1-ebbf-44b7-a86f-5502dde349c7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_vps_netcup
+  module:
+    - user
+id: user.user.field_vps_netcup
+field_name: field_vps_netcup
+entity_type: user
+bundle: user
+label: 'VPS netcup'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,10 @@
+uuid: d915e7a3-7e87-4b36-bf98-346ce5b638e5
+langcode: en
+status: true
+dependencies: {  }
+id: tools
+label: Tools
+icon_uuid: null
+icon_default: null
+description: 'Install a server side tool that helps with application usage (docker, ddev, etc.).'
+behavior_plugins: {  }

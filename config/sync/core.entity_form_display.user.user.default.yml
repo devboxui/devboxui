@@ -1,0 +1,331 @@
+uuid: fbd75b5b-ce19-49b1-a16b-65a81163281a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.user.user.field_regenerate_keys
+    - field.field.user.user.field_ssh_private_key
+    - field.field.user.user.field_ssh_public_key
+    - field.field.user.user.field_vps_akamai_cloud_linode
+    - field.field.user.user.field_vps_amazon_lightsail
+    - field.field.user.user.field_vps_atlantic_net
+    - field.field.user.user.field_vps_cherry_servers
+    - field.field.user.user.field_vps_clouding
+    - field.field.user.user.field_vps_digitalocean
+    - field.field.user.user.field_vps_hetzner
+    - field.field.user.user.field_vps_hostman
+    - field.field.user.user.field_vps_infomaniak
+    - field.field.user.user.field_vps_ionos
+    - field.field.user.user.field_vps_katapult
+    - field.field.user.user.field_vps_leaseweb
+    - field.field.user.user.field_vps_netcup
+    - field.field.user.user.field_vps_ovhcloud
+    - field.field.user.user.field_vps_ovhcloud_us
+    - field.field.user.user.field_vps_scaleway
+    - field.field.user.user.field_vps_servers_com
+    - field.field.user.user.field_vps_upcloud
+    - field.field.user.user.field_vps_vultr
+    - field.field.user.user.user_picture
+    - image.style.thumbnail
+  module:
+    - field_group
+    - image
+    - user
+third_party_settings:
+  field_group:
+    group_tabs:
+      children:
+        - group_account_settings
+        - group_ssh_keys
+        - group_vps_providers
+      label: Tabs
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        label_as_html: false
+        direction: horizontal
+        width_breakpoint: 640
+    group_account_settings:
+      children:
+        - account
+        - user_picture
+        - timezone
+      label: 'Account settings'
+      region: content
+      parent_name: group_tabs
+      weight: 20
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        label_as_html: false
+        formatter: open
+        description: ''
+        required_fields: true
+    group_ssh_keys:
+      children:
+        - field_ssh_private_key
+        - field_ssh_public_key
+        - field_regenerate_keys
+      label: 'SSH keys'
+      region: content
+      parent_name: group_tabs
+      weight: 21
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        label_as_html: false
+        formatter: closed
+        description: ''
+        required_fields: true
+    group_vps_providers:
+      children:
+        - field_vps_hetzner
+        - field_vps_vultr
+        - field_vps_cherry_servers
+        - field_vps_clouding
+        - field_vps_ovhcloud
+        - field_vps_ovhcloud_us
+        - field_vps_hostman
+        - field_vps_servers_com
+        - field_vps_infomaniak
+        - field_vps_ionos
+        - field_vps_upcloud
+        - field_vps_katapult
+        - field_vps_leaseweb
+        - field_vps_akamai_cloud_linode
+        - field_vps_amazon_lightsail
+        - field_vps_atlantic_net
+        - field_vps_netcup
+        - field_vps_digitalocean
+        - field_vps_scaleway
+      label: 'VPS Providers'
+      region: content
+      parent_name: group_tabs
+      weight: 22
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        label_as_html: false
+        formatter: closed
+        description: ''
+        required_fields: true
+_core:
+  default_config_hash: FaQ9Ptcpxpg30AtiqRDtl_8zbJArHP1LPfug_s59TOA
+id: user.user.default
+targetEntityType: user
+bundle: user
+mode: default
+content:
+  account:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  contact:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_regenerate_keys:
+    type: boolean_checkbox
+    weight: 7
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_ssh_private_key:
+    type: string_textarea
+    weight: 5
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_ssh_public_key:
+    type: string_textarea
+    weight: 6
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_akamai_cloud_linode:
+    type: string_textfield
+    weight: 35
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_amazon_lightsail:
+    type: string_textfield
+    weight: 36
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_atlantic_net:
+    type: string_textfield
+    weight: 37
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_cherry_servers:
+    type: string_textfield
+    weight: 24
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_clouding:
+    type: string_textfield
+    weight: 25
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_digitalocean:
+    type: string_textfield
+    weight: 39
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_hetzner:
+    type: string_textfield
+    weight: 22
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_hostman:
+    type: string_textfield
+    weight: 28
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_infomaniak:
+    type: string_textfield
+    weight: 30
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_ionos:
+    type: string_textfield
+    weight: 31
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_katapult:
+    type: string_textfield
+    weight: 33
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_leaseweb:
+    type: string_textfield
+    weight: 34
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_netcup:
+    type: string_textfield
+    weight: 38
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_ovhcloud:
+    type: string_textfield
+    weight: 26
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_ovhcloud_us:
+    type: string_textfield
+    weight: 27
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_scaleway:
+    type: string_textfield
+    weight: 40
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_servers_com:
+    type: string_textfield
+    weight: 29
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_upcloud:
+    type: string_textfield
+    weight: 32
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_vps_vultr:
+    type: string_textfield
+    weight: 23
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  timezone:
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  user_picture:
+    type: image_image
+    weight: 1
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+hidden:
+  langcode: true
+  language: true
+  path: true

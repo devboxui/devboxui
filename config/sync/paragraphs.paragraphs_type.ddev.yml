@@ -1,0 +1,10 @@
+uuid: 3d026d7b-ccd1-49a6-8bac-3c4b75389790
+langcode: en
+status: true
+dependencies: {  }
+id: ddev
+label: DDEV
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

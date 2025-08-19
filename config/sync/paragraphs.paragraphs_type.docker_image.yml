@@ -1,0 +1,10 @@
+uuid: 557e4687-2244-40ad-9902-ad4e0bfc7033
+langcode: en
+status: true
+dependencies: {  }
+id: docker_image
+label: 'Docker image'
+icon_uuid: null
+icon_default: null
+description: 'Add docker image to use on a VPS machine.'
+behavior_plugins: {  }

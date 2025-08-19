@@ -1,0 +1,131 @@
+<?php
+
+namespace Drupal\devboxui\Plugin\Action;
+
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Action\ActionBase;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\devboxui\Service\DevBoxBatchService;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Provides a custom action.
+ *
+ * @Action(
+ *   id = "devboxui_save_update",
+ *   label = @Translation("DevBox Save/Update"),
+ *   type = "node",
+ *   category = @Translation("DevBoxUI"),
+ *   context = {
+ *     "entity" = @ContextDefinition("entity:node", label = @Translation("Node"))
+ *   }
+ * )
+ */
+final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPluginInterface {
+
+  protected DevBoxBatchService $batchService;
+
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, DevBoxBatchService $batchService) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->batchService = $batchService;
+  }
+
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('devboxui.batch')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access($entity, AccountInterface $account = NULL, $return_as_object = FALSE): AccessResultInterface|bool {
+    $access = $entity->access('update', $account, TRUE);
+    return $return_as_object ? $access : $access->isAllowed();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function execute(ContentEntityInterface $node = NULL): void {
+    if ($node) {
+      $status = $node->get('status')->getString() == '1';
+      // Created.
+      if ($node->isNew() && $status) {
+        $this->processVpsNodes($node->get('field_vps_provider')->getValue());
+      }
+      else { // Updated.
+        if ($status) {
+          $this->processVpsNodes(
+            // Current values, after update.
+            $node->get('field_vps_provider')->getValue(),
+            // Original values, before update.
+            $node->getOriginal()->get('field_vps_provider')->getValue()
+          );
+        }
+      }
+    }
+  }
+
+  public function processVpsNodes($currentValues, $originalValues = []) {
+    $title = "Processing VPS request";
+
+    // Updated
+    if (!empty($originalValues)) {
+      $commands = [];
+      // Use $currentValues to create VPS nodes that were added.
+      foreach ($currentValues as $vps_node) {
+        $pid = $vps_node['target_id'];
+        $paragraph = entityManage('paragraph', $pid);
+        $server_info = json_decode($paragraph->get('field_response')->getString(), TRUE);
+        $tools = $paragraph->get('field_tools')->getString();
+        // Create server only if it does not exist.
+        if (empty($server_info)) {
+          $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];
+          $commands["Ubuntu packages updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
+          $commands["Ubuntu packages upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
+          if (in_array($tools, ['docker', 'ddev'])) {
+            $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
+            $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
+            
+            if ($tools == 'ddev') {
+              $commands["DevBox user created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user_devbox']];
+              $commands["DDEV installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ddev_install']];
+            }
+          }
+        }
+      }
+
+      $currentIds = array_column($currentValues, 'target_id');
+      // Use $originalValues to delete VPS nodes that were removed.
+      foreach ($originalValues as $vps_node) {
+        $pid = $vps_node['target_id'];
+        // Delete server.
+        if (!in_array($pid, $currentIds)) {
+          $commands["VPS deleted (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'delete_vps']];
+        }
+      }
+    }
+    else { // Created
+      $commands = [];
+      foreach ($currentValues as $vps_node) {
+        $pid = $vps_node['target_id'];
+        $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];
+        $commands["Ubuntu packages updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
+        $commands["Ubuntu packages upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
+        $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
+        $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
+      }
+    }
+    // Run the batch operation.
+    if (!empty($commands)) {
+      $this->batchService->startBatch($commands, $title);
+    }
+  }
+
+}

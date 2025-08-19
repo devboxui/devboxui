@@ -1,0 +1,21 @@
+uuid: c6896952-703b-44d5-bad4-607b7507f44a
+langcode: en
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_vps_hostman
+field_name: field_vps_hostman
+entity_type: user
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

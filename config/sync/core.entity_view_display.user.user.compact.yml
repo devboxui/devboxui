@@ -1,0 +1,81 @@
+uuid: c3c47a63-6a00-4fea-8821-20a01b878dff
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.user.compact
+    - field.field.user.user.field_regenerate_keys
+    - field.field.user.user.field_ssh_private_key
+    - field.field.user.user.field_ssh_public_key
+    - field.field.user.user.field_vps_akamai_cloud_linode
+    - field.field.user.user.field_vps_amazon_lightsail
+    - field.field.user.user.field_vps_atlantic_net
+    - field.field.user.user.field_vps_cherry_servers
+    - field.field.user.user.field_vps_clouding
+    - field.field.user.user.field_vps_digitalocean
+    - field.field.user.user.field_vps_hetzner
+    - field.field.user.user.field_vps_hostman
+    - field.field.user.user.field_vps_infomaniak
+    - field.field.user.user.field_vps_ionos
+    - field.field.user.user.field_vps_katapult
+    - field.field.user.user.field_vps_leaseweb
+    - field.field.user.user.field_vps_netcup
+    - field.field.user.user.field_vps_ovhcloud
+    - field.field.user.user.field_vps_ovhcloud_us
+    - field.field.user.user.field_vps_scaleway
+    - field.field.user.user.field_vps_servers_com
+    - field.field.user.user.field_vps_upcloud
+    - field.field.user.user.field_vps_vultr
+    - field.field.user.user.user_picture
+    - image.style.thumbnail
+  module:
+    - image
+    - user
+_core:
+  default_config_hash: 00zr_RBdTjPjBGITD3h4c1ESQZimjdVCcHGt1trLqIY
+id: user.user.compact
+targetEntityType: user
+bundle: user
+mode: compact
+content:
+  masquerade:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 50
+    region: content
+  user_picture:
+    type: image
+    label: hidden
+    settings:
+      image_link: content
+      image_style: thumbnail
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_regenerate_keys: true
+  field_ssh_private_key: true
+  field_ssh_public_key: true
+  field_vps_akamai_cloud_linode: true
+  field_vps_amazon_lightsail: true
+  field_vps_atlantic_net: true
+  field_vps_cherry_servers: true
+  field_vps_clouding: true
+  field_vps_digitalocean: true
+  field_vps_hetzner: true
+  field_vps_hostman: true
+  field_vps_infomaniak: true
+  field_vps_ionos: true
+  field_vps_katapult: true
+  field_vps_leaseweb: true
+  field_vps_netcup: true
+  field_vps_ovhcloud: true
+  field_vps_ovhcloud_us: true
+  field_vps_scaleway: true
+  field_vps_servers_com: true
+  field_vps_upcloud: true
+  field_vps_vultr: true
+  langcode: true
+  member_for: true

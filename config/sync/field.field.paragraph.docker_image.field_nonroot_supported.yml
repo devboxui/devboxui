@@ -1,0 +1,19 @@
+uuid: 85832818-e797-46da-b748-d93d4ba1c40f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_nonroot_supported
+    - paragraphs.paragraphs_type.docker_image
+id: paragraph.docker_image.field_nonroot_supported
+field_name: field_nonroot_supported
+entity_type: paragraph
+bundle: docker_image
+label: 'NonRoot supported'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

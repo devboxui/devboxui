@@ -1,0 +1,21 @@
+uuid: 9fb7f932-8106-4a4b-accd-d934e7d46f5b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_application
+    - paragraphs.paragraphs_type.app
+  module:
+    - options
+id: paragraph.app.field_application
+field_name: field_application
+entity_type: paragraph
+bundle: app
+label: Application
+description: 'Select an application to install on VPS.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

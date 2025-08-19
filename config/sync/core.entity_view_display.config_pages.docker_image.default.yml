@@ -1,0 +1,24 @@
+uuid: 9c72a100-dc27-48af-8e0c-6fffd2361f39
+langcode: en
+status: true
+dependencies:
+  config:
+    - config_pages.type.docker_image
+    - field.field.config_pages.docker_image.field_docker_image
+  module:
+    - entity_reference_revisions
+id: config_pages.docker_image.default
+targetEntityType: config_pages
+bundle: docker_image
+mode: default
+content:
+  field_docker_image:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 4
+    region: content
+hidden: {  }

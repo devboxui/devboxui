@@ -1,0 +1,20 @@
+uuid: 90331797-7ea0-4d00-b71c-cba83aa8ec44
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_vps_leaseweb
+  module:
+    - user
+id: user.user.field_vps_leaseweb
+field_name: field_vps_leaseweb
+entity_type: user
+bundle: user
+label: 'VPS Leaseweb'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

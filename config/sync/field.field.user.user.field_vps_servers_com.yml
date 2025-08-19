@@ -1,0 +1,20 @@
+uuid: 632daef0-f255-459c-826f-bf1373e37ecf
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_vps_servers_com
+  module:
+    - user
+id: user.user.field_vps_servers_com
+field_name: field_vps_servers_com
+entity_type: user
+bundle: user
+label: 'VPS Servers.com'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

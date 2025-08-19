@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * @file
+ * Contains turnstile_protect.install.
+ */
+
+use Drupal\Core\Database\Database;
+
+/**
+ * Implements hook_schema().
+ */
+function turnstile_protect_schema() {
+  $schema['turnstile_protect_history'] = [
+    'description' => 'Stores the history of requests by IP range.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'timestamp' => [
+        'description' => 'The Unix timestamp of the record.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'ip_range' => [
+        'description' => 'The IP range being tracked.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'requests' => [
+        'description' => 'The number of requests by the IP range.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'ip_range' => ['ip_range'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Adds the turnstile_protect_history table.
+ */
+function turnstile_protect_update_10001() {
+  $schema = Database::getConnection()->schema();
+  if (!$schema->tableExists('turnstile_protect_history')) {
+    // Create the table using the schema definition from hook_schema().
+    $schema_definition = turnstile_protect_schema();
+    $schema->createTable('turnstile_protect_history', $schema_definition['turnstile_protect_history']);
+  }
+
+}
+
+/**
+ * Adds a primary key to the turnstile_protect_history table.
+ */
+function turnstile_protect_update_10002() {
+  $schema = Database::getConnection()->schema();
+
+  if ($schema->tableExists('turnstile_protect_history')) {
+    if (!$schema->fieldExists('turnstile_protect_history', 'id')) {
+      \Drupal::database()->query("ALTER TABLE {turnstile_protect_history}
+        ADD COLUMN id INT AUTO_INCREMENT PRIMARY KEY");
+    }
+  }
+}

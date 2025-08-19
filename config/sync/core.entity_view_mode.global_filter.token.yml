@@ -1,0 +1,11 @@
+uuid: 946698ad-c331-43ce-a1b7-dee358f6e406
+langcode: en
+status: true
+dependencies:
+  module:
+    - simple_global_filter
+id: global_filter.token
+label: Token
+description: null
+targetEntityType: global_filter
+cache: true

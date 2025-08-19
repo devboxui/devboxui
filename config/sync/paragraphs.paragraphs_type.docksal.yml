@@ -1,0 +1,10 @@
+uuid: 7a1774a3-6e74-4896-8518-58299f935914
+langcode: en
+status: true
+dependencies: {  }
+id: docksal
+label: Docksal
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

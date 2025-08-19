@@ -1,0 +1,26 @@
+uuid: 3aade564-ba81-461e-b553-60963fcf45e3
+langcode: en
+status: true
+dependencies:
+  module:
+    - user
+id: anonymous_styling
+label: 'Anonymous styling'
+code: |-
+  .gin-breadcrumb-wrapper,
+  .region-sticky-watcher,
+  .region.region-sticky {
+  	display: none;
+  }
+media: all
+preprocess: true
+conditions:
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      anonymous: anonymous
+contexts: {  }
+conditions_require_all: true

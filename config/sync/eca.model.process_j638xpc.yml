@@ -1,0 +1,261 @@
+uuid: 6a2bcd58-fbe7-461e-9fb5-c7200a36f2c0
+langcode: en
+status: true
+dependencies:
+  config:
+    - eca.eca.process_j638xpc
+id: process_j638xpc
+label: 'DevBox/Application actions'
+tags:
+  - untagged
+documentation: ''
+filename: ''
+modeldata: |
+  <?xml version="1.0" encoding="UTF-8"?>
+  <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:qa="http://some-company/schema/bpmn/qa" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+    <bpmn2:process id="Process_j638xPc" name="DevBox/Application actions" isExecutable="true" camunda:versionTag="v1">
+      <bpmn2:startEvent id="Event_0uua5tn" name="DevBox after submit" camunda:modelerTemplate="org.drupal.event.form:form_submit">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="form:form_submit" />
+          </camunda:properties>
+          <camunda:field name="form_id">
+            <camunda:string></camunda:string>
+          </camunda:field>
+          <camunda:field name="entity_type_id">
+            <camunda:string>node</camunda:string>
+          </camunda:field>
+          <camunda:field name="bundle">
+            <camunda:string>devbox</camunda:string>
+          </camunda:field>
+          <camunda:field name="operation">
+            <camunda:string></camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:outgoing>Flow_1ayaubd</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:task id="Activity_1dwv4zy" name="Redirect to /dashboard" camunda:modelerTemplate="org.drupal.action.eca_form_state_set_redirect">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="eca_form_state_set_redirect" />
+          </camunda:properties>
+          <camunda:field name="destination">
+            <camunda:string>/dashboard</camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>Flow_1ayaubd</bpmn2:incoming>
+      </bpmn2:task>
+      <bpmn2:sequenceFlow id="Flow_1ayaubd" sourceRef="Event_0uua5tn" targetRef="Activity_1dwv4zy" />
+      <bpmn2:startEvent id="Event_0ku97h8" name="DevBox&#10;predelete" camunda:modelerTemplate="org.drupal.event.content_entity:predelete">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="content_entity:predelete" />
+          </camunda:properties>
+          <camunda:field name="type">
+            <camunda:string>node devbox</camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:outgoing>Flow_0v8v5wg</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:task id="Activity_1ir9zzl" name="Provision VPS" camunda:modelerTemplate="org.drupal.action.devboxui_save_update">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="devboxui_save_update" />
+          </camunda:properties>
+          <camunda:field name="object">
+            <camunda:string>node</camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>Flow_0oyghrz</bpmn2:incoming>
+      </bpmn2:task>
+      <bpmn2:sequenceFlow id="Flow_0oyghrz" sourceRef="Event_18f6tmn" targetRef="Activity_1ir9zzl" />
+      <bpmn2:sequenceFlow id="Flow_0v8v5wg" sourceRef="Event_0ku97h8" targetRef="Activity_14lbsrj" />
+      <bpmn2:task id="Activity_14lbsrj" name="Delete VPS" camunda:modelerTemplate="org.drupal.action.devboxui_delete">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="devboxui_delete" />
+          </camunda:properties>
+          <camunda:field name="object">
+            <camunda:string>node</camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>Flow_0v8v5wg</bpmn2:incoming>
+      </bpmn2:task>
+      <bpmn2:startEvent id="Event_18f6tmn" name="DevBox&#10;presave" camunda:modelerTemplate="org.drupal.event.content_entity:presave">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="content_entity:presave" />
+          </camunda:properties>
+          <camunda:field name="type">
+            <camunda:string>node devbox</camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:outgoing>Flow_0oyghrz</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:startEvent id="Event_1s77ovw" name="App after submit" camunda:modelerTemplate="org.drupal.event.form:form_submit">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="form:form_submit" />
+          </camunda:properties>
+          <camunda:field name="form_id">
+            <camunda:string></camunda:string>
+          </camunda:field>
+          <camunda:field name="entity_type_id">
+            <camunda:string>node</camunda:string>
+          </camunda:field>
+          <camunda:field name="bundle">
+            <camunda:string>app</camunda:string>
+          </camunda:field>
+          <camunda:field name="operation">
+            <camunda:string></camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:outgoing>Flow_1guwwbc</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:task id="Activity_1e1giao" name="Redirect to /dashboard" camunda:modelerTemplate="org.drupal.action.eca_form_state_set_redirect">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="eca_form_state_set_redirect" />
+          </camunda:properties>
+          <camunda:field name="destination">
+            <camunda:string>/dashboard</camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>Flow_1guwwbc</bpmn2:incoming>
+      </bpmn2:task>
+      <bpmn2:startEvent id="Event_044bqes" name="App&#10;predelete" camunda:modelerTemplate="org.drupal.event.content_entity:predelete">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="content_entity:predelete" />
+          </camunda:properties>
+          <camunda:field name="type">
+            <camunda:string>node app</camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:outgoing>Flow_1gb708u</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:sequenceFlow id="Flow_1guwwbc" sourceRef="Event_1s77ovw" targetRef="Activity_1e1giao" />
+      <bpmn2:startEvent id="Event_1w3bn59" name="App&#10;presave" camunda:modelerTemplate="org.drupal.event.content_entity:presave">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="content_entity:presave" />
+          </camunda:properties>
+          <camunda:field name="type">
+            <camunda:string>node app</camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:outgoing>Flow_1nswuqo</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:task id="Activity_1x7bazk" name="Provision App" camunda:modelerTemplate="org.drupal.action.devboxui_save_update_app">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="devboxui_save_update_app" />
+          </camunda:properties>
+          <camunda:field name="object">
+            <camunda:string>node</camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>Flow_1nswuqo</bpmn2:incoming>
+      </bpmn2:task>
+      <bpmn2:sequenceFlow id="Flow_1nswuqo" sourceRef="Event_1w3bn59" targetRef="Activity_1x7bazk" />
+      <bpmn2:task id="Activity_0bqp2tv" name="Delete App" camunda:modelerTemplate="org.drupal.action.devboxui_delete_app">
+        <bpmn2:extensionElements>
+          <camunda:properties>
+            <camunda:property name="pluginid" value="devboxui_delete_app" />
+          </camunda:properties>
+          <camunda:field name="object">
+            <camunda:string>node</camunda:string>
+          </camunda:field>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>Flow_1gb708u</bpmn2:incoming>
+      </bpmn2:task>
+      <bpmn2:sequenceFlow id="Flow_1gb708u" sourceRef="Event_044bqes" targetRef="Activity_0bqp2tv" />
+    </bpmn2:process>
+    <bpmndi:BPMNDiagram id="sid-d21ca53f-e64d-4d4c-b2fa-346f44fed556">
+      <bpmndi:BPMNPlane id="sid-c5a0fc6f-12c8-4ca9-a9c8-1d1eb87b70ea" bpmnElement="Process_j638xPc">
+        <bpmndi:BPMNShape id="Event_0uua5tn_di" bpmnElement="Event_0uua5tn">
+          <dc:Bounds x="232" y="242" width="36" height="36" />
+          <bpmndi:BPMNLabel>
+            <dc:Bounds x="218" y="285" width="64" height="27" />
+          </bpmndi:BPMNLabel>
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNShape id="Activity_1dwv4zy_di" bpmnElement="Activity_1dwv4zy">
+          <dc:Bounds x="320" y="220" width="100" height="80" />
+          <bpmndi:BPMNLabel />
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNShape id="Event_0fbiv3b_di" bpmnElement="Event_0ku97h8">
+          <dc:Bounds x="562" y="112" width="36" height="36" />
+          <bpmndi:BPMNLabel>
+            <dc:Bounds x="558" y="155" width="46" height="27" />
+          </bpmndi:BPMNLabel>
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNShape id="Activity_1ir9zzl_di" bpmnElement="Activity_1ir9zzl">
+          <dc:Bounds x="320" y="90" width="100" height="80" />
+          <bpmndi:BPMNLabel />
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNShape id="Activity_1bns4hi_di" bpmnElement="Activity_14lbsrj">
+          <dc:Bounds x="650" y="90" width="100" height="80" />
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNShape id="Event_129o8ve_di" bpmnElement="Event_18f6tmn">
+          <dc:Bounds x="232" y="112" width="36" height="36" />
+          <bpmndi:BPMNLabel>
+            <dc:Bounds x="230" y="155" width="40" height="27" />
+          </bpmndi:BPMNLabel>
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNShape id="BPMNShape_0fx44x9" bpmnElement="Event_1s77ovw">
+          <dc:Bounds x="232" y="522" width="36" height="36" />
+          <bpmndi:BPMNLabel>
+            <dc:Bounds x="210" y="565" width="81" height="14" />
+          </bpmndi:BPMNLabel>
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNShape id="BPMNShape_03k9m4p" bpmnElement="Activity_1e1giao">
+          <dc:Bounds x="320" y="500" width="100" height="80" />
+          <bpmndi:BPMNLabel />
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNShape id="BPMNShape_14rm6gi" bpmnElement="Event_044bqes">
+          <dc:Bounds x="562" y="392" width="36" height="36" />
+          <bpmndi:BPMNLabel>
+            <dc:Bounds x="558" y="435" width="46" height="27" />
+          </bpmndi:BPMNLabel>
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNShape id="Event_17c6gla_di" bpmnElement="Event_1w3bn59">
+          <dc:Bounds x="232" y="392" width="36" height="36" />
+          <bpmndi:BPMNLabel>
+            <dc:Bounds x="230" y="435" width="40" height="27" />
+          </bpmndi:BPMNLabel>
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNShape id="Activity_1x7bazk_di" bpmnElement="Activity_1x7bazk">
+          <dc:Bounds x="320" y="370" width="100" height="80" />
+          <bpmndi:BPMNLabel />
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNShape id="Activity_0bqp2tv_di" bpmnElement="Activity_0bqp2tv">
+          <dc:Bounds x="650" y="370" width="100" height="80" />
+          <bpmndi:BPMNLabel />
+        </bpmndi:BPMNShape>
+        <bpmndi:BPMNEdge id="Flow_1ayaubd_di" bpmnElement="Flow_1ayaubd">
+          <di:waypoint x="268" y="260" />
+          <di:waypoint x="320" y="260" />
+        </bpmndi:BPMNEdge>
+        <bpmndi:BPMNEdge id="Flow_0oyghrz_di" bpmnElement="Flow_0oyghrz">
+          <di:waypoint x="268" y="130" />
+          <di:waypoint x="320" y="130" />
+        </bpmndi:BPMNEdge>
+        <bpmndi:BPMNEdge id="Flow_0v8v5wg_di" bpmnElement="Flow_0v8v5wg">
+          <di:waypoint x="598" y="130" />
+          <di:waypoint x="650" y="130" />
+        </bpmndi:BPMNEdge>
+        <bpmndi:BPMNEdge id="BPMNEdge_1qk68vd" bpmnElement="Flow_1guwwbc">
+          <di:waypoint x="268" y="540" />
+          <di:waypoint x="320" y="540" />
+        </bpmndi:BPMNEdge>
+        <bpmndi:BPMNEdge id="Flow_1nswuqo_di" bpmnElement="Flow_1nswuqo">
+          <di:waypoint x="268" y="410" />
+          <di:waypoint x="320" y="410" />
+        </bpmndi:BPMNEdge>
+        <bpmndi:BPMNEdge id="Flow_1gb708u_di" bpmnElement="Flow_1gb708u">
+          <di:waypoint x="598" y="410" />
+          <di:waypoint x="650" y="410" />
+        </bpmndi:BPMNEdge>
+      </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+  </bpmn2:definitions>

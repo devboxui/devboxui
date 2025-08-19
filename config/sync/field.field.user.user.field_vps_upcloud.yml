@@ -1,0 +1,20 @@
+uuid: ba69de90-f3fe-43cf-a494-c49cb4cd9525
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_vps_upcloud
+  module:
+    - user
+id: user.user.field_vps_upcloud
+field_name: field_vps_upcloud
+entity_type: user
+bundle: user
+label: 'VPS UpCloud'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

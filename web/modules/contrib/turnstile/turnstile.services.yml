@@ -1,0 +1,5 @@
+services:
+  turnstile.event_subscriber:
+    class: Drupal\turnstile\EventSubscriber\TurnstileAjaxSubscriber
+    tags:
+      - { name: event_subscriber }

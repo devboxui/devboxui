@@ -1,0 +1,5 @@
+# Overrides
+user.pass:
+  route_name: user.pass
+  base_route: user.page
+  title: 'Log in'

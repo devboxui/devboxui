@@ -1,0 +1,43 @@
+uuid: 7ebf9b06-722e-472b-8afe-d8b0861fc73c
+langcode: en
+status: true
+dependencies: {  }
+id: general_styling
+label: 'General styling'
+code: |-
+  a {
+  	text-decoration: none;
+  }
+  a:hover {
+  	text-decoration: underline;
+  }
+  a.is-active {
+  	color: initial !important;
+  	text-decoration: underline;
+  }
+  .tabs.tabs--primary {
+  	margin-top: 10px;
+  }
+  .horizontal-tabs {
+  	border: 0 !important;
+  }
+  .gin--dark-mode .chosen-search-input {
+  	color: black;
+  }
+  .tabledrag-toggle-weight-wrapper {
+  	display: none;
+  }
+  .inline {
+  	display: inline;
+  }
+  .inline-block {
+  	display: inline-block;
+  }
+  .config-text {
+  	margin-block: var(--space-m);
+  }
+media: all
+preprocess: true
+conditions: {  }
+contexts: {  }
+conditions_require_all: true

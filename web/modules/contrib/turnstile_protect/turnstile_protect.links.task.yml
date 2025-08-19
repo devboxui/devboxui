@@ -1,0 +1,4 @@
+turnstile_protect.tab:
+  route_name: turnstile_protect.settings
+  title: Turnstile Protect
+  base_route: captcha_settings

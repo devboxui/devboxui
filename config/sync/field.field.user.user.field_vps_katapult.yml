@@ -1,0 +1,20 @@
+uuid: 770c450f-4d90-4e8c-b3fa-11a5974855fc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_vps_katapult
+  module:
+    - user
+id: user.user.field_vps_katapult
+field_name: field_vps_katapult
+entity_type: user
+bundle: user
+label: 'VPS Katapult'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

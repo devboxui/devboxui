@@ -1,0 +1,6 @@
+services:
+  alter_route_title.route_subscriber:
+    class: Drupal\alter_route_title\Routing\RouteSubscriber
+    arguments: ['@config.factory']
+    tags:
+      - { name: event_subscriber }

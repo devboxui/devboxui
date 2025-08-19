@@ -1,0 +1,6 @@
+vendor
+web/sites/default/files
+/.gitattributes
+web/sites/default/settings.ddev.php
+config/sync/symfony_mailer.mailer_transport.smtp.yml
+config/sync/smtp.settings.yml

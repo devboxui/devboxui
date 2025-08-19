@@ -1,0 +1,21 @@
+uuid: 23b41d3e-d6a0-491d-b534-612d7cc0ecbc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_tools
+    - paragraphs.paragraphs_type.tools
+  module:
+    - options
+id: paragraph.tools.field_tools
+field_name: field_tools
+entity_type: paragraph
+bundle: tools
+label: Tools
+description: "Select a tool to install during VPS provisioning.<br>\r\nChoosing anything else except Docker will trigger Docker installation too since it's a requirement."
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

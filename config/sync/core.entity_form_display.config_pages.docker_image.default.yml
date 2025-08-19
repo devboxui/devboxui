@@ -1,0 +1,50 @@
+uuid: 82a1a05d-3102-49dd-9648-1207e11d8e55
+langcode: en
+status: true
+dependencies:
+  config:
+    - config_pages.type.docker_image
+    - field.field.config_pages.docker_image.field_docker_image
+  module:
+    - paragraphs
+    - paragraphs_ee
+    - paragraphs_features
+id: config_pages.docker_image.default
+targetEntityType: config_pages
+bundle: docker_image
+mode: default
+content:
+  field_docker_image:
+    type: paragraphs
+    weight: 4
+    region: content
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: docker_image
+      features:
+        add_above: add_above
+        collapse_edit_all: collapse_edit_all
+        convert: '0'
+        duplicate: duplicate
+    third_party_settings:
+      paragraphs_features:
+        add_in_between: false
+        add_in_between_link_count: 3
+        delete_confirmation: true
+        show_drag_and_drop: false
+        show_collapse_all: true
+      paragraphs_ee:
+        paragraphs_ee:
+          dialog_off_canvas: false
+          dialog_style: tiles
+          drag_drop: false
+          sidebar_disabled: false
+hidden:
+  label: true

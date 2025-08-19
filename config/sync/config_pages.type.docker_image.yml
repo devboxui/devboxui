@@ -1,0 +1,17 @@
+uuid: 3fe08484-16d2-4de6-b6d2-d35664263d9c
+langcode: en
+status: true
+dependencies: {  }
+id: docker_image
+label: 'Docker images'
+token: false
+context:
+  show_warning: true
+  group:
+    language: false
+  fallback:
+    language: ''
+menu:
+  path: /admin/config/docker-images
+  weight: 0
+  description: ''

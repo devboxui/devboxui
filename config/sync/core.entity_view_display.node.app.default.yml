@@ -1,0 +1,31 @@
+uuid: 6f834ccd-d925-4762-99df-0403ff24a93a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.app.field_app
+    - node.type.app
+  module:
+    - entity_reference_revisions
+    - user
+id: node.app.default
+targetEntityType: node
+bundle: app
+mode: default
+content:
+  field_app:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  langcode: true

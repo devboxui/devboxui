@@ -1,0 +1,124 @@
+uuid: 0468abf9-13ac-44f0-b877-cd0aa5115563
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.app
+    - node.type.devbox
+  module:
+    - devboxui
+    - eca_content
+    - eca_form
+id: process_j638xpc
+modeller: bpmn_io
+label: 'DevBox/Application actions'
+version: v1
+weight: 0
+events:
+  Event_0uua5tn:
+    plugin: 'form:form_submit'
+    label: 'DevBox after submit'
+    configuration:
+      form_id: ''
+      entity_type_id: node
+      bundle: devbox
+      operation: ''
+    successors:
+      -
+        id: Activity_1dwv4zy
+        condition: ''
+  Event_0ku97h8:
+    plugin: 'content_entity:predelete'
+    label: |-
+      DevBox
+      predelete
+    configuration:
+      type: 'node devbox'
+    successors:
+      -
+        id: Activity_14lbsrj
+        condition: ''
+  Event_18f6tmn:
+    plugin: 'content_entity:presave'
+    label: |-
+      DevBox
+      presave
+    configuration:
+      type: 'node devbox'
+    successors:
+      -
+        id: Activity_1ir9zzl
+        condition: ''
+  Event_1s77ovw:
+    plugin: 'form:form_submit'
+    label: 'App after submit'
+    configuration:
+      form_id: ''
+      entity_type_id: node
+      bundle: app
+      operation: ''
+    successors:
+      -
+        id: Activity_1e1giao
+        condition: ''
+  Event_044bqes:
+    plugin: 'content_entity:predelete'
+    label: |-
+      App
+      predelete
+    configuration:
+      type: 'node app'
+    successors:
+      -
+        id: Activity_0bqp2tv
+        condition: ''
+  Event_1w3bn59:
+    plugin: 'content_entity:presave'
+    label: |-
+      App
+      presave
+    configuration:
+      type: 'node app'
+    successors:
+      -
+        id: Activity_1x7bazk
+        condition: ''
+conditions: {  }
+gateways: {  }
+actions:
+  Activity_1dwv4zy:
+    plugin: eca_form_state_set_redirect
+    label: 'Redirect to /dashboard'
+    configuration:
+      destination: /dashboard
+    successors: {  }
+  Activity_1ir9zzl:
+    plugin: devboxui_save_update
+    label: 'Provision VPS'
+    configuration:
+      object: node
+    successors: {  }
+  Activity_14lbsrj:
+    plugin: devboxui_delete
+    label: 'Delete VPS'
+    configuration:
+      object: node
+    successors: {  }
+  Activity_1e1giao:
+    plugin: eca_form_state_set_redirect
+    label: 'Redirect to /dashboard'
+    configuration:
+      destination: /dashboard
+    successors: {  }
+  Activity_1x7bazk:
+    plugin: devboxui_save_update_app
+    label: 'Provision App'
+    configuration:
+      object: node
+    successors: {  }
+  Activity_0bqp2tv:
+    plugin: devboxui_delete_app
+    label: 'Delete App'
+    configuration:
+      object: node
+    successors: {  }

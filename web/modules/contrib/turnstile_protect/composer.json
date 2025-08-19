@@ -1,0 +1,20 @@
+{
+    "name": "drupal/turnstile_protect",
+    "description": "Put your site routes behind a Cloudflare Turnstile",
+    "type": "drupal-module",
+    "license": "GPL-2.0+",
+    "homepage": "https://www.drupal.org/project/turnstile_protect",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/turnstile_protect"
+    },
+    "authors": [
+        {
+            "name": "Joe Corall",
+            "email": "jjc223@lehigh.edu",
+            "role": "Owner"
+        }
+    ],
+    "require" : {
+        "drupal/turnstile": "^1"
+    }
+}

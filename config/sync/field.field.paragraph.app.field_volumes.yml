@@ -1,0 +1,52 @@
+uuid: 354d683c-69d7-4715-9767-a7dcd8008ef4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_volumes
+    - paragraphs.paragraphs_type.app
+    - paragraphs.paragraphs_type.volumes
+  module:
+    - entity_reference_revisions
+id: paragraph.app.field_volumes
+field_name: field_volumes
+entity_type: paragraph
+bundle: app
+label: Volumes
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      volumes: volumes
+    negate: 0
+    target_bundles_drag_drop:
+      app:
+        weight: 6
+        enabled: false
+      caps:
+        weight: 10
+        enabled: false
+      docker_image:
+        weight: 7
+        enabled: false
+      env_vars:
+        weight: 8
+        enabled: false
+      hetzner:
+        weight: 9
+        enabled: false
+      ports:
+        weight: 14
+        enabled: false
+      volumes:
+        weight: 11
+        enabled: true
+      vultr:
+        weight: 10
+        enabled: false
+field_type: entity_reference_revisions

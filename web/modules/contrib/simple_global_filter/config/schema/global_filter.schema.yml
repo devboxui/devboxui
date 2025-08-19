@@ -1,0 +1,33 @@
+simple_global_filter.global_filter.*:
+  type: config_entity
+  label: 'Global filter config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+    vocabulary_name:
+      type: string
+      label: 'Vocabulary'
+    default_value:
+      type: string
+      label: 'Default value'
+    alias_field:
+      type: string
+      label: 'Alias field'
+    display_in_url:
+      type: boolean
+      label: 'Display in the URL'
+    display_all_option:
+      type: boolean
+      label: 'Display all option'
+    display_all_label:
+      type: string
+      label: 'Display all label'
+    storing_mode:
+      type: string
+      label: 'Storing mode'

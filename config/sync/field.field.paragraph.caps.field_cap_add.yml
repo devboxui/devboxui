@@ -1,0 +1,19 @@
+uuid: 3adcb003-6963-44b3-9531-9b2eadfc2e6e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_cap_add
+    - paragraphs.paragraphs_type.caps
+id: paragraph.caps.field_cap_add
+field_name: field_cap_add
+entity_type: paragraph
+bundle: caps
+label: 'Cap add'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

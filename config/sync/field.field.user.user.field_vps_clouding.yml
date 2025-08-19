@@ -1,0 +1,20 @@
+uuid: 235ab443-3166-4b21-8ade-1a34bb94054a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_vps_clouding
+  module:
+    - user
+id: user.user.field_vps_clouding
+field_name: field_vps_clouding
+entity_type: user
+bundle: user
+label: 'VPS Clouding'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

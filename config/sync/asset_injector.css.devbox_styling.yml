@@ -1,0 +1,25 @@
+uuid: b03caeb0-537b-4397-b51f-c1cf9bfed368
+langcode: en
+status: true
+dependencies: {  }
+id: devbox_styling
+label: 'DevBox/App styling'
+code: |-
+  .node-devbox-form .entity-meta,
+  .node-devbox-edit-form .entity-meta {
+  	display: none;
+  }
+  .node-app-form .entity-meta,
+  .node-app-edit-form .entity-meta {
+  	display: none;
+  }
+  .volumes .details-wrapper > .form-item {
+  	display: inline-block;
+    width: 49%;
+    vertical-align: top;
+  }
+media: all
+preprocess: true
+conditions: {  }
+contexts: {  }
+conditions_require_all: true

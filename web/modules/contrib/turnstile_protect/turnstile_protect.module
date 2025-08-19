@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Turnstile Protect module.
+ */
+
+/**
+ * Implements hook_library_info_alter().
+ */
+function turnstile_protect_library_info_alter(&$libraries, $extension) {
+  $config = \Drupal::config('turnstile.settings');
+  $turnstile_src = $config->get('turnstile_src');
+  if (isset($libraries['turnstile.remote']['js'][$turnstile_src])) {
+    $libraries['turnstile']['js'][$turnstile_src]['attributes']['referrerpolicy'] = 'no-referrer';
+  }
+}
+
+/**
+ * Implements hook_captcha_alter().
+ */
+function turnstile_protect_captcha_alter(&$captcha, $info) {
+  if ($info['module'] !== 'turnstile') {
+    return;
+  }
+
+  if (\Drupal::routeMatch()->getRouteName() !== 'turnstile_protect.challenge') {
+    return;
+  }
+
+  // Block referrer to cloudflare.
+  if (!empty($captcha['form']['turnstile_widget']['#attached']['html_head'][0][0])) {
+    $captcha['form']['turnstile_widget']['#attached']['html_head'][0][0]['#attributes']['referrerpolicy'] = 'no-referrer';
+  }
+
+  // Add a javascript callback after the turnstile succeeds.
+  $captcha['form']['turnstile_widget']['#markup'] = str_replace('<div', '<div data-callback="turnstileProtectAutoSubmit"', $captcha['form']['turnstile_widget']['#markup']);
+  $captcha['form']['#attached']['library'][] = 'turnstile_protect/challenge';
+}
+
+/**
+ * Implements hook_cron().
+ */
+function turnstile_protect_cron() {
+  $config = \Drupal::config('turnstile_protect.settings');
+  if (!$config->get('history_enabled')) {
+    return;
+  }
+
+  $window = $config->get('window');
+  $current_time = \Drupal::time()->getRequestTime();
+  $threshold_timestamp = $current_time - $window;
+  // Add a 15m buffer.
+  $threshold_timestamp -= 900;
+
+  // Retrieve the last execution time.
+  $result = \Drupal::database()->query("SELECT MAX(timestamp) FROM {turnstile_protect_history}")->fetchField();
+
+  // Run only if there's no recent execution.
+  if ($result && $result >= $threshold_timestamp) {
+    return;
+  }
+
+  \Drupal::database()->query("INSERT INTO {turnstile_protect_history} (`timestamp`, ip_range, requests)
+    SELECT :current_time, identifier, COUNT(*)
+    FROM {flood}
+    WHERE `event` = :event
+    GROUP BY identifier
+    ORDER BY COUNT(*) DESC", [
+      ':event' => 'turnstile_protect_rate_limit',
+      ':current_time' => $current_time,
+    ]);
+}

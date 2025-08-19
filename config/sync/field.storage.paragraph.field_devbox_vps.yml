@@ -1,0 +1,21 @@
+uuid: 562df3ee-51cd-4e86-a3a2-4740f8c5d642
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - paragraphs
+id: paragraph.field_devbox_vps
+field_name: field_devbox_vps
+entity_type: paragraph
+type: list_string
+settings:
+  allowed_values: {  }
+  allowed_values_function: devboxui_options_allowed_values
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

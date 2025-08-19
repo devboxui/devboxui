@@ -1,0 +1,14 @@
+turnstile_protect.challenge:
+  path: "/challenge"
+  defaults:
+    _title: "Challenge"
+    _form: '\Drupal\turnstile_protect\Form\Challenge'
+  requirements:
+    _permission: 'access content'
+turnstile_protect.settings:
+  path: '/admin/config/people/captcha/turnstile-protect'
+  defaults:
+    _form: '\Drupal\turnstile_protect\Form\Settings'
+    _title: 'Turnstile Protect'
+  requirements:
+    _permission: 'administer turnstile'

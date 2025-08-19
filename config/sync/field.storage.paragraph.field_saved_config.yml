@@ -1,0 +1,19 @@
+uuid: cd3d9c84-0155-4718-8d20-2294a3b87a64
+langcode: en
+status: true
+dependencies:
+  module:
+    - paragraphs
+id: paragraph.field_saved_config
+field_name: field_saved_config
+entity_type: paragraph
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

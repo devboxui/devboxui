@@ -1,0 +1,20 @@
+uuid: 0ec3cb83-5382-4482-9345-afbe574107bf
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_vps_akamai_cloud_linode
+  module:
+    - user
+id: user.user.field_vps_akamai_cloud_linode
+field_name: field_vps_akamai_cloud_linode
+entity_type: user
+bundle: user
+label: 'VPS Akamai Cloud (Linode)'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,21 @@
+uuid: 8944417a-364f-4c6d-9af2-97aafdce4be9
+langcode: en
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_vps_infomaniak
+field_name: field_vps_infomaniak
+entity_type: user
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

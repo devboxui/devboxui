@@ -1,0 +1,155 @@
+uuid: 5cbcb835-708e-49fd-bc4b-b0b197eb149c
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.user.register
+    - field.field.user.user.field_regenerate_keys
+    - field.field.user.user.field_ssh_private_key
+    - field.field.user.user.field_ssh_public_key
+    - field.field.user.user.field_vps_akamai_cloud_linode
+    - field.field.user.user.field_vps_amazon_lightsail
+    - field.field.user.user.field_vps_atlantic_net
+    - field.field.user.user.field_vps_cherry_servers
+    - field.field.user.user.field_vps_clouding
+    - field.field.user.user.field_vps_digitalocean
+    - field.field.user.user.field_vps_hetzner
+    - field.field.user.user.field_vps_hostman
+    - field.field.user.user.field_vps_infomaniak
+    - field.field.user.user.field_vps_ionos
+    - field.field.user.user.field_vps_katapult
+    - field.field.user.user.field_vps_leaseweb
+    - field.field.user.user.field_vps_netcup
+    - field.field.user.user.field_vps_ovhcloud
+    - field.field.user.user.field_vps_ovhcloud_us
+    - field.field.user.user.field_vps_scaleway
+    - field.field.user.user.field_vps_servers_com
+    - field.field.user.user.field_vps_upcloud
+    - field.field.user.user.field_vps_vultr
+    - field.field.user.user.user_picture
+  module:
+    - field_group
+    - user
+third_party_settings:
+  field_group:
+    group_tabs:
+      children:
+        - group_account_settings
+      label: Tabs
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        label_as_html: false
+        direction: horizontal
+        width_breakpoint: 640
+    group_account_settings:
+      children:
+        - account
+        - timezone
+        - language
+      label: 'Account settings'
+      region: content
+      parent_name: group_tabs
+      weight: 20
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        label_as_html: false
+        formatter: open
+        description: ''
+        required_fields: true
+    group_ssh_keys:
+      children:
+        - field_regenerate_keys
+        - field_ssh_private_key
+        - field_ssh_public_key
+      label: 'SSH keys'
+      region: hidden
+      parent_name: ''
+      weight: 4
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        label_as_html: false
+        formatter: closed
+        description: ''
+        required_fields: true
+    group_vps_providers:
+      children:
+        - field_vps_hetzner
+        - field_vps_vultr
+      label: 'VPS Providers'
+      region: hidden
+      parent_name: ''
+      weight: 5
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        label_as_html: false
+        formatter: closed
+        description: ''
+        required_fields: true
+_core:
+  default_config_hash: FaQ9Ptcpxpg30AtiqRDtl_8zbJArHP1LPfug_s59TOA
+id: user.user.register
+targetEntityType: user
+bundle: user
+mode: register
+content:
+  account:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  contact:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  language:
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  timezone:
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_regenerate_keys: true
+  field_ssh_private_key: true
+  field_ssh_public_key: true
+  field_vps_akamai_cloud_linode: true
+  field_vps_amazon_lightsail: true
+  field_vps_atlantic_net: true
+  field_vps_cherry_servers: true
+  field_vps_clouding: true
+  field_vps_digitalocean: true
+  field_vps_hetzner: true
+  field_vps_hostman: true
+  field_vps_infomaniak: true
+  field_vps_ionos: true
+  field_vps_katapult: true
+  field_vps_leaseweb: true
+  field_vps_netcup: true
+  field_vps_ovhcloud: true
+  field_vps_ovhcloud_us: true
+  field_vps_scaleway: true
+  field_vps_servers_com: true
+  field_vps_upcloud: true
+  field_vps_vultr: true
+  langcode: true
+  path: true
+  user_picture: true

@@ -1,0 +1,20 @@
+uuid: ace07159-bcbb-4b81-90b9-547d56a90f0e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_vps_ionos
+  module:
+    - user
+id: user.user.field_vps_ionos
+field_name: field_vps_ionos
+entity_type: user
+bundle: user
+label: 'VPS IONOS'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,20 @@
+uuid: 94504f2e-62c9-48b5-93a1-43dab6017dcc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_vps_hostman
+  module:
+    - user
+id: user.user.field_vps_hostman
+field_name: field_vps_hostman
+entity_type: user
+bundle: user
+label: 'VPS Hostman'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

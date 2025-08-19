@@ -1,0 +1,19 @@
+uuid: 6c9d0370-2fd6-4e7d-8725-46123a899642
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_docker_image
+    - paragraphs.paragraphs_type.docker_image
+id: paragraph.docker_image.field_docker_image
+field_name: field_docker_image
+entity_type: paragraph
+bundle: docker_image
+label: 'Docker image'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

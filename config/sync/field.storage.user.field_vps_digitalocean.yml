@@ -1,0 +1,21 @@
+uuid: 09672810-0809-48a3-aba5-c21fd1c68419
+langcode: en
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_vps_digitalocean
+field_name: field_vps_digitalocean
+entity_type: user
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

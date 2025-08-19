@@ -1,0 +1,10 @@
+uuid: 52ebbaf7-8556-45e3-ba9e-901b3164c36b
+langcode: en
+status: true
+dependencies: {  }
+id: caps
+label: Caps
+icon_uuid: null
+icon_default: null
+description: 'Docker image caps options.'
+behavior_plugins: {  }

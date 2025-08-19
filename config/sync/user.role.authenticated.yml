@@ -1,0 +1,37 @@
+uuid: aeeab70b-8219-46c5-b1bd-05eaa4da0563
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.basic_html
+    - node.type.app
+    - node.type.devbox
+  module:
+    - comment
+    - file
+    - filter
+    - node
+    - search
+    - shortcut
+    - system
+_core:
+  default_config_hash: cFrlqjtkTfvY3RGccjJkPf1SGIfJ942IrxTLWAO4mgA
+id: authenticated
+label: 'Authenticated user'
+weight: 1
+is_admin: false
+permissions:
+  - 'access comments'
+  - 'access content'
+  - 'access shortcuts'
+  - 'create app content'
+  - 'create devbox content'
+  - 'delete own app content'
+  - 'delete own devbox content'
+  - 'delete own files'
+  - 'edit own app content'
+  - 'edit own devbox content'
+  - 'post comments'
+  - 'search content'
+  - 'skip comment approval'
+  - 'use text format basic_html'

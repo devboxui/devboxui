@@ -1,0 +1,15 @@
+uuid: 57fc0b69-73d7-4d1d-a3ae-8669cf4e6fbe
+langcode: en
+status: false
+dependencies: {  }
+id: user
+label: User
+type: paths
+dialog_group: administrative
+dialog_type: modal
+dialog_width: 100%
+dialog_title_override: ''
+selection_criteria:
+  paths:
+    - '/user/*'
+    - /admin/people/create

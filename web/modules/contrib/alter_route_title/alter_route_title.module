@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains alter_route_title.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function alter_route_title_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the alter_route_title module.
+    case 'help.page.alter_route_title':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module will help you to alter existing router&#039;&#039;s title.') . '</p>';
+      return $output;
+
+    default:
+  }
+}

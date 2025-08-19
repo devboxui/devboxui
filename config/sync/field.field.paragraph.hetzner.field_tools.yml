@@ -1,0 +1,21 @@
+uuid: 2ca8c9b9-e1b5-447e-837e-9ff4790815da
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_tools
+    - paragraphs.paragraphs_type.hetzner
+  module:
+    - options
+id: paragraph.hetzner.field_tools
+field_name: field_tools
+entity_type: paragraph
+bundle: hetzner
+label: Tools
+description: "Select a tool to install during VPS provisioning.<br>\r\nChoosing anything else except Docker will trigger Docker installation too since it's a requirement."
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

@@ -1,0 +1,19 @@
+uuid: 0bc00143-11f1-4ade-92aa-094ce2abc826
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_application_setup
+    - paragraphs.paragraphs_type.docker_image
+id: paragraph.docker_image.field_application_setup
+field_name: field_application_setup
+entity_type: paragraph
+bundle: docker_image
+label: 'Application setup URL'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

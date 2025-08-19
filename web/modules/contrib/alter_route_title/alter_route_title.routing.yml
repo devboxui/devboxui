@@ -1,0 +1,9 @@
+alter_route_title.configuration_form:
+  path: '/admin/config/alter-route-title/configuration'
+  defaults:
+    _form: '\Drupal\alter_route_title\Form\ConfigurationForm'
+    _title: 'Alter Route Title'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE

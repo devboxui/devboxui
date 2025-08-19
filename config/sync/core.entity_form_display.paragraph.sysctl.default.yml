@@ -1,0 +1,23 @@
+uuid: 925281b3-f2ac-44e6-a091-411e2de32f1d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.sysctl.field_value
+    - paragraphs.paragraphs_type.sysctl
+id: paragraph.sysctl.default
+targetEntityType: paragraph
+bundle: sysctl
+mode: default
+content:
+  field_value:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

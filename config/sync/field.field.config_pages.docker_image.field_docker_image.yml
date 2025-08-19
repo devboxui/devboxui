@@ -1,0 +1,43 @@
+uuid: bb5c24b4-03ac-44cc-b836-3b1cc670c100
+langcode: en
+status: true
+dependencies:
+  config:
+    - config_pages.type.docker_image
+    - field.storage.config_pages.field_docker_image
+    - paragraphs.paragraphs_type.docker_image
+  module:
+    - entity_reference_revisions
+id: config_pages.docker_image.field_docker_image
+field_name: field_docker_image
+entity_type: config_pages
+bundle: docker_image
+label: 'Docker image'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      docker_image: docker_image
+    negate: 0
+    target_bundles_drag_drop:
+      app:
+        weight: 5
+        enabled: false
+      docker_image:
+        weight: 7
+        enabled: true
+      env_vars:
+        weight: 6
+        enabled: false
+      hetzner:
+        weight: 7
+        enabled: false
+      vultr:
+        weight: 8
+        enabled: false
+field_type: entity_reference_revisions

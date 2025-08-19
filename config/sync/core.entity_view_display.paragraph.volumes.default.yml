@@ -1,0 +1,30 @@
+uuid: b71b683a-b3e5-4bf6-9092-98bb5be5c7ca
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.volumes.field_host_path
+    - field.field.paragraph.volumes.field_path
+    - paragraphs.paragraphs_type.volumes
+id: paragraph.volumes.default
+targetEntityType: paragraph
+bundle: volumes
+mode: default
+content:
+  field_host_path:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_path:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

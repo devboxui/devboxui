@@ -1,0 +1,20 @@
+uuid: 636b6f90-e248-4f31-9600-2b6548b25291
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_vps_cherry_servers
+  module:
+    - user
+id: user.user.field_vps_cherry_servers
+field_name: field_vps_cherry_servers
+entity_type: user
+bundle: user
+label: 'VPS Cherry Servers'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,37 @@
+uuid: b2773adb-a0be-446b-9541-f4e54ea01838
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.dashboard
+  module:
+    - system
+    - user
+    - views
+  theme:
+    - gin
+id: gin_views_block__dashboard_block_1
+theme: gin
+region: content
+weight: 0
+provider: null
+plugin: 'views_block:dashboard-block_1'
+settings:
+  id: 'views_block:dashboard-block_1'
+  label: ''
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: null
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /dashboard
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      authenticated: authenticated

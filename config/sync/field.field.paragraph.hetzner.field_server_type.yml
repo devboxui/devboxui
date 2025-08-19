@@ -1,0 +1,21 @@
+uuid: 9c05dc99-fb6a-4efc-a175-69f272564531
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_server_type
+    - paragraphs.paragraphs_type.hetzner
+  module:
+    - options
+id: paragraph.hetzner.field_server_type
+field_name: field_server_type
+entity_type: paragraph
+bundle: hetzner
+label: Server
+description: "Select the server type.<br>\r\nThe latest version of Ubuntu OS will be used."
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

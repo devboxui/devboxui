@@ -1,0 +1,117 @@
+<?php
+
+/**
+ * @file
+ * Defines the install/schema hooks for the turnstile module.
+ */
+
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+use Drupal\key\Entity\Key;
+
+/**
+ * Implements hook_requirements().
+ */
+function turnstile_requirements($phase) {
+  $requirements = [];
+
+  if ($phase == 'runtime') {
+    $turnstile_keys = turnstile_keys();
+    
+    if (!$turnstile_keys || empty($turnstile_keys['site_key']) || empty($turnstile_keys['secret_key'])) {
+      $url_key_config = Url::fromUri('internal:/admin/config/system/keys');
+      $url_turnstile_config = Url::fromUri('internal:/admin/config/people/captcha/turnstile');
+
+      $link_key_config = Link::fromTextAndUrl(t('use the Key module'), $url_key_config)->toString();
+      $link_turnstile_config = Link::fromTextAndUrl(t('Turnstile configuration page'), $url_turnstile_config)->toString();
+
+      $requirements['turnstile'] = [
+        'title' => t('Turnstile'),
+        'description' => t('You must @link_to_key to create a Turnstile Site and Secret Keys, then select it in the @link_to_turnstile.', [
+          '@link_to_key' => $link_key_config,
+          '@link_to_turnstile' => $link_turnstile_config,
+        ]),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    }
+  }
+  return $requirements;
+}
+
+/**
+ * Add configuration settings.
+ *
+ * Adds new configuration settings to support the language, size, retry, retry
+ * interval, and appearance options.
+ */
+function turnstile_update_8001() {
+  $config = \Drupal::configFactory()->getEditable('turnstile.settings');
+  $config
+    ->set('widget.language', 'auto')
+    ->set('widget.size', 'auto')
+    ->set('widget.retry', 'auto')
+    ->set('widget.retry_interval', 8000)
+    ->set('widget.appearance', 'auto')
+    ->save();
+}
+
+/**
+ * Migrate key settings, if they exist.
+ *
+ * If a user is coming from a previous version of the module, they probably
+ * have an older site_key and secret_key; we need to migrate them into a new
+ * key.
+ */
+function turnstile_update_8002() {
+  // Enable the key module if it has not already been installed.
+  if (!\Drupal::moduleHandler()->moduleExists('key')) {
+    \Drupal::service('module_installer')->install(['key']);
+    \Drupal::messenger()->addMessage(t('The Key module has been enabled as a dependency for Turnstile.'));
+  }
+
+  $config = \Drupal::configFactory()->getEditable('turnstile.settings');
+
+  // Get the existing keys, if any
+  $turnstile_site_key = $config->get('site_key');
+  $turnstile_secret_key = $config->get('secret_key');
+
+  // If the keys exist, migrate them.
+  if ($turnstile_site_key && $turnstile_secret_key) {
+    $key_machine_name = 'turnstile';
+    $key_pretty_name = t('Turnstile');
+
+    $key_machine_name_iteration = $key_machine_name;
+    $key_pretty_name_iteration = $key_pretty_name;
+
+    while (\Drupal::service('key.repository')->getKey($key_machine_name_iteration)) {
+      $key_machine_iterator = date('Ymd_His');
+      $key_pretty_iterator = date('Y-m-d H:i:s');
+      $key_machine_name_iteration = $key_machine_name . '_' . $key_machine_iterator;
+      $key_pretty_name_iteration = $key_pretty_name . ' - ' . $key_pretty_iterator;
+    }
+
+    $key = Key::create([
+      'id' => $key_machine_name_iteration,
+      'label' => $key_pretty_name_iteration,
+      'description' => t('The migrated site and secret keys.'),
+      'key_type' => 'authentication_multivalue',
+      'key_provider' => 'config',
+    ]);
+
+    $key->setKeyValue(json_encode([
+      'site_key' => $turnstile_site_key,
+      'secret_key' => $turnstile_secret_key,
+    ], JSON_PRETTY_PRINT));
+
+    $key->save();
+
+    $config->clear('site_key');
+    $config->clear('secret_key');
+    $config->set('keys', $key_machine_name_iteration);
+    $config->save();
+    \Drupal::messenger()->addStatus(t('The Turnstile keys have been migrated successfully to the Key module as "@keyname_pretty" (@keyname_machine), and the old values have been deleted from the settings.', [
+      '@keyname_pretty' => $key_pretty_name_iteration,
+      '@keyname_machine' => $key_machine_name_iteration,
+    ]));
+  }
+}

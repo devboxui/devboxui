@@ -1,0 +1,21 @@
+uuid: fddbb449-a80c-4947-9d2f-0f40f1870381
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.tools.field_tools
+    - paragraphs.paragraphs_type.tools
+id: paragraph.tools.default
+targetEntityType: paragraph
+bundle: tools
+mode: default
+content:
+  field_tools:
+    type: options_select
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

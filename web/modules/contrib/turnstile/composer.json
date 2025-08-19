@@ -1,0 +1,8 @@
+{
+  "name": "drupal/turnstile",
+  "type": "drupal-module",
+  "description": "Adds Cloudflare's Turnstile product as an option to the CAPTCHA module.",
+  "require": {
+    "drupal/key": "^1"
+  }
+}

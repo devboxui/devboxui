@@ -1,0 +1,90 @@
+uuid: 34249288-16f3-4447-90b2-ed7b3d1d4c97
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.docker_image.field_application_setup
+    - field.field.paragraph.docker_image.field_caps
+    - field.field.paragraph.docker_image.field_docker_image
+    - field.field.paragraph.docker_image.field_env_vars
+    - field.field.paragraph.docker_image.field_nonroot_supported
+    - field.field.paragraph.docker_image.field_ports
+    - field.field.paragraph.docker_image.field_readonly_supported
+    - field.field.paragraph.docker_image.field_volumes
+    - paragraphs.paragraphs_type.docker_image
+  module:
+    - entity_reference_revisions
+id: paragraph.docker_image.default
+targetEntityType: paragraph
+bundle: docker_image
+mode: default
+content:
+  field_application_setup:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_caps:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_docker_image:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_env_vars:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_nonroot_supported:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_ports:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_readonly_supported:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_volumes:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 4
+    region: content
+hidden: {  }

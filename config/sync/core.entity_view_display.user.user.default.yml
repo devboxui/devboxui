@@ -1,0 +1,203 @@
+uuid: b8f67d38-33fe-4430-a4d4-400436b88622
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.user.user.field_regenerate_keys
+    - field.field.user.user.field_ssh_private_key
+    - field.field.user.user.field_ssh_public_key
+    - field.field.user.user.field_vps_akamai_cloud_linode
+    - field.field.user.user.field_vps_amazon_lightsail
+    - field.field.user.user.field_vps_atlantic_net
+    - field.field.user.user.field_vps_cherry_servers
+    - field.field.user.user.field_vps_clouding
+    - field.field.user.user.field_vps_digitalocean
+    - field.field.user.user.field_vps_hetzner
+    - field.field.user.user.field_vps_hostman
+    - field.field.user.user.field_vps_infomaniak
+    - field.field.user.user.field_vps_ionos
+    - field.field.user.user.field_vps_katapult
+    - field.field.user.user.field_vps_leaseweb
+    - field.field.user.user.field_vps_netcup
+    - field.field.user.user.field_vps_ovhcloud
+    - field.field.user.user.field_vps_ovhcloud_us
+    - field.field.user.user.field_vps_scaleway
+    - field.field.user.user.field_vps_servers_com
+    - field.field.user.user.field_vps_upcloud
+    - field.field.user.user.field_vps_vultr
+    - field.field.user.user.user_picture
+    - image.style.thumbnail
+  module:
+    - image
+    - user
+_core:
+  default_config_hash: mZLyuWM9CQx2ZJVqFGSbzgFnHzudVbHBYmdU256A5Wk
+id: user.user.default
+targetEntityType: user
+bundle: user
+mode: default
+content:
+  field_vps_akamai_cloud_linode:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 14
+    region: content
+  field_vps_amazon_lightsail:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 15
+    region: content
+  field_vps_atlantic_net:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 16
+    region: content
+  field_vps_cherry_servers:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_vps_clouding:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_vps_digitalocean:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 18
+    region: content
+  field_vps_hostman:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_vps_infomaniak:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_vps_ionos:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_vps_katapult:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 12
+    region: content
+  field_vps_leaseweb:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 13
+    region: content
+  field_vps_netcup:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 17
+    region: content
+  field_vps_ovhcloud:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_vps_ovhcloud_us:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_vps_scaleway:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 19
+    region: content
+  field_vps_servers_com:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_vps_upcloud:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 11
+    region: content
+  masquerade:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  member_for:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  user_picture:
+    type: image
+    label: hidden
+    settings:
+      image_link: content
+      image_style: thumbnail
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_regenerate_keys: true
+  field_ssh_private_key: true
+  field_ssh_public_key: true
+  field_vps_hetzner: true
+  field_vps_vultr: true
+  langcode: true

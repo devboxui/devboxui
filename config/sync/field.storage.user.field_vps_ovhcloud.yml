@@ -1,0 +1,21 @@
+uuid: 5893addb-21b4-4199-8f1c-364e31ef367e
+langcode: en
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_vps_ovhcloud
+field_name: field_vps_ovhcloud
+entity_type: user
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

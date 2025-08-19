@@ -1,0 +1,20 @@
+uuid: f8d920fc-98dc-4115-becb-cdf6966fdf5d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_vps_amazon_lightsail
+  module:
+    - user
+id: user.user.field_vps_amazon_lightsail
+field_name: field_vps_amazon_lightsail
+entity_type: user
+bundle: user
+label: 'VPS Amazon Lightsail'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

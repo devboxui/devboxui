@@ -1,0 +1,6 @@
+alter_route_title.configuration_form:
+  title: 'Alter Route Title'
+  route_name: alter_route_title.configuration_form
+  description: 'Alter Route Title'
+  parent: system.admin_config_system
+  weight: 99

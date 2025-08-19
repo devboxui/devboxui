@@ -1,0 +1,7 @@
+uuid: d9722136-6e00-4304-9d54-af9776fc30fe
+langcode: en
+status: false
+dependencies: {  }
+formId: node_devbox_form
+captchaType: default
+label: node_devbox_form

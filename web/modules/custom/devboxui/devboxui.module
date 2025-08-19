@@ -1,0 +1,693 @@
+<?php
+
+/**
+ * @file
+ * Contains \Drupal\devboxui\DevboxUiModule.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\user\Entity\User;
+
+/**
+ * Implements hook_form_alter().
+ */
+function devboxui_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'user_form') {
+    $vps_count = 1;
+    foreach ($form as $field_name => $field) {
+      if (preg_match('/^field_vps_/', $field_name)) {
+        // Remove the "VPS" prefix from the field title.
+        $field_title = $field['widget'][0]['value']['#title'];
+        $field_title = explode(' ', $field_title);
+        array_shift($field_title);
+
+        # Alter title.
+        $form[$field_name]['widget'][0]['value']['#title'] = implode(' ', [
+          #$vps_count.'.',
+          implode(' ', $field_title),
+        ]);
+        # Alter weight.
+        $weight = 50 + $vps_count;
+        $form[$field_name]['#weight'] = $weight;
+        $form[$field_name]['widget'][0]['#weight'] = $weight;
+        $form[$field_name]['widget'][0]['value']['#weight'] = $weight;
+
+        // Add a description to the field.
+        $form[$field_name]['widget'][0]['value']['#description'] = devboxuiGetUserFieldDescription($field_name);
+      
+        $vps_count++;
+      }
+    }
+  }
+
+  if ($form_id == 'user_register_form') {
+    // Add validation handler before the standard one.
+    array_unshift($form['#validate'], 'user_register_validation');
+  }
+
+  if ($form_id == 'user_pass') {
+    $form['mail']['#markup'] = t('A login link will be sent to your registered email address.');
+  }
+
+  if (in_array($form_id, ['node_devbox_form', 'node_devbox_edit_form'])) {
+    # Use Ubuntu OS by default.
+    $finished = FALSE;
+    for ($i = 0; $finished == FALSE; $i++) {
+      if (isset($form['field_vps_provider']['widget'][$i])) {
+        if (isset($form['field_vps_provider']['widget'][$i]['subform']['field_os_image'])) {
+          $keys = array_keys($form['field_vps_provider']['widget'][$i]['subform']['field_os_image']['widget']['#options']);
+          $default = end($keys);
+          $form['field_vps_provider']['widget'][$i]['subform']['field_os_image']['widget']['#default_value'] = $default;
+        }
+      }
+      else {
+        $finished = TRUE;
+      }
+
+      // Field descriptions.
+      $form['status']['widget']['value']['#description'] = 'Leave this unpublished to keep in draft mode.<br> Set it to published and hit Save in order to create the VPS server.';
+      $form['title']['widget']['0']['value']['#description'] = 'A meaningful name for your server or group of servers.<br>You can use this as a cluster/project name if you want to group several VPS servers.';
+    }
+  }
+
+  if (in_array($form_id, ['node_app_form', 'node_app_edit_form'])) {
+    $lsio = apiCall('https://api.linuxserver.io/api/v1', 'images', [
+      'include_config' => true,
+      'include_deprecated' => false,
+    ]);
+    $lsio_images = $lsio['data']['repositories']['linuxserver'];
+
+    foreach ($form['field_app']['widget'] as $index => &$item) {
+      if (!is_numeric($index)) {
+        continue;
+      }
+
+      $application_select = &$item['subform']['field_application']['widget'];
+
+      $application_select['#ajax'] = [
+        'callback' => 'devboxui_getImageConfigs',
+        'wrapper' => "config-output-wrapper-$index",
+        'event' => 'change',
+      ];
+
+      // Get current selected value
+      $user_input = $form_state->getUserInput();
+      if (isset($user_input['field_app'], $user_input['field_app'][$index]['subform']['field_application'])) {
+        $selected_app = $user_input['field_app'][$index]['subform']['field_application'];
+      }
+      else {
+        if (isset($form['field_app']['widget'][$index]['subform']['field_application']['widget']['#default_value'])) {
+          $selected_app = $form['field_app']['widget'][$index]['subform']['field_application']['widget']['#default_value'];
+          $form['field_app']['widget'][$index]['subform']['field_saved_config']['#access'] = FALSE;
+        }
+        else {
+          $selected_app = '';
+        }
+      }
+
+      $item['subform']['config_output_container'] = [
+        '#type' => 'container',
+        '#attributes' => ['id' => "config-output-wrapper-$index"],
+        '#weight' => 100,
+      ];
+
+      if (!empty($selected_app)) {
+        if (is_array($selected_app)) $selected_app = reset($selected_app);
+
+        // Wrap in a container with a unique ID
+        $item['subform']['config_output_container']['config_output'] = [
+          '#type' => 'details',
+          '#title' => t('Configurations'),
+          '#open' => TRUE,
+          '#description' => t('Configuration options for the selected application.'),
+        ];
+
+        $nameList = array_column($lsio_images, 'name');
+        $selected_index = array_search($selected_app, $nameList);
+        $config = $lsio_images[$selected_index]['config'];
+
+        // Add items that do not exist by default but at the beginning of the array.
+        $prependItems = [
+          'docker_image' => ''
+        ];
+        $config = $prependItems + $config;
+
+        devboxuiConfigOverrides(
+          $config,
+          $selected_app,
+          $form['field_app']['widget'][$index]['subform']['field_saved_config']['widget'][0]['value']['#default_value']);
+        $i = -10;
+        foreach ($config as $ckey => $cvalue) {
+          // If the value is an array, we assume it's a list of options.
+          if (is_array($cvalue)) {
+            $item['subform']['config_output_container']['config_output'][$ckey] = [
+              '#type' => 'details',
+              '#title' => ucwords(str_replace('_', ' ', $ckey)),
+              '#attributes' => ['class' => [$ckey]],
+              '#weight' => $i,
+            ];
+            foreach ($cvalue as $key => $value) {
+              $required = $value['optional'] ? 'FALSE' : 'TRUE';
+              if ($ckey == 'env_vars') {
+                $field_name = strtolower($value['name']);
+                $item['subform']['config_output_container']['config_output'][$ckey][$key][$field_name] = [
+                  '#type' => 'textfield',
+                  '#title' => $value['name'],
+                  '#default_value' => $value['value'],
+                  '#description' => $value['desc'],
+                ];
+              }
+              else if ($ckey == 'volumes') {
+                $item['subform']['config_output_container']['config_output'][$ckey][$key]['host_path'] = [
+                  '#type' => 'textfield',
+                  '#title' => 'Host Path',
+                  '#default_value' => $value['host_path'],
+                  '#description' => $value['desc'],
+                  '#required' => $required,
+                ];
+                $item['subform']['config_output_container']['config_output'][$ckey][$key]['path'] = [
+                  '#type' => 'textfield',
+                  '#title' => 'Container Path',
+                  '#default_value' => $value['path'],
+                  '#required' => $required,
+                ];
+              }
+              else if ($ckey == 'ports') {
+                $item['subform']['config_output_container']['config_output'][$ckey][$key]['external'] = [
+                  '#type' => 'textfield',
+                  '#title' => 'Host Port',
+                  '#default_value' => $value['external'],
+                  '#description' => $value['desc'],
+                  '#required' => $required,
+                ];
+                $item['subform']['config_output_container']['config_output'][$ckey][$key]['internal'] = [
+                  '#type' => 'textfield',
+                  '#title' => 'Container Port',
+                  '#default_value' => $value['internal'],
+                  '#required' => $required,
+                ];
+              }
+              else if ($ckey == 'custom') {
+                $field_name = strtolower($value['name']);
+                $item['subform']['config_output_container']['config_output'][$ckey][$key][$field_name] = [
+                  '#type' => 'textfield',
+                  '#title' => $value['name'],
+                  '#default_value' => $value['value'],
+                  '#description' => $value['desc'],
+                ];
+              }
+              else if ($ckey == 'caps') {
+                $item['subform']['config_output_container']['config_output'][$ckey][$key]['cap_add'] = [
+                  '#type' => 'textfield',
+                  '#title' => 'Cap Add ' . $key + 1,
+                  '#default_value' => $value['cap_add'],
+                  '#description' => $value['desc'],
+                  '#required' => $required,
+                ];
+              }
+            }
+          }
+          else { // Otherwise, just set the value as is.
+            $item['subform']['config_output_container']['config_output'][$ckey] = [
+              '#type' => 'textfield',
+              '#title' => ucwords(str_replace('_', ' ', $ckey)),
+              '#default_value' => is_bool($cvalue) ? ($cvalue ? 'Yes' : 'No') : (is_link($cvalue) ? Markup::create('<a href="' . $cvalue . '" target="_blank">' . $cvalue . '</a>') : $cvalue),
+              '#weight' => $i,
+            ];
+            if ($ckey != 'docker_image') {
+              $item['subform']['config_output_container']['config_output'][$ckey]['#disabled'] = TRUE;
+            }
+          }
+          $i++;
+        }
+        /* TO DO: add --restart with options. */
+        $item['subform']['config_output_container']['config_output']['restart'] = [
+          '#type' => 'textfield',
+          '#title' => 'Restart: ',
+          '#default_value' => 'unless-stopped',
+          '#disabled' => TRUE,
+        ];
+      }
+    }
+  }
+}
+
+/**
+ * Custom validation handler.
+ */
+function user_register_validation(array &$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  $values = $form_state->getValues();
+
+  if (!empty($values['mail'])) {
+    $form_state->setValue('name', $values['mail']);
+  }
+}
+
+
+/**
+ * AJAX callback to get image configurations.
+ *
+ * @param array $form
+ *   The form structure.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current form state.
+ *
+ * @return array
+ *   The updated form element containing the image configurations.
+ */
+function devboxui_getImageConfigs(array &$form, FormStateInterface $form_state) {
+  // Find the triggering element.
+  $triggering_element = $form_state->getTriggeringElement();
+  $parents = $triggering_element['#parents'];
+  $index = $parents[1]; // Should point to paragraph delta.
+
+  return $form['field_app']['widget'][$index]['subform']['config_output_container'];
+}
+
+/**
+ * Get the description for a user field.
+ */
+function devboxuiGetUserFieldDescription($field_name) {
+  return '';
+}
+
+/**
+ * Set dynamic allowed values.
+ *
+ * @param \Drupal\field\Entity\FieldStorageConfig $definition
+ *   The field definition.
+ * @param \Drupal\Core\Entity\ContentEntityInterface|null $entity
+ *   The entity being created if applicable.
+ * @param bool $cacheable
+ *   Boolean indicating if the results are cacheable.
+ *
+ * @return array
+ *   An array of possible key and value options.
+ *
+ * @see options_allowed_values()
+ */
+function devboxui_options_allowed_values(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+  /*
+   * Drupal's Plugin Manager is responsible for discovering, instantiating, and managing plugins.
+   * When cron runs, it may trigger any code that uses or discovers plugins.
+   * To prevent this, we check if the current user is logged in.
+   * If not, we return an empty array.
+   */
+  $uid = \Drupal::currentUser()->id();
+  if ($uid < 1) {
+    return [];
+  }
+
+  $options = [];
+  $entity_type = $entity->getEntityTypeId();
+
+  if ($entity_type == 'paragraph') {
+    $bundle = $entity->bundle();
+    $field_id = $definition->id();
+
+    // VPS provider fields.
+    $allowed_bundles = devboxui_get_providers_list();
+    $allowed_fields = [
+      'paragraph.field_server_type',
+    ];
+
+    if (in_array($bundle, $allowed_bundles) && in_array($field_id, $allowed_fields)) {
+      $vps_manager = \Drupal::service('plugin.manager.vps_provider');
+      $method = explode('field_', $field_id)[1];
+      $vps_plugin = $vps_manager->createInstance($bundle);
+      $options = $vps_plugin->$method();
+
+      return $options;
+    }
+
+    // App fields.
+    if ($bundle == 'app' && $field_id == 'paragraph.field_devbox_vps') {
+      // Get all the devbox nodes that belong to the current user, sorted in descending order.
+      $query = \Drupal::entityQuery('node')
+        ->condition('type', 'devbox')
+        ->condition('uid', $uid)
+        ->sort('created', 'DESC')
+        ->accessCheck(TRUE);
+      $nids = $query->execute();
+
+      $options = [];
+      if (!empty($nids)) {
+        $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids);
+        foreach ($nodes as $node) {
+          foreach($node->get('field_vps_provider')->referencedEntities() as $vps_node) {
+            $pid = $vps_node->id();
+            $options[$node->label()][$pid] = implode('', [
+              $vps_node->get('field_name')->getString(),
+              vps_node_description($vps_node)
+            ]);
+          }
+        }
+      }
+      return $options;
+    }
+
+    if ($bundle == 'app' && $field_id == 'paragraph.field_application') {
+      $lsio = apiCall('https://api.linuxserver.io/api/v1', 'images', [
+        'include_config' => true,
+        'include_deprecated' => false,
+      ]);
+      $options = [];
+      foreach ($lsio['data']['repositories']['linuxserver'] as $image) {
+        $options[$image['name']] = $image['name'];
+      }
+    }
+  }
+
+  return $options;
+}
+
+function vps_node_description($vps_node) {
+  $vps_info = json_decode($vps_node->get('field_response')->getString(), TRUE);
+  $description = ' (' . implode(', ',[
+    $vps_info['id'],
+    $vps_info['server_type']['description'],
+    $vps_info['server_type']['architecture'],
+    $vps_info['server_type']['cores'] . ' CPUs',
+    $vps_info['server_type']['memory'] . ' GB RAM',
+    $vps_info['server_type']['disk'] . ' GB',
+    'IP ' . $vps_info['public_net']['ipv4']['ip'],
+  ]) . ')';
+  return $description;
+}
+
+function devboxui_get_providers_list() {
+  // Get all field definitions for the user entity.
+  $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('user', 'user');
+  $vps_fields = [];
+
+  foreach ($field_definitions as $field_name => $definition) {
+    if (str_starts_with($field_name, 'field_vps_')) {
+      $vps_fields[] = str_replace('field_vps_', '', $field_name);
+    }
+  }
+
+  return $vps_fields;
+}
+/**
+ * Helper function to call any API.
+ *
+ * @param [type] $api_url
+ * @param [type] $method
+ * @param array $params
+ * @return void
+ */
+function apiCall($api_url, $path, $params = [], $method = 'GET', $token = '', $cached = TRUE, $expire = -1) {
+  $uid = \Drupal::currentUser()->id();
+  # Ignore if user is not logged in.
+  if ($uid < 1) {
+    return [];
+  }
+
+  $method = strtoupper($method);
+  $client = \Drupal::httpClient();
+  try {
+    if ($method === 'GET') {
+      // Add query parameters to the path, if any.
+      if (!empty($params)) {
+        $query = http_build_query($params);
+        $path .= '?' . $query;
+      }
+
+      // Check if the response is cached.
+      if ($cached && $cache = \Drupal::cache('devboxui')->get($api_url. ':' . $path)) {
+        return $cache->data;
+      }
+      else { // Get the response from the API.
+        $headers = [];
+        if (!empty($token)) {
+          $headers['Authorization'] = 'Bearer ' . $token;
+        }
+        $response = $client->get(
+          $api_url . '/' . $path,
+          [$headers]
+        );
+        $responseBody = json_decode($response->getBody(), TRUE);
+        // Cache the response if not in cache.
+        \Drupal::cache('devboxui')->set(
+          $api_url. ':' . $path,
+          $responseBody,
+          $expire,
+        );
+        // Return the response.
+        return $responseBody;
+      }
+    }
+    else if ($method === 'POST') {
+      $headers = [];
+      if (!empty($token)) {
+        $headers['Authorization'] = 'Bearer ' . $token;
+      }
+      $headers['Content-Type'] = 'application/json';
+      $response = $client->post(
+        $api_url . '/' . $path, [
+          $headers,
+          'json' => $params,
+        ]
+      );
+      return json_decode($response->getBody(), TRUE);
+    }
+    else if ($method === 'DELETE') {
+      $response = $client->delete($api_url . '/' . $path, [
+        'headers' => [
+          'Authorization' => 'Bearer ' . $token,
+        ],
+      ]);
+      return json_decode($response->getBody(), TRUE);
+    }
+  } catch (\Exception $e) {
+    $msg = $e->getMessage();
+    \Drupal::logger('devboxui')->error('VPS API error: ' . $msg);
+    \Drupal::messenger()->addError(t('API error: @message', ['@message' => $msg]));
+
+    return [
+      'error' => TRUE,
+      'message' => 'API error: ' . $msg,
+    ];
+  }
+}
+
+/**
+ * Helper function to call the VPS provider API.
+ *
+ * @param [type] $provider
+ * @param [type] $method
+ * @param array $params
+ * @return void
+ */
+function vpsCall($provider, $path, $params = [], $method = 'GET', $cached = TRUE) {
+  $uid = \Drupal::currentUser()->id();
+  # Ignore if user is not logged in.
+  if ($uid < 1) {
+    return [];
+  }
+
+  $method = strtoupper($method);
+  $user = User::load($uid);
+  $field_name = 'field_vps_' . $provider;
+  $token = $user->get($field_name)->getString();
+  $api_url = \Drupal::service('plugin.manager.vps_provider')->createInstance($provider)->info()['api_url'];
+  if (empty($token)) return [];
+
+  $client = \Drupal::httpClient();
+  try {
+    if ($method === 'GET') {
+      // Add query parameters to the path, if any.
+      if (!empty($params)) {
+        $query = http_build_query($params);
+        $path .= '?' . $query;
+      }
+
+      // Check if the response is cached.
+      if ($cached && $cache = \Drupal::cache('devboxui')->get($provider . ':' . $path)) {
+        return $cache->data;
+      }
+      else { // Get the response from the API.
+        $response = $client->get(
+          $api_url . '/' . $path, [
+            'headers' => [
+              'Authorization' => 'Bearer ' . $token,
+            ],
+          ]
+        );
+        $responseBody = json_decode($response->getBody(), TRUE);
+        $cache_time = 300;
+        // Cache the response if not in cache.
+        \Drupal::cache('devboxui')->set(
+          $provider . ':' . $path,
+          $responseBody,
+          time() + $cache_time
+        );
+        // Return the response.
+        return $responseBody;
+      }
+    }
+    else if ($method === 'POST') {
+      $response = $client->post($api_url . '/' . $path, [
+        'headers' => [
+          'Authorization' => 'Bearer ' . $token,
+          'Content-Type' => 'application/json',
+        ],
+        'json' => $params,
+      ]);
+      return json_decode($response->getBody(), TRUE);
+    }
+    else if ($method === 'DELETE') {
+      $response = $client->delete($api_url . '/' . $path, [
+        'headers' => [
+          'Authorization' => 'Bearer ' . $token,
+        ],
+      ]);
+      return json_decode($response->getBody(), TRUE);
+    }
+  } catch (\Exception $e) {
+    $msg = $e->getMessage();
+    \Drupal::logger('devboxui')->error('VPS API error: ' . $msg);
+    # add display message
+    \Drupal::messenger()->addError(t('An error occurred while communicating with the VPS provider API: @message', ['@message' => $msg]));
+
+    return [
+      'error' => TRUE,
+      'message' => 'VPS API error: ' . $msg,
+    ];
+  }
+}
+
+/*
+ * Entity Manager - a wrapper for entity CRUD & listing operations.
+ * If $values is empty, it returns the request entity if found, else false.
+ */
+function entityManage($entity_type, $entityIdArray = [], $values = []) {
+	$entityStorage = \Drupal::entityTypeManager()->getStorage($entity_type);
+
+  # Load all entities if no Id and no values were supplied
+  if(empty($entityIdArray) && empty($values))
+    return $entityStorage->loadMultiple();
+
+  # Try loading the supplied entity
+  if(is_array($entityIdArray)) # Find entity using an array of properties (e.g. vid and term name)
+    $entity = $entityStorage->loadByProperties($entityIdArray);
+  else # Find entity using a non-array property (e.g. Id)
+    $entity = $entityStorage->load($entityIdArray);
+
+  # Entity exists
+  if(!empty($entity)) {
+    # Return entity if Id or properties were supplied but no values to be set
+    if(!empty($entityIdArray) && empty($values)) {
+      # If only 1 result is returned, use the entity object (not array, in case array with object is returned)
+      if(is_array($entity) && count($entity) == 1) $entity = $entity[key($entity)];
+			# Else, return all
+      return $entity;
+    }
+
+    # If requested, delete the selected entities
+    if(!empty($values) && $values == 'del') {
+      if(is_array($entity)) {
+        foreach($entity as $e) {
+          $e->delete();
+        }
+      } else {
+        $entity->delete();
+      }
+      return;
+    }
+
+    # Use the entity object (not array, in case array with object is returned)
+    if(is_array($entity)) $entity = $entity[key($entity)];
+
+    # Update the entity
+    foreach($values as $k => $v) $entity->set($k, $v);
+    $entity->save();
+  }
+  else { // Initial entity does not exist
+    if(!empty($values)) { # Continue if values were supplied
+      if($values == 'del') return false;
+
+      // Check for previously created entity. Fixes duplication if this is run
+      // more than once when an entity property gets changed (e.g. term name change).
+      if(is_array($entityIdArray)) { // Array with properties
+        $ak = array_keys($entityIdArray); $newEntityIdArray = []; // Get array keys, start new array
+
+        if(is_array($values)) { // Use the supplied values for entity search
+          foreach ($ak as $k) $newEntityIdArray = array_merge($newEntityIdArray, [$k => $values[$k]]);
+        }
+
+        // Find entity using an array of properties (e.g. vid and term name)
+        $entity = $entityStorage->loadByProperties($newEntityIdArray);
+      }
+      else // Find entity using a non-array property (e.g. Id)
+        $entity = $entityStorage->load($entityIdArray);
+
+      if(empty($entity)) { // Entity was not previously created
+        // Create entity with supplied values
+        $entity = $entityStorage->create($values);
+        // Save the entity
+        $entity->save();
+      }
+
+      // Use the entity object (in case array with object is returned)
+      if(is_array($entity)) $entity = $entity[key($entity)];
+    }
+  }
+
+  // Return the object of the found/created/updated entity
+  return !empty($entity) ? $entity : false;
+}
+
+function devboxuiConfigOverrides(&$config, $selected_app = '', $savedConfig = '') {
+  // Saved config.
+  if (!empty($savedConfig)) {
+    $savedConfig = json_decode($savedConfig, TRUE);
+    foreach ($savedConfig as $ckey => $cvalue) {
+      if (is_array($cvalue)) {
+        foreach ($cvalue as $cvKey => $cvVal) {
+          if ($ckey == 'env_vars') {
+            $envVar = strtoupper(key($cvVal));
+            $index = array_search($envVar, array_column($config[$ckey], 'name'));
+            $config[$ckey][$index]['value'] = reset($cvVal);
+          }
+          else if ($ckey == 'volumes') {
+            $config[$ckey][$cvKey]['host_path'] = $cvVal['host_path'];
+            $config[$ckey][$cvKey]['path'] = $cvVal['path'];
+          }
+          else if ($ckey == 'ports') {
+            $config[$ckey][$cvKey]['external'] = $cvVal['external'];
+            $config[$ckey][$cvKey]['internal'] = $cvVal['internal'];
+          }
+          else if ($ckey == 'custom') {
+            $config[$ckey][$cvKey]['name'] = key($cvVal);
+            $config[$ckey][$cvKey]['value'] = [reset($cvVal)];
+          }
+          else if ($ckey == 'caps') {
+            $config[$ckey][$cvKey]['cap_add'] = reset($cvVal);
+          }
+        }
+      }
+      else {
+        $config[$ckey] = $cvalue;
+      }
+    }
+  }
+  else { // Defaults.
+    # General
+    $config['docker_image'] = "lscr.io/linuxserver/$selected_app:latest";
+
+    $index = array_search('/config', array_column($config['volumes'], 'path'));
+    $config['volumes'][$index]['host_path'] = "~/config-$selected_app";
+    unset($index);
+
+    # WireGuard specific
+    if (preg_match('/docker-wireguard/', $config['application_setup'])) {
+      $index = array_search('SERVERURL', array_column($config['env_vars'], 'name'));
+      $config['env_vars'][$index]['value'] = 'auto';
+      unset($index);
+    }
+  }
+}

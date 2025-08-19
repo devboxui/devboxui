@@ -1,0 +1,23 @@
+uuid: cfd782f8-d5c7-4d84-bdf8-4993812ba957
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_restart
+    - paragraphs.paragraphs_type.app
+  module:
+    - options
+id: paragraph.app.field_restart
+field_name: field_restart
+entity_type: paragraph
+bundle: app
+label: Restart
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: always
+default_value_callback: ''
+settings: {  }
+field_type: list_string

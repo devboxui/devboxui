@@ -1,0 +1,19 @@
+uuid: ae8fe351-447c-42ac-ad7d-29a4cb2b271c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_external
+    - paragraphs.paragraphs_type.ports
+id: paragraph.ports.field_external
+field_name: field_external
+entity_type: paragraph
+bundle: ports
+label: External
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+USER_NAME="admin"
+DOMAIN="devbox.condurachi.ro"
+PROXY_TARGET="dockerhost:8080"
+CADDYFILE="/etc/caddy/Caddyfile"
+
+echo "=== Installing dependencies ==="
+apt-get update -y
+apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl openssl gnupg
+
+echo "=== Installing Caddy ==="
+rm -f /usr/share/keyrings/caddy-stable.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable.gpg
+echo "deb [signed-by=/usr/share/keyrings/caddy-stable.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/ubuntu noble main" | tee /etc/apt/sources.list.d/caddy-stable.list
+apt-get update -y
+apt-get install -y caddy
+
+echo "=== Generating Basic Auth password and hash ==="
+PASSWORD=$(openssl rand -base64 12)
+HASHED_PASS=$(caddy hash-password --plaintext "$PASSWORD")
+
+echo "=== Writing Caddyfile ==="
+cat > "$CADDYFILE" <<EOF
+$DOMAIN {
+    basic_auth /* {
+        $USER_NAME $HASHED_PASS
+    }
+
+    reverse_proxy $PROXY_TARGET
+}
+EOF
+
+echo "=== Validating Caddy config ==="
+if caddy validate --config "$CADDYFILE"; then
+    echo "Config valid."
+    if systemctl is-active --quiet caddy; then
+        echo "Reloading Caddy..."
+        systemctl reload caddy
+    else
+        echo "Starting Caddy..."
+        systemctl start caddy
+    fi
+else
+    echo "Invalid config. Aborting."
+    exit 1
+fi
+
+echo "=== Basic Auth credentials ==="
+echo "Username: $USER_NAME"
+echo "Password: $PASSWORD"
+
+echo "=== Root install complete ==="
+echo "Please run the user install script as the regular user to install DDEV."

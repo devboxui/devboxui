@@ -1,0 +1,49 @@
+uuid: 48a14876-8e5e-47eb-9e03-b0efb23e93f0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_ports
+    - paragraphs.paragraphs_type.docker_image
+    - paragraphs.paragraphs_type.ports
+  module:
+    - entity_reference_revisions
+id: paragraph.docker_image.field_ports
+field_name: field_ports
+entity_type: paragraph
+bundle: docker_image
+label: Ports
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      ports: ports
+    negate: 0
+    target_bundles_drag_drop:
+      app:
+        weight: 7
+        enabled: false
+      docker_image:
+        weight: 8
+        enabled: false
+      env_vars:
+        weight: 9
+        enabled: false
+      hetzner:
+        weight: 10
+        enabled: false
+      ports:
+        weight: 12
+        enabled: true
+      volumes:
+        weight: 11
+        enabled: false
+      vultr:
+        weight: 12
+        enabled: false
+field_type: entity_reference_revisions

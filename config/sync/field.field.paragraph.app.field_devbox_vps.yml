@@ -1,0 +1,21 @@
+uuid: f30266ff-a9ed-4b64-8ca2-b1ceef455ee2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_devbox_vps
+    - paragraphs.paragraphs_type.app
+  module:
+    - options
+id: paragraph.app.field_devbox_vps
+field_name: field_devbox_vps
+entity_type: paragraph
+bundle: app
+label: DevBox/VPS
+description: 'Select the VPS this app will get install into.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

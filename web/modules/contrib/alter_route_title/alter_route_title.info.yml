@@ -1,0 +1,11 @@
+name: 'Alter Route Title'
+type: module
+description: 'This module will help you to alter existing router''s title.'
+core_version_requirement: ^8.8 || ^9 || ^10 || ^11
+package: 'Utility'
+configure: alter_route_title.configuration_form
+
+# Information added by Drupal.org packaging script on 2025-01-20
+version: '1.0.3'
+project: 'alter_route_title'
+datestamp: 1737349952

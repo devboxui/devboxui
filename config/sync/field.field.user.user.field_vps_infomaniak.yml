@@ -1,0 +1,20 @@
+uuid: 1642a122-d4a8-4754-8f6e-10a919b09b58
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_vps_infomaniak
+  module:
+    - user
+id: user.user.field_vps_infomaniak
+field_name: field_vps_infomaniak
+entity_type: user
+bundle: user
+label: 'VPS Infomaniak'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

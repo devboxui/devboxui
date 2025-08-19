@@ -1,0 +1,34 @@
+# Schema for the configuration files of the turnstile_protect module.
+
+turnstile_protect.settings:
+  type: config_object
+  label: 'Turnstile Protect settings'
+  mapping:
+    routes:
+      type: sequence
+      sequence:
+        type: string
+      label: 'Routes'
+    bots:
+      type: sequence
+      sequence:
+        type: string
+      label: 'List of good bot domains'
+    protect_parameters:
+      type: boolean
+      label: 'Always challenge protected routes with URL parameters set'
+    rate_limit:
+      type: boolean
+      label: 'Only present challenge if an IP range is seeing increased traffic'
+    threshold:
+      type: integer
+      label: 'How many requests within a time window before blocking traffic within an IP range'
+    window:
+      type: integer
+      label: 'Number of seconds in the time window to allow "threshold" number of events'
+    max_challenges:
+      type: integer
+      label: 'The maximum times the client can be challenged in a session before sending 429 responses'
+    history_enabled:
+      type: boolean
+      label: 'Save a daily snapshot of the flood information on your site'

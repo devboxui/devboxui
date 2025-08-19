@@ -1,0 +1,36 @@
+eca.condition.plugin.eca_tamper_condition:*:
+  type: tamper.[%parent.original_id]
+  mapping:
+    left:
+      type: text
+      label: 'First value'
+    right:
+      type: text
+      label: 'Second value'
+    operator:
+      type: string
+      label: 'Comparison operator'
+      constraints:
+        Choice:
+          callback: '\Drupal\eca\Plugin\ECA\Condition\StringComparisonBase::getAllValidOperators'
+    type:
+      type: string
+      label: 'Comparison type'
+      constraints:
+        Choice:
+          callback: '\Drupal\eca\Plugin\ECA\Condition\StringComparisonBase::getAllValidTypes'
+    case:
+      type: boolean
+      label: 'Case sensitive comparison'
+    negate:
+      type: boolean
+      label: 'Negate the Condition'
+action.configuration.eca_tamper:*:
+  type: tamper.[%parent.original_id]
+  mapping:
+    eca_data:
+      type: string
+      label: 'Data to be tampered'
+    eca_token_name:
+      type: string
+      label: 'Result token name'

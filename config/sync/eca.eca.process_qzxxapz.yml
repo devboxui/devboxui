@@ -1,0 +1,108 @@
+uuid: 526c4d04-392e-4bde-b06e-47a232babba2
+langcode: en
+status: true
+dependencies:
+  module:
+    - eca_form
+    - eca_user
+id: process_qzxxapz
+modeller: bpmn_io
+label: 'Passwordless login'
+version: v1
+weight: 0
+events:
+  Event_1yzdx79:
+    plugin: 'form:form_build'
+    label: 'User edit/register form'
+    configuration:
+      form_id: ''
+      entity_type_id: user
+      bundle: ''
+      operation: ''
+    successors:
+      -
+        id: Activity_00djols
+        condition: ''
+      -
+        id: Activity_1sjgili
+        condition: Flow_1xvpxyr
+  Event_1inhbmt:
+    plugin: 'form:form_build'
+    label: 'User pass form'
+    configuration:
+      form_id: user_login_form
+      entity_type_id: ''
+      bundle: ''
+      operation: ''
+    successors:
+      -
+        id: Activity_0yy5f29
+        condition: ''
+  Event_1wq8ti0:
+    plugin: 'form:form_build'
+    label: 'User pass form'
+    configuration:
+      form_id: user_pass
+      entity_type_id: ''
+      bundle: ''
+      operation: ''
+    successors:
+      -
+        id: Activity_1eq8f07
+        condition: ''
+conditions:
+  Flow_1xvpxyr:
+    plugin: eca_current_user_role
+    configuration:
+      negate: false
+      role: authenticated
+gateways: {  }
+actions:
+  Activity_00djols:
+    plugin: eca_form_field_access
+    label: "Hide 'name'"
+    configuration:
+      flag: false
+      field_name: name
+    successors:
+      -
+        id: Activity_072edn8
+        condition: ''
+  Activity_0yy5f29:
+    plugin: action_goto_action
+    label: 'Redirect to /user/password'
+    configuration:
+      replace_tokens: false
+      url: /user/password
+    successors: {  }
+  Activity_1eq8f07:
+    plugin: eca_form_field_set_label
+    label: "Change 'Username' label"
+    configuration:
+      label: E-mail
+      field_name: name
+    successors: {  }
+  Activity_072edn8:
+    plugin: eca_form_field_access
+    label: "Hide 'current_pass'"
+    configuration:
+      flag: false
+      field_name: current_pass
+    successors:
+      -
+        id: Activity_144qz6x
+        condition: ''
+  Activity_144qz6x:
+    plugin: eca_form_field_access
+    label: "Hide 'pass[pass1]'"
+    configuration:
+      flag: false
+      field_name: pass
+    successors: {  }
+  Activity_1sjgili:
+    plugin: eca_form_field_disable
+    label: "Disable 'mail'"
+    configuration:
+      flag: true
+      field_name: mail
+    successors: {  }

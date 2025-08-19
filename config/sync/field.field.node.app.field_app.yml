@@ -1,0 +1,61 @@
+uuid: ac1ff386-6c2b-4140-9099-dd5cd264dfd8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_app
+    - node.type.app
+    - paragraphs.paragraphs_type.app
+  module:
+    - entity_reference_revisions
+id: node.app.field_app
+field_name: field_app
+entity_type: node
+bundle: app
+label: 'Docker Apps'
+description: 'Install a docker image.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      app: app
+    negate: 0
+    target_bundles_drag_drop:
+      app:
+        weight: 4
+        enabled: true
+      caps:
+        weight: 10
+        enabled: false
+      ddev:
+        weight: 14
+        enabled: false
+      docker_image:
+        weight: 11
+        enabled: false
+      docksal:
+        weight: 16
+        enabled: false
+      env_vars:
+        weight: 12
+        enabled: false
+      hetzner:
+        weight: 5
+        enabled: false
+      lando:
+        weight: 19
+        enabled: false
+      ports:
+        weight: 14
+        enabled: false
+      volumes:
+        weight: 15
+        enabled: false
+      vultr:
+        weight: 6
+        enabled: false
+field_type: entity_reference_revisions

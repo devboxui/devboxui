@@ -1,0 +1,19 @@
+uuid: 6e294b82-0eb9-4721-98a3-9d4c2d2f2fa2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_app_response
+    - paragraphs.paragraphs_type.app
+id: paragraph.app.field_app_response
+field_name: field_app_response
+entity_type: paragraph
+bundle: app
+label: 'App response'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long
