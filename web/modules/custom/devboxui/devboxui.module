@@ -246,6 +246,32 @@ function user_register_validation(array &$form, \Drupal\Core\Form\FormStateInter
   }
 }
 
+function devboxui_page_attachments(array &$attachments) {
+  $current_path = \Drupal::service('path.current')->getPath();
+  $alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+
+  // Exclude admin pages and batch paths.
+  if (str_starts_with($alias, '/admin') || str_starts_with($alias, '/batch')) {
+    return;
+  }
+
+  // Attach the library (loads external gtag.js in <head>).
+  $attachments['#attached']['library'][] = 'devboxui/gtag';
+
+  // Add inline init script in <head>.
+  $attachments['#attached']['html_head'][] = [
+    [
+      '#tag' => 'script',
+      '#value' => "
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-HF31Z5LYX2');
+      ",
+    ],
+    'devboxui_gtag_inline',
+  ];
+}
 
 /**
  * AJAX callback to get image configurations.

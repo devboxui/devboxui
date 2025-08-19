@@ -1,0 +1,7 @@
+gtag:
+  js:
+    https://www.googletagmanager.com/gtag/js?id=G-HF31Z5LYX2:
+      type: external
+      attributes:
+        async: true
+      header: true
