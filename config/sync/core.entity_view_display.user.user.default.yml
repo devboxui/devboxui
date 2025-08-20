@@ -62,12 +62,11 @@ content:
     weight: 16
     region: content
   field_vps_cherry_servers:
-    type: string
+    type: basic_string
     label: above
-    settings:
-      link_to_entity: false
+    settings: {  }
     third_party_settings: {  }
-    weight: 3
+    weight: 20
     region: content
   field_vps_clouding:
     type: string

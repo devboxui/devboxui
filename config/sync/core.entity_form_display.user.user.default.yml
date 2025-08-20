@@ -185,11 +185,11 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_vps_cherry_servers:
-    type: string_textfield
-    weight: 24
+    type: string_textarea
+    weight: 41
     region: content
     settings:
-      size: 60
+      rows: 5
       placeholder: ''
     third_party_settings: {  }
   field_vps_clouding:
