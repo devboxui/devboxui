@@ -510,7 +510,7 @@ function apiCall($api_url, $path, $params = [], $method = 'GET', $token = '', $c
  * @param array $params
  * @return void
  */
-function vpsCall($provider, $path, $params = [], $method = 'GET', $cached = TRUE) {
+function vpsCall($provider, $path, $params = [], $method = 'GET', $cached = TRUE, $cache_time = 300) {
   $uid = \Drupal::currentUser()->id();
   # Ignore if user is not logged in.
   if ($uid < 1) {
@@ -546,13 +546,21 @@ function vpsCall($provider, $path, $params = [], $method = 'GET', $cached = TRUE
           ]
         );
         $responseBody = json_decode($response->getBody(), TRUE);
-        $cache_time = 300;
-        // Cache the response if not in cache.
-        \Drupal::cache('devboxui')->set(
-          $provider . ':' . $path,
-          $responseBody,
-          time() + $cache_time
-        );
+        if ($cache_time > 0) {
+          // Cache the response if not in cache.
+          \Drupal::cache('devboxui')->set(
+            $provider . ':' . $path,
+            $responseBody,
+            time() + $cache_time
+          );
+        }
+        else {
+          // Permanent cache (until cache clear).
+          \Drupal::cache('devboxui')->set(
+            $provider . ':' . $path,
+            $responseBody
+          );
+        }
         // Return the response.
         return $responseBody;
       }
