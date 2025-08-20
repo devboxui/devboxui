@@ -20,11 +20,9 @@ class PricingController extends ControllerBase {
     $header = [];
     $row = [];
     foreach ($providers as $p) {
-      if ($p == 'hetzner') {
+      if ($data = $this->processProvider($p)) {
         $header[] = ucwords(str_replace('_', ' ', $p));
-        $row[] = [
-          'data' => ['#markup' => $this->processProvider($p)],
-        ];
+        $row[] = ['data' => ['#markup' => $data]];
       }
     }
     $rows = [$row];
@@ -44,28 +42,32 @@ class PricingController extends ControllerBase {
   }
 
   public function processProvider($p) {
-    if ($p == 'hetzner') {
+    $user = entityManage('user', \Drupal::currentUser()->id());
+    if ($token = $user->get('field_vps_'.$p)->getString()) {
       $servers = \Drupal::service('plugin.manager.vps_provider')->createInstance($p)->server_type();
-      $list = ['<ul>'];
-      foreach ($servers as $sk => $sv) {
-        $list[] = '<li>';
-        $list[] = $sk;
-        if (is_array($sv)) {
-          $list[] = '<ul>';
-          foreach ($sv as $vk => $vv) {
-            $list[] = '<li>';
-            $list[] = $vv;
-            $list[] = '</li>';
-          }
-          $list[] = '</ul>';
-        }
-        $list[] = '</li>';
-      }
-      $list[] = '</ul>';
-      return implode('', $list);
+      return $this->pretify($servers);
     }
-    else {
-      return '<p>'.$p.'</p>';
-    }
+    return NULL;
   }
+
+  public function pretify($servers) {
+    $list = ['<ul>'];
+    foreach ($servers as $sk => $sv) {
+      $list[] = '<li>';
+      $list[] = $sk;
+      if (is_array($sv)) {
+        $list[] = '<ul>';
+        foreach ($sv as $vk => $vv) {
+          $list[] = '<li>';
+          $list[] = $vv;
+          $list[] = '</li>';
+        }
+        $list[] = '</ul>';
+      }
+      $list[] = '</li>';
+    }
+    $list[] = '</ul>';
+    return implode('', $list);
+  }
+
 }

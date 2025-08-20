@@ -17,8 +17,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryPluginInterface {
 
+  protected $api_url;
+  protected $currency;
+  protected $images;
+  protected $locations;
+  protected $locationsRetKey;
   protected $pbkey;
+  protected $pricing;
   protected $provider;
+  protected $providerName;
+  protected $server_types;
+  protected $ssh_keys;
+  protected $ssh_keys_public_key;
+  protected $ssh_keys_ret_key;
   protected $sshKeyName;
   protected $sshRespField;
   protected $user;
@@ -34,7 +45,17 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     /* Default values. */
+    $this->api_url = 'https://api.hetzner.cloud/v1';
+    $this->currency = 'currency';
+    $this->images = 'images';
+    $this->locations = 'locations';
+    $this->pricing = 'pricing';
     $this->provider = 'hetzner';
+    $this->providerName = 'Hetzner';
+    $this->server_types = 'server_types';
+    $this->ssh_keys = 'ssh_keys';
+    $this->ssh_keys_public_key = 'public_key';
+    $this->ssh_keys_ret_key = 'ssh_key';
     $this->user = User::load(\Drupal::currentUser()->id());
     $this->userData = $user_data;
     $this->sshKeyName = $this->user->uuid();
@@ -60,9 +81,8 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
 
   public function info() {
     return [
-      'name' => 'Hetzner',
-      'api_url' => 'https://api.hetzner.cloud/v1',
-      'currency' => 'EUR',
+      'name' => $this->providerName,
+      'api_url' => $this->api_url,
     ];
   }
 
@@ -73,7 +93,7 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
     if ($sshResp = $this->userData->get('devboxui', $this->user->id(), $this->sshRespField)) {
       $key_resp = json_decode($sshResp, TRUE);
       // Don't upload if the current and previously stored keys are the same.
-      if (isset($key_resp['ssh_key']) && $this->pbkey == $key_resp['ssh_key']['public_key']) {
+      if (isset($key_resp[$this->ssh_keys_ret_key]) && $this->pbkey == $key_resp[$this->ssh_keys_ret_key]['public_key']) {
         \Drupal::logger('dexboxui')->notice('SSH key already exists for user @uid', [
           '@uid' => $this->user->id(),
         ]);
@@ -82,20 +102,20 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
 
       # First, delete the old key if it exists.
       if (!empty($key_resp)) {
-        vpsCall($this->provider, 'ssh_keys/'.$key_resp['ssh_key']['id'], [], 'DELETE');
+        vpsCall($this->provider, $this->ssh_keys.'/'.$key_resp[$this->ssh_keys_ret_key]['id'], [], 'DELETE');
       }
     }
 
     # Then, upload it.
-    $ret = vpsCall($this->provider, 'ssh_keys', [
+    $ret = vpsCall($this->provider, $this->ssh_keys, [
       'name' => $this->sshKeyName,
-      'public_key' => $this->pbkey,
+      $this->ssh_keys_public_key => $this->pbkey,
     ], 'POST');
     $this->saveKeys($ret);
   }
 
   public function saveKeys($ret) {
-    if (isset($ret['ssh_key'])) {
+    if (isset($ret[$this->ssh_keys_ret_key])) {
       $this->userData->set('devboxui', $this->user->id(), $this->sshRespField, json_encode($ret));
     }
   }
@@ -107,8 +127,8 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
    */
   public function location() {
     $options = [];
-    $results = vpsCall($this->provider, 'locations');
-    foreach($results['locations'] as $l) {
+    $results = vpsCall($this->provider, $this->locations);
+    foreach($results[$this->locations] as $l) {
       $options[$l['id']] = implode(', ', [
         $l['city'],
         $l['country'],
@@ -123,14 +143,15 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
    * @return void
    */
   public function server_type() {
-    $locations = vpsCall($this->provider, 'locations');
-    $response = vpsCall($this->provider, 'server_types');
-    $server_types = array_column($response['server_types'], 'description', 'id');
+    $currency = vpsCall($this->provider, $this->pricing)[$this->pricing][$this->currency];
+    $locations = vpsCall($this->provider, $this->locations);
+    $response = vpsCall($this->provider, $this->server_types);
+    $server_types = array_column($response[$this->server_types], 'description', 'id');
 
     $processed_server_types = [];
-    foreach ($locations['locations'] as $lk => $lv) {
+    foreach ($locations[$this->locations] as $lk => $lv) {
       foreach ($server_types as $key => $server_name) {
-        $prices = array_column($response['server_types'], 'prices', 'id');
+        $prices = array_column($response[$this->server_types], 'prices', 'id');
         if (!isset($prices[$key][$lk])) {
           continue; // Skip if no price is available for current location.
         }
@@ -140,15 +161,15 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
         }
         $hourly_price = $prices[$key][$lk]['price_hourly']['gross'];
 
-        $arch = array_column($response['server_types'], 'architecture', 'id');
-        $cores = array_column($response['server_types'], 'cores', 'id');
-        $memory = array_column($response['server_types'], 'memory', 'id');
-        $disk = array_column($response['server_types'], 'disk', 'id');
-        $cpu_type = array_column($response['server_types'], 'cpu_type', 'id');
+        $arch = array_column($response[$this->server_types], 'architecture', 'id');
+        $cores = array_column($response[$this->server_types], 'cores', 'id');
+        $memory = array_column($response[$this->server_types], 'memory', 'id');
+        $disk = array_column($response[$this->server_types], 'disk', 'id');
+        $cpu_type = array_column($response[$this->server_types], 'cpu_type', 'id');
 
         $price_key = implode(' (', [
-          number_format($monthly_price, 4) . ' EUR/mo',
-          number_format($hourly_price, 5) . ' EUR/hr)',
+          number_format($monthly_price, 4) . ' '. $currency .'/mo',
+          number_format($hourly_price, 5) . ' '. $currency .'/hr)',
         ]);
 
         $location_key = Markup::create('<b>' . $lv['city'] . ', ' . $lv['country'] . ' (' . $lv['network_zone'] . ')</b>');
@@ -176,7 +197,7 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
    * @return void
    */
   public function os_image($arch = 'x86') {
-    $results = vpsCall($this->provider, 'images', [
+    $results = vpsCall($this->provider, $this->images, [
       'type' => 'system',
       'status' => 'available',
       'os_flavor' => 'ubuntu',
@@ -184,7 +205,7 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
       'architecture' => $arch,
       'per_page' => '1',
     ]);
-    return $results['images'][0]['id'];
+    return $results[$this->images][0]['id'];
   }
 
   public function create_vps($paragraph) {
@@ -193,7 +214,7 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
     if (empty($server_info)) {
       $vpsName = $paragraph->uuid();
       [$server_type, $location] = explode('_', $paragraph->get('field_server_type')->getValue()[0]['value'], 2);
-      $chosen_server_type = vpsCall($this->provider, 'server_types/'.$server_type, [], 'GET', FALSE);
+      $chosen_server_type = vpsCall($this->provider, $this->server_types.'/'.$server_type, [], 'GET', FALSE);
       $arch = $chosen_server_type['server_type']['architecture'];
 
       # Create the server.
