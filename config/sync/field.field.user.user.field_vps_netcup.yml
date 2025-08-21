@@ -10,7 +10,7 @@ id: user.user.field_vps_netcup
 field_name: field_vps_netcup
 entity_type: user
 bundle: user
-label: 'VPS netcup'
+label: 'VPS Netcup'
 description: ''
 required: false
 translatable: false

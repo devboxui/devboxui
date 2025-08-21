@@ -44,8 +44,12 @@ class PricingController extends ControllerBase {
   public function processProvider($p) {
     $user = entityManage('user', \Drupal::currentUser()->id());
     if ($token = $user->get('field_vps_'.$p)->getString()) {
-      $servers = \Drupal::service('plugin.manager.vps_provider')->createInstance($p)->server_type();
-      return $this->pretify($servers);
+      $plugin_manager = \Drupal::service('plugin.manager.vps_provider');
+      if ($plugin_manager->hasDefinition($p)) {
+        $servers = $plugin_manager->createInstance($p)->server_type();
+        return $this->pretify($servers);
+      }
+      return NULL;
     }
     return NULL;
   }

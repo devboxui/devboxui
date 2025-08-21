@@ -90,23 +90,11 @@ third_party_settings:
       children:
         - field_vps_hetzner
         - field_vps_vultr
-        - field_vps_cherry_servers
-        - field_vps_clouding
-        - field_vps_ovhcloud
-        - field_vps_ovhcloud_us
-        - field_vps_hostman
-        - field_vps_servers_com
         - field_vps_infomaniak
-        - field_vps_ionos
-        - field_vps_upcloud
-        - field_vps_katapult
         - field_vps_leaseweb
         - field_vps_akamai_cloud_linode
-        - field_vps_amazon_lightsail
-        - field_vps_atlantic_net
         - field_vps_netcup
         - field_vps_digitalocean
-        - field_vps_scaleway
       label: 'VPS Providers'
       region: content
       parent_name: group_tabs
@@ -168,38 +156,6 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_vps_amazon_lightsail:
-    type: string_textfield
-    weight: 36
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_vps_atlantic_net:
-    type: string_textfield
-    weight: 37
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_vps_cherry_servers:
-    type: string_textarea
-    weight: 41
-    region: content
-    settings:
-      rows: 5
-      placeholder: ''
-    third_party_settings: {  }
-  field_vps_clouding:
-    type: string_textfield
-    weight: 25
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_vps_digitalocean:
     type: string_textfield
     weight: 39
@@ -216,33 +172,9 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_vps_hostman:
-    type: string_textfield
-    weight: 28
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_vps_infomaniak:
     type: string_textfield
     weight: 30
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_vps_ionos:
-    type: string_textfield
-    weight: 31
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_vps_katapult:
-    type: string_textfield
-    weight: 33
     region: content
     settings:
       size: 60
@@ -259,46 +191,6 @@ content:
   field_vps_netcup:
     type: string_textfield
     weight: 38
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_vps_ovhcloud:
-    type: string_textfield
-    weight: 26
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_vps_ovhcloud_us:
-    type: string_textfield
-    weight: 27
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_vps_scaleway:
-    type: string_textfield
-    weight: 40
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_vps_servers_com:
-    type: string_textfield
-    weight: 29
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_vps_upcloud:
-    type: string_textfield
-    weight: 32
     region: content
     settings:
       size: 60
@@ -326,6 +218,18 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
 hidden:
+  field_vps_amazon_lightsail: true
+  field_vps_atlantic_net: true
+  field_vps_cherry_servers: true
+  field_vps_clouding: true
+  field_vps_hostman: true
+  field_vps_ionos: true
+  field_vps_katapult: true
+  field_vps_ovhcloud: true
+  field_vps_ovhcloud_us: true
+  field_vps_scaleway: true
+  field_vps_servers_com: true
+  field_vps_upcloud: true
   langcode: true
   language: true
   path: true
