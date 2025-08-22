@@ -33,9 +33,9 @@ class PricingController extends ControllerBase {
               $rows[$rowCount][$i] = ['data' => ['#markup' => '']];
             }
           }
-
+          # Add the current data.
           $rows[$rowCount][$providerCount] = ['data' => ['#markup' => $d]];
-
+          # Increase counter.
           $rowCount++;
         }
         $providerCount++;

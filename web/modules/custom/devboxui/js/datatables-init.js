@@ -5,10 +5,10 @@
 
       tables.forEach(table => {
         $(table).DataTable({
-          autoWidth: false,
+          dom: 'lfirtip',
           scrollX: true,   // Horizontal scrolling
           paging: false,   // Show all rows
-          info: false,     // Hide "Showing X of Y"
+          ordering: false,
           searching: true,  // Enable search box
         });
       });
