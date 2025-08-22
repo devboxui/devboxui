@@ -74,8 +74,7 @@ class PricingController extends ControllerBase {
     foreach ($servers as $sk => $sv) {
       if (is_array($sv)) {
         foreach ($sv as $vk => $vv) {
-          $row = $sk.'<br>';
-          $row .= $vv;
+          $row = '<b>'.$sk.'</b><br>'.$vv;
           $output[] = $row;
         }
       }
