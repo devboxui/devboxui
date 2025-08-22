@@ -173,12 +173,14 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
         ]);
 
         $location_key = Markup::create('<b>' . $lv['city'] . ', ' . $lv['country'] . ' (' . $lv['network_zone'] . ')</b>');
-        $processed_value = implode(', ', [
-          implode(' - ', [$location_key, $server_name, $arch[$key]]),
-          $cores[$key] . ' cores',
-          $memory[$key] . ' GB RAM',
-          $disk[$key] . ' GB SSD',
-          $cpu_type[$key] . ' CPU',
+        $processed_value = implode('<br>', [
+          implode(' - ', [$server_name, $location_key, $arch[$key]]),
+          implode(', ', [
+            $cores[$key] . ' cores',
+            $memory[$key] . ' GB RAM',
+            $disk[$key] . ' GB SSD',
+            $cpu_type[$key] . ' CPU',
+          ]),
         ]);
 
         # Key format: 'server type ID'_'location ID'

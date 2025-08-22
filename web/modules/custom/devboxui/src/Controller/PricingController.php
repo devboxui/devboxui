@@ -18,14 +18,29 @@ class PricingController extends ControllerBase {
     natsort($providers);
 
     $header = [];
-    $row = [];
+    $rows = [];
+    $providerCount = 0;
     foreach ($providers as $p) {
       if ($data = $this->processProvider($p)) {
         $header[] = ucwords(str_replace('_', ' ', $p));
-        $row[] = ['data' => ['#markup' => $data]];
+
+        # Fill columns instead of rows.
+        $rowCount = 0;
+        foreach ($data as $d) {
+          # Account for different provider counts.
+          for ($i = 0; $i < $providerCount; $i++) {
+            if (!isset($rows[$rowCount][$i])) {
+              $rows[$rowCount][$i] = ['data' => ['#markup' => '']];
+            }
+          }
+
+          $rows[$rowCount][$providerCount] = ['data' => ['#markup' => $d]];
+
+          $rowCount++;
+        }
+        $providerCount++;
       }
     }
-    $rows = [$row];
 
     // Render table.
     $build['pricing_table'] = [
@@ -34,8 +49,8 @@ class PricingController extends ControllerBase {
       '#rows' => $rows,
       '#attributes' => ['class' => ['vps-pricing-table']],
       '#empty' => $this->t('No pricing data available.'),
-      '#attached' => ['library' => ['devboxui/datatables'],
-      ],
+      # TO DO: dataTables truncates table if one column longer
+      '#attached' => ['library' => ['devboxui/datatables']],
     ];
 
     return $build;
@@ -43,15 +58,29 @@ class PricingController extends ControllerBase {
 
   public function processProvider($p) {
     $user = entityManage('user', \Drupal::currentUser()->id());
-    if ($token = $user->get('field_vps_'.$p)->getString()) {
+    if (!empty($user->get('field_vps_'.$p)->getString())) {
       $plugin_manager = \Drupal::service('plugin.manager.vps_provider');
       if ($plugin_manager->hasDefinition($p)) {
         $servers = $plugin_manager->createInstance($p)->server_type();
-        return $this->pretify($servers);
+        return $this->arrayOfStrings($servers);
       }
-      return NULL;
+      return [];
     }
-    return NULL;
+    return [];
+  }
+
+  public function arrayOfStrings($servers) {
+    $output = [];
+    foreach ($servers as $sk => $sv) {
+      if (is_array($sv)) {
+        foreach ($sv as $vk => $vv) {
+          $row = $sk.'<br>';
+          $row .= $vv;
+          $output[] = $row;
+        }
+      }
+    }
+    return $output;
   }
 
   public function pretify($servers) {

@@ -159,12 +159,14 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
       foreach ($server['locations'] as $l) {
         $lv = $locations[$this->locations][$locationIds[$l]];
         $location_key = Markup::create('<b>' . $lv['city'] . ', ' . $lv['country'] . ' (' . $lv['continent'] . ')</b>');
-        $processed_value = implode(', ', [
-          implode(' - ', [$location_key, $server_name]),
-          $server['cpu_vendor'],
-          '<b>'.$server['vcpu_count'].'</b>' . ' core(s)',
-          '<b>'.$server['ram'].'</b>' . ' MB RAM',
-          '<b>'.$server['disk'].'</b>' . ' GB SSD',
+        $processed_value = implode('<br>', [
+          implode(' - ', [$server_name, $location_key]),
+          implode(', ', [
+            $server['cpu_vendor'],
+            '<b>'.$server['vcpu_count'].'</b>' . ' core(s)',
+            '<b>'.$server['ram'].'</b>' . ' MB RAM',
+            '<b>'.$server['disk'].'</b>' . ' GB SSD',
+          ]),
         ]);
 
         # Key format: 'server type ID'
