@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("Akamai Cloud (Linode)")
  * )
  */
-class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPluginInterface {
+class ProviderAkamai extends VpsProviderPluginBase implements ContainerFactoryPluginInterface {
 
   protected $api_url;
   protected $currency;
@@ -27,6 +27,7 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
   protected $provider;
   protected $providerName;
   protected $server_types;
+  protected $server_types_ret_key;
   protected $ssh_keys;
   protected $ssh_keys_public_key;
   protected $ssh_keys_ret_key;
@@ -49,10 +50,12 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
     $this->currency = 'currency';
     $this->images = 'images';
     $this->locations = 'regions';
+    $this->locationsRetKey = 'data';
     $this->pricing = 'pricing';
     $this->provider = 'akamai_cloud_linode';
     $this->providerName = 'Akamai Cloud (Linode)';
     $this->server_types = 'linode/types';
+    $this->server_types_ret_key = 'data';
     $this->ssh_keys = 'profile/sshkeys';
     $this->ssh_keys_public_key = 'ssh_key';
     $this->ssh_keys_ret_key = 'ssh_key';
@@ -147,13 +150,13 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
     $locations = vpsCall($this->provider, $this->locations);
     $response = vpsCall($this->provider, $this->server_types);
 
-    $locationIds = array_flip(array_column($locations[$this->locations], 'id'));
+    $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'id'));
     $processed_server_types = [];
-    foreach ($response[$this->server_types] as $server) {
+    foreach ($response[$this->server_types_ret_key] as $server) {
       $key = $server_name = $server['id'];
       $price_key = implode(' (', [
-        $server['monthly_cost'] . ' '. $currency .'/mo',
-        $server['hourly_cost'] . ' '. $currency .'/hr)',
+        $server['price']['monthly'] . ' '. $currency .'/mo',
+        $server['price']['hourly'] . ' '. $currency .'/hr)',
       ]);
 
       foreach ($server['locations'] as $l) {
