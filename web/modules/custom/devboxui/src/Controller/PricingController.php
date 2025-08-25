@@ -49,7 +49,6 @@ class PricingController extends ControllerBase {
       '#rows' => $rows,
       '#attributes' => ['class' => ['vps-pricing-table']],
       '#empty' => $this->t('No pricing data available.'),
-      # TO DO: dataTables truncates table if one column longer
       '#attached' => ['library' => ['devboxui/datatables']],
     ];
 

@@ -90,10 +90,7 @@ third_party_settings:
       children:
         - field_vps_hetzner
         - field_vps_vultr
-        - field_vps_infomaniak
-        - field_vps_leaseweb
         - field_vps_akamai_cloud_linode
-        - field_vps_netcup
         - field_vps_digitalocean
       label: 'VPS Providers'
       region: content
@@ -172,30 +169,6 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_vps_infomaniak:
-    type: string_textfield
-    weight: 30
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_vps_leaseweb:
-    type: string_textfield
-    weight: 34
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_vps_netcup:
-    type: string_textfield
-    weight: 38
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_vps_vultr:
     type: string_textfield
     weight: 23
@@ -223,8 +196,11 @@ hidden:
   field_vps_cherry_servers: true
   field_vps_clouding: true
   field_vps_hostman: true
+  field_vps_infomaniak: true
   field_vps_ionos: true
   field_vps_katapult: true
+  field_vps_leaseweb: true
+  field_vps_netcup: true
   field_vps_ovhcloud: true
   field_vps_ovhcloud_us: true
   field_vps_scaleway: true

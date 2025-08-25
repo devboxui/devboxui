@@ -4,3 +4,5 @@ web/sites/default/files
 web/sites/default/settings.ddev.php
 config/sync/symfony_mailer.mailer_transport.smtp.yml
 config/sync/smtp.settings.yml
+config/sync/eca.eca.process_xs2zvsm.yml
+config/sync/eca.model.process_xs2zvsm.yml

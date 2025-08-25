@@ -150,6 +150,11 @@ class ProviderAkamai extends VpsProviderPluginBase implements ContainerFactoryPl
     $locations = vpsCall($this->provider, $this->locations);
     $response = vpsCall($this->provider, $this->server_types);
 
+    $locationsArray = [];
+    foreach ($locations['data'] as $location) {
+      $locationsArray[$location['id']] = $location['label'];
+    }
+
     $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'id'));
     $processed_server_types = [];
     foreach ($response[$this->server_types_ret_key] as $server) {
@@ -159,24 +164,43 @@ class ProviderAkamai extends VpsProviderPluginBase implements ContainerFactoryPl
         $server['price']['hourly'] . ' '. $currency .'/hr)',
       ]);
 
-      foreach ($server['locations'] as $l) {
-        $lv = $locations[$this->locations][$locationIds[$l]];
-        $location_key = Markup::create('<b>' . $lv['city'] . ', ' . $lv['country'] . ' (' . $lv['continent'] . ')</b>');
-        $processed_value = implode('<br>', [
-          implode(' - ', [$server_name, $location_key]),
-          implode(', ', [
-            $server['cpu_vendor'],
-            '<b>'.$server['vcpu_count'].'</b>' . ' core(s)',
-            '<b>'.$server['ram'].'</b>' . ' MB RAM',
-            '<b>'.$server['disk'].'</b>' . ' GB SSD',
-          ]),
+      $processed_value = implode('<br>', [
+        '<b>ID:</b> '.implode(' - ', [$server_name]),
+        '<b>Specs:</b> '.implode(', ', [
+          '<b>'.$server['vcpus'].'</b>' . ' core(s)',
+          '<b>'.$server['memory'].'</b>' . ' MB RAM',
+          '<b>'.$server['disk'].'</b>' . ' MB SSD',
+          '<b>'.$server['network_out'].'</b>' . ' MB traffic',
+        ]),
+      ]);
+
+      # Add locations.
+      $processed_value = implode('<br>', [
+        $processed_value,
+        '<b>Locations:</b> All',
+      ]);
+
+      # Process location exceptions.
+      $exceptions = [];
+      foreach ($server['region_prices'] as $ex) {
+        $exceptions[] = '' . implode(', ', [
+          $ex['monthly'] . ' '. $currency .'/mo',
+          $ex['hourly'] . ' '. $currency .'/hr',
         ]);
-
-        # Key format: 'server type ID'
-        $processed_key = implode('_', [$key]);
-
-        $processed_server_types[$price_key][$processed_key] = Markup::create($processed_value);
       }
+
+      # Add location exceptions.
+      if (!empty($exceptions)) {
+        $processed_value = implode('<br>', [
+          $processed_value,
+          '<b>Exceptions:</b> ' . implode('; ', $exceptions),
+        ]);
+      }
+
+      # Key format: 'server type ID'.
+      $processed_key = implode('_', [$key]);
+      # Build the record.
+      $processed_server_types[$price_key][$processed_key] = Markup::create($processed_value);
     }
     ksort($processed_server_types, SORT_NATURAL);
     return $processed_server_types;
