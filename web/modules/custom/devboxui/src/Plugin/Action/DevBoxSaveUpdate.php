@@ -89,6 +89,7 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
           $commands["Ubuntu packages updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
           $commands["Ubuntu packages upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
           $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
+          $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
           $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
         }
       }
@@ -111,6 +112,7 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
         $commands["Ubuntu packages updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
         $commands["Ubuntu packages upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
         $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
+        $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
         $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
       }
     }

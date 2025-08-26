@@ -131,6 +131,22 @@ class DevBoxBatchService {
    * Batch callback for running SSH commands.
    * Use phpseclib to connect via SSH and run the command(s).
    */
+  public static function ssh_ssh_configs($step, $paragraph_id, &$context): void {
+    $context['message'] = t('@step', ['@step' => $step]);
+
+    // Set keep alive settings for SSH.
+    self::ssh_wrapper($paragraph_id, "sed -i 's/^#\?TCPKeepAlive.*/TCPKeepAlive yes/' /etc/ssh/sshd_config", $context, TRUE);
+    self::ssh_wrapper($paragraph_id, "sed -i 's/^#\?ClientAliveInterval.*/ClientAliveInterval 60/' /etc/ssh/sshd_config", $context, TRUE);
+    self::ssh_wrapper($paragraph_id, "sed -i 's/^#\?ClientAliveCountMax.*/ClientAliveCountMax 5/' /etc/ssh/sshd_config", $context, TRUE);
+    # Enable ssh on boot.
+    self::ssh_wrapper($paragraph_id, 'systemctl enable ssh', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'systemctl restart ssh', $context, TRUE);
+  }
+
+  /**
+   * Batch callback for running SSH commands.
+   * Use phpseclib to connect via SSH and run the command(s).
+   */
   public static function ssh_ddev_install($step, $paragraph_id, &$context): void {
     $context['message'] = t('@step', ['@step' => $step]);
 
