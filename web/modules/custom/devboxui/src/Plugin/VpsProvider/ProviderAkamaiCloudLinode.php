@@ -148,7 +148,7 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
   public function server_type() {
     $currency = 'USD';
     $locations = vpsCall($this->provider, $this->locations);
-    $response = vpsCall($this->provider, $this->server_types);
+    $servers = vpsCall($this->provider, $this->server_types);
 
     $locationsArray = [];
     foreach ($locations['data'] as $location) {
@@ -157,7 +157,7 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
 
     $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'id'));
     $processed_server_types = [];
-    foreach ($response[$this->server_types_ret_key] as $server) {
+    foreach ($servers[$this->server_types_ret_key] as $server) {
       $key = $server_name = $server['id'];
       $price_key = implode(' (', [
         $server['price']['monthly'] . ' '. $currency .'/mo',

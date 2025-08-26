@@ -50,15 +50,15 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
     $this->currency = 'currency';
     $this->images = 'images';
     $this->locations = 'regions';
-    $this->locationsRetKey = 'data';
+    $this->locationsRetKey = 'regions';
     $this->pricing = 'pricing';
     $this->provider = 'digitalocean';
     $this->providerName = 'DigitalOcean';
-    $this->server_types = 'linode/types';
-    $this->server_types_ret_key = 'data';
+    $this->server_types = 'sizes';
+    $this->server_types_ret_key = 'sizes';
     $this->ssh_keys = 'account/keys';
     $this->ssh_keys_public_key = 'public_key';
-    $this->ssh_keys_ret_key = 'ssh_keys';
+    $this->ssh_keys_ret_key = 'ssh_key';
     $this->user = User::load(\Drupal::currentUser()->id());
     $this->userData = $user_data;
     $this->sshKeyName = $this->user->uuid();
@@ -148,20 +148,20 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
   public function server_type() {
     $currency = 'USD';
     $locations = vpsCall($this->provider, $this->locations);
-    $response = vpsCall($this->provider, $this->server_types);
+    $servers = vpsCall($this->provider, $this->server_types);
 
     $locationsArray = [];
-    foreach ($locations['data'] as $location) {
-      $locationsArray[$location['id']] = $location['label'];
+    foreach ($locations[$this->locationsRetKey] as $location) {
+      $locationsArray[$location['slug']] = $location['name'];
     }
 
-    $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'id'));
+    $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'slug'));
     $processed_server_types = [];
-    foreach ($response[$this->server_types_ret_key] as $server) {
-      $key = $server_name = $server['id'];
+    foreach ($servers[$this->server_types_ret_key] as $server) {
+      $key = $server_name = $server['slug'];
       $price_key = implode(' (', [
-        $server['price']['monthly'] . ' '. $currency .'/mo',
-        $server['price']['hourly'] . ' '. $currency .'/hr)',
+        $server['price_monthly'] . ' '. $currency .'/mo',
+        $server['price_hourly'] . ' '. $currency .'/hr)',
       ]);
 
       $processed_value = implode('<br>', [
@@ -170,32 +170,9 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
           '<b>'.$server['vcpus'].'</b>' . ' core(s)',
           '<b>'.$server['memory'].'</b>' . ' MB RAM',
           '<b>'.$server['disk'].'</b>' . ' MB SSD',
-          '<b>'.$server['network_out'].'</b>' . ' MB traffic',
+          '<b>'.$server['transfer'].'</b>' . ' TB traffic',
         ]),
       ]);
-
-      # Add locations.
-      $processed_value = implode('<br>', [
-        $processed_value,
-        '<b>Locations:</b> All',
-      ]);
-
-      # Process location exceptions.
-      $exceptions = [];
-      foreach ($server['region_prices'] as $ex) {
-        $exceptions[] = '' . implode(', ', [
-          $ex['monthly'] . ' '. $currency .'/mo',
-          $ex['hourly'] . ' '. $currency .'/hr',
-        ]);
-      }
-
-      # Add location exceptions.
-      if (!empty($exceptions)) {
-        $processed_value = implode('<br>', [
-          $processed_value,
-          '<b>Exceptions:</b> ' . implode('; ', $exceptions),
-        ]);
-      }
 
       # Key format: 'server type ID'.
       $processed_key = implode('_', [$key]);

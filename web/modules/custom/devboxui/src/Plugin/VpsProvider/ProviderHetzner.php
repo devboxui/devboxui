@@ -62,7 +62,7 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
     /* END OF Default values. */
 
     /* Computed values. */
-    $this->sshRespField = 'ssh_response_'.$this->provider;
+    $this->sshRespField = 'ssh_servers_'.$this->provider;
     $this->pbkey = $this->user->get('field_ssh_public_key')->getString();
     /* END OF Computed values. */
   }
@@ -145,13 +145,13 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
   public function server_type() {
     $currency = vpsCall($this->provider, $this->pricing)[$this->pricing][$this->currency];
     $locations = vpsCall($this->provider, $this->locations);
-    $response = vpsCall($this->provider, $this->server_types);
-    $server_types = array_column($response[$this->server_types], 'description', 'id');
+    $servers = vpsCall($this->provider, $this->server_types);
+    $server_types = array_column($servers[$this->server_types], 'description', 'id');
 
     $processed_server_types = [];
     foreach ($locations[$this->locations] as $lk => $lv) {
       foreach ($server_types as $key => $server_name) {
-        $prices = array_column($response[$this->server_types], 'prices', 'id');
+        $prices = array_column($servers[$this->server_types], 'prices', 'id');
         if (!isset($prices[$key][$lk])) {
           continue; // Skip if no price is available for current location.
         }
@@ -161,11 +161,11 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
         }
         $hourly_price = $prices[$key][$lk]['price_hourly']['gross'];
 
-        $arch = array_column($response[$this->server_types], 'architecture', 'id');
-        $cores = array_column($response[$this->server_types], 'cores', 'id');
-        $memory = array_column($response[$this->server_types], 'memory', 'id');
-        $disk = array_column($response[$this->server_types], 'disk', 'id');
-        $cpu_type = array_column($response[$this->server_types], 'cpu_type', 'id');
+        $arch = array_column($servers[$this->server_types], 'architecture', 'id');
+        $cores = array_column($servers[$this->server_types], 'cores', 'id');
+        $memory = array_column($servers[$this->server_types], 'memory', 'id');
+        $disk = array_column($servers[$this->server_types], 'disk', 'id');
+        $cpu_type = array_column($servers[$this->server_types], 'cpu_type', 'id');
 
         $price_key = implode(' (', [
           number_format($monthly_price, 4) . ' '. $currency .'/mo',
@@ -211,7 +211,7 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
   }
 
   public function create_vps($paragraph) {
-    $server_info = json_decode($paragraph->get('field_response')->getString(), TRUE);
+    $server_info = json_decode($paragraph->get('field_servers')->getString(), TRUE);
     // Create server only if it does not exist.
     if (empty($server_info)) {
       $vpsName = $paragraph->uuid();
@@ -243,14 +243,14 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
           $server_status = $ret['server']['status'];
         }
 
-        $paragraph->set('field_response', json_encode($ret['server']));
+        $paragraph->set('field_servers', json_encode($ret['server']));
         $paragraph->save();
       }
     }
   }
 
   public function delete_vps($paragraph) {
-    $server_info = json_decode($paragraph->get('field_response')->getString(), TRUE);
+    $server_info = json_decode($paragraph->get('field_servers')->getString(), TRUE);
 
     # Delete the server.
     vpsCall($this->provider, 'servers/'.$server_info['id'], [], 'DELETE');

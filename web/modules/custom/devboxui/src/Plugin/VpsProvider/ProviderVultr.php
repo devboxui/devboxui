@@ -145,11 +145,11 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
   public function server_type() {
     $currency = 'USD';
     $locations = vpsCall($this->provider, $this->locations);
-    $response = vpsCall($this->provider, $this->server_types);
+    $servers = vpsCall($this->provider, $this->server_types);
 
     $locationIds = array_flip(array_column($locations[$this->locations], 'id'));
     $processed_server_types = [];
-    foreach ($response[$this->server_types] as $server) {
+    foreach ($servers[$this->server_types] as $server) {
       $key = $server_name = $server['id'];
       $price_key = implode(' (', [
         $server['monthly_cost'] . ' '. $currency .'/mo',
