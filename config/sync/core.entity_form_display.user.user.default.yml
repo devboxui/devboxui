@@ -147,7 +147,7 @@ content:
     third_party_settings: {  }
   field_vps_akamai_cloud_linode:
     type: string_textfield
-    weight: 35
+    weight: 24
     region: content
     settings:
       size: 60
@@ -155,7 +155,7 @@ content:
     third_party_settings: {  }
   field_vps_digitalocean:
     type: string_textfield
-    weight: 39
+    weight: 25
     region: content
     settings:
       size: 60

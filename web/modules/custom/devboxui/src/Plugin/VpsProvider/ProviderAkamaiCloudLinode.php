@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("Akamai Cloud (Linode)")
  * )
  */
-class ProviderAkamai extends VpsProviderPluginBase implements ContainerFactoryPluginInterface {
+class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements ContainerFactoryPluginInterface {
 
   protected $api_url;
   protected $currency;
@@ -96,7 +96,7 @@ class ProviderAkamai extends VpsProviderPluginBase implements ContainerFactoryPl
     if ($sshResp = $this->userData->get('devboxui', $this->user->id(), $this->sshRespField)) {
       $key_resp = json_decode($sshResp, TRUE);
       // Don't upload if the current and previously stored keys are the same.
-      if (isset($key_resp[$this->ssh_keys_ret_key]) && $this->pbkey == $key_resp[$this->ssh_keys_ret_key]['public_key']) {
+      if (isset($key_resp[$this->ssh_keys_ret_key]) && $this->pbkey == $key_resp[$this->ssh_keys_ret_key]) {
         \Drupal::logger('dexboxui')->notice('SSH key already exists for user @uid', [
           '@uid' => $this->user->id(),
         ]);
@@ -111,7 +111,7 @@ class ProviderAkamai extends VpsProviderPluginBase implements ContainerFactoryPl
 
     # Then, upload it.
     $ret = vpsCall($this->provider, $this->ssh_keys, [
-      'name' => $this->sshKeyName,
+      'label' => $this->sshKeyName,
       $this->ssh_keys_public_key => $this->pbkey,
     ], 'POST');
     $this->saveKeys($ret);

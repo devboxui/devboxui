@@ -27,13 +27,8 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_tools:
-    type: options_select
-    weight: 2
-    region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
   created: true
   field_response: true
+  field_tools: true
   status: true

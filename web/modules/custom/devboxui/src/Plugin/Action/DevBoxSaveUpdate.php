@@ -83,21 +83,13 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
         $pid = $vps_node['target_id'];
         $paragraph = entityManage('paragraph', $pid);
         $server_info = json_decode($paragraph->get('field_response')->getString(), TRUE);
-        $tools = $paragraph->get('field_tools')->getString();
         // Create server only if it does not exist.
         if (empty($server_info)) {
           $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];
           $commands["Ubuntu packages updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
           $commands["Ubuntu packages upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
-          if (in_array($tools, ['docker', 'ddev'])) {
-            $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
-            $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
-            
-            if ($tools == 'ddev') {
-              $commands["DevBox user created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user_devbox']];
-              $commands["DDEV installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ddev_install']];
-            }
-          }
+          $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
+          $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
         }
       }
 
