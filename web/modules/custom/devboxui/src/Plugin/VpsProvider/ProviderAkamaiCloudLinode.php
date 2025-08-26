@@ -151,11 +151,10 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
     $servers = vpsCall($this->provider, $this->server_types);
 
     $locationsArray = [];
-    foreach ($locations['data'] as $location) {
+    foreach ($locations[$this->locationsRetKey] as $location) {
       $locationsArray[$location['id']] = $location['label'];
     }
 
-    $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'id'));
     $processed_server_types = [];
     foreach ($servers[$this->server_types_ret_key] as $server) {
       $key = $server_name = $server['id'];

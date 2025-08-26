@@ -174,7 +174,7 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
 
         $location_key = Markup::create('<b>' . $lv['city'] . ', ' . $lv['country'] . ' (' . $lv['network_zone'] . ')</b>');
         $processed_value = implode('<br>', [
-          implode(' - ', [$server_name, $location_key, $arch[$key]]),
+          implode(' - ', [$server_name, $location_key, $arch[$key]]) . ' - ',
           implode(', ', [
             $cores[$key] . ' cores',
             $memory[$key] . ' GB RAM',
@@ -211,7 +211,7 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
   }
 
   public function create_vps($paragraph) {
-    $server_info = json_decode($paragraph->get('field_servers')->getString(), TRUE);
+    $server_info = json_decode($paragraph->get('field_response')->getString(), TRUE);
     // Create server only if it does not exist.
     if (empty($server_info)) {
       $vpsName = $paragraph->uuid();
@@ -243,14 +243,14 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
           $server_status = $ret['server']['status'];
         }
 
-        $paragraph->set('field_servers', json_encode($ret['server']));
+        $paragraph->set('field_response', json_encode($ret['server']));
         $paragraph->save();
       }
     }
   }
 
   public function delete_vps($paragraph) {
-    $server_info = json_decode($paragraph->get('field_servers')->getString(), TRUE);
+    $server_info = json_decode($paragraph->get('field_response')->getString(), TRUE);
 
     # Delete the server.
     vpsCall($this->provider, 'servers/'.$server_info['id'], [], 'DELETE');

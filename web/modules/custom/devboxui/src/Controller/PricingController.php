@@ -22,7 +22,11 @@ class PricingController extends ControllerBase {
     $providerCount = 0;
     foreach ($providers as $p) {
       if ($data = $this->processProvider($p)) {
-        $header[] = ucwords(str_replace('_', ' ', $p));
+        $provider_name = ucwords(str_replace('_', ' ', $p));
+        if ($provider_name == 'Digitalocean') {
+          $provider_name = 'DigitalOcean';
+        }
+        $header[] = $provider_name;
 
         # Fill columns instead of rows.
         $rowCount = 0;
