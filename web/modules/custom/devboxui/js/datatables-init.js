@@ -18,7 +18,7 @@
         });
 
         dt.on('draw.dt', function () {
-          const term = dt.search().trim();
+          const term = (dt.search() || '').trim();
           const body = dt.table().body();
 
           $(body).find('td').each(function () {
@@ -27,16 +27,19 @@
 
             if (!term) return;
 
-            // Replace matching text inside cell HTML, preserving other tags
-            const regex = new RegExp(term, 'gi');
+            // Highlight matching text in HTML, preserving all other tags
+            const regex = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+
             $(this).html(function (_, oldHtml) {
-              return oldHtml.replace(regex, function (m) {
-                return '<mark class="dt-hl">' + m + '</mark>';
+              return oldHtml.replace(regex, function (match) {
+                return '<mark class="dt-hl">' + match + '</mark>';
               });
             });
           });
         });
 
+        // Initial highlight on page load
+        dt.draw();
       });
     }
   };
