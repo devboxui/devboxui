@@ -176,13 +176,13 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
       # Add locations.
       $processed_value = implode('<br>', [
         $processed_value,
-        '<b>Locations:</b> All',
+        '<b>Locations:</b> ' . implode('; ', $locationsArray),
       ]);
 
       # Process location exceptions.
       $exceptions = [];
       foreach ($server['region_prices'] as $ex) {
-        $exceptions[] = '' . implode(', ', [
+        $exceptions[] = $locationsArray[$ex['id']] . ' - '. implode(', ', [
           $ex['monthly'] . ' '. $currency .'/mo',
           $ex['hourly'] . ' '. $currency .'/hr',
         ]);
