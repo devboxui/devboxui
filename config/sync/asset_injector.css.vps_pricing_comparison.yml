@@ -1,7 +1,9 @@
 uuid: e2db7832-cd47-45c2-b605-b93b9be3de25
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - system
 id: vps_pricing_comparison
 label: 'VPS pricing comparison'
 code: |-
@@ -18,8 +20,15 @@ code: |-
     background: yellow;
     font-weight: bold;
   }
+  .vps-pricing-table tr {
+    vertical-align: top;
+  }
 media: all
 preprocess: true
-conditions: {  }
+conditions:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /vps-pricing-comparison
 contexts: {  }
 conditions_require_all: true

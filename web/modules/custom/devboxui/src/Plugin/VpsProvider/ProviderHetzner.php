@@ -152,19 +152,14 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
     $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'name'));
     $processed_server_types = [];
     foreach ($servers[$this->server_types] as $server) {
-      $server_name = $server['name'];
-
-      $processed_value = implode('<br>', [
-        '<b>ID:</b> '.$server_name,
-        '<b>Specfications:</b><br> '.implode(', ', [
-          $server['architecture'],
-          $server['cores'] . ' core(s)',
-          $server['memory'] . ' GB RAM',
-          $server['disk'] . ' GB SSD',
-        ]),
+      $specs = implode(', ', [
+        $server['architecture'],
+        $server['cores'] . ' core(s)',
+        $server['memory'] . ' GB RAM',
+        $server['disk'] . ' GB SSD',
+        $server['category'],
       ]);
 
-      $serverLocations = [];
       foreach ($server['prices'] as $pv) {
         // Skip if no price is available for current location.
         if (!isset($pv)) continue;
@@ -179,18 +174,21 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
         ]);
 
         $lv = $locations[$this->locations][$locationIds[$pv['location']]];
-        $location_key = Markup::create('<b>' . $lv['city'] . ', ' . $lv['country'] . ' (' . $lv['network_zone'] . ')</b>');
-        $serverLocations[] = $location_key;
+        $loc = $lv['city'] . ', ' . $lv['country'] . ' (' . $lv['network_zone'] . ')';
 
-        # Add locations.
-        $processed_value = implode('<br>', [
-          $processed_value,
-          '<b>Locations:</b><br> ' . implode('; ', $serverLocations),
+        $oneTerabyte = bcpow(10, 12);
+        $traffic = bcdiv($pv['included_traffic'], $oneTerabyte, 0) . ' TB traffic';
+
+        $processed_value = implode(' - ', [
+          $loc,
+          $server['name'],
+          $specs . ', ' . $traffic,
         ]);
 
-        # Key format: 'server type ID'_'location ID'
+        # Key format: 'server type ID'_'location ID'.
         $processed_key = implode('_', [$server['id'], $lv['id']]);
 
+        # <select> option.
         $processed_server_types[$price_key][$processed_key] = $processed_value;
       }
     }

@@ -182,7 +182,7 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
         '<b>Locations:</b><br> ' . implode('; ', $serverLocations),
       ]);
 
-      # Key format: 'server type ID'
+      # Key format: 'server type ID'_'location ID'.
       $processed_key = implode('_', [$key]);
 
       $processed_server_types[$price_key][$processed_key] = Markup::create($processed_value);

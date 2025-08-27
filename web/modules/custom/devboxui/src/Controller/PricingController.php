@@ -76,10 +76,16 @@ class PricingController extends ControllerBase {
     $output = [];
     foreach ($servers as $sk => $sv) {
       if (is_array($sv)) {
+        $id = ''; $specs = ''; $locations = [];
         foreach ($sv as $vk => $vv) {
-          $row = '<b>'.$sk.'</b><br>'.$vv;
-          $output[] = $row;
+          [$locations[], $id, $specs] = explode(' - ', $vv);
         }
+        $output[] = implode('<br>', [
+          '<b>Price:</b>' . $sk . '<br>',
+          '<b>ID:</b>' . $id,
+          '<b>Specifications:</b><br>' . $specs,
+          '<b>Locations:</b><br>' . implode(', ', $locations),
+        ]);
       }
     }
     return $output;
