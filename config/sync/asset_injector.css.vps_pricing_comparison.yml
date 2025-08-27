@@ -1,0 +1,25 @@
+uuid: e2db7832-cd47-45c2-b605-b93b9be3de25
+langcode: en
+status: true
+dependencies: {  }
+id: vps_pricing_comparison
+label: 'VPS pricing comparison'
+code: |-
+  .path-vps-pricing-comparison .dt-info {
+  	margin: 15px 0 10px 0;
+  }
+  .path-vps-pricing-comparison .dt-search label {
+  	margin-right: 10px;
+  }
+  .path-vps-pricing-comparison .dt-search input {
+  	box-shadow: none;
+  }
+  .vps-pricing-table mark.dt-hl {
+    background: yellow;
+    font-weight: bold;
+  }
+media: all
+preprocess: true
+conditions: {  }
+contexts: {  }
+conditions_require_all: true
