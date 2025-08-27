@@ -49,6 +49,7 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
     $this->currency = 'currency';
     $this->images = 'images';
     $this->locations = 'locations';
+    $this->locationsRetKey = 'locations';
     $this->pricing = 'pricing';
     $this->provider = 'hetzner';
     $this->providerName = 'Hetzner';
@@ -148,47 +149,52 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
     $servers = vpsCall($this->provider, $this->server_types);
     $server_types = array_column($servers[$this->server_types], 'description', 'id');
 
+    $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'name'));
     $processed_server_types = [];
-    foreach ($locations[$this->locations] as $lk => $lv) {
-      foreach ($server_types as $key => $server_name) {
-        $prices = array_column($servers[$this->server_types], 'prices', 'id');
-        if (!isset($prices[$key][$lk])) {
-          continue; // Skip if no price is available for current location.
-        }
-        $monthly_price = $prices[$key][$lk]['price_monthly']['gross'];
-        if (empty($monthly_price)) {
-          continue; // Skip if no monthly price is available.
-        }
-        $hourly_price = $prices[$key][$lk]['price_hourly']['gross'];
+    foreach ($servers[$this->server_types] as $server) {
+      $server_name = $server['name'];
 
-        $arch = array_column($servers[$this->server_types], 'architecture', 'id');
-        $cores = array_column($servers[$this->server_types], 'cores', 'id');
-        $memory = array_column($servers[$this->server_types], 'memory', 'id');
-        $disk = array_column($servers[$this->server_types], 'disk', 'id');
-        $cpu_type = array_column($servers[$this->server_types], 'cpu_type', 'id');
+      $processed_value = implode('<br>', [
+        '<b>ID:</b> '.$server_name,
+        '<b>Specfications:</b><br> '.implode(', ', [
+          $server['architecture'],
+          $server['cores'] . ' core(s)',
+          $server['memory'] . ' GB RAM',
+          $server['disk'] . ' GB SSD',
+        ]),
+      ]);
+
+      $serverLocations = [];
+      foreach ($server['prices'] as $pv) {
+        // Skip if no price is available for current location.
+        if (!isset($pv)) continue;
+        $monthly_price = $pv['price_monthly']['gross'];
+        // Skip if no monthly price is available.
+        if (empty($monthly_price)) continue;
+        $hourly_price = $pv['price_hourly']['gross'];
 
         $price_key = implode(' (', [
           number_format($monthly_price, 4) . ' '. $currency .'/mo',
           number_format($hourly_price, 5) . ' '. $currency .'/hr)',
         ]);
 
+        $lv = $locations[$this->locations][$locationIds[$pv['location']]];
         $location_key = Markup::create('<b>' . $lv['city'] . ', ' . $lv['country'] . ' (' . $lv['network_zone'] . ')</b>');
+        $serverLocations[] = $location_key;
+
+        # Add locations.
         $processed_value = implode('<br>', [
-          implode(' - ', [$server_name, $location_key, $arch[$key]]) . ' - ',
-          implode(', ', [
-            $cores[$key] . ' cores',
-            $memory[$key] . ' GB RAM',
-            $disk[$key] . ' GB SSD',
-            $cpu_type[$key] . ' CPU',
-          ]),
+          $processed_value,
+          '<b>Locations:</b><br> ' . implode('; ', $serverLocations),
         ]);
 
         # Key format: 'server type ID'_'location ID'
-        $processed_key = implode('_', [$key, $lv['id']]);
+        $processed_key = implode('_', [$server['id'], $lv['id']]);
 
         $processed_server_types[$price_key][$processed_key] = $processed_value;
       }
     }
+
     ksort($processed_server_types, SORT_NATURAL);
     return $processed_server_types;
   }
