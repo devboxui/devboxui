@@ -148,44 +148,34 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
     $locations = vpsCall($this->provider, $this->locations);
     $servers = vpsCall($this->provider, $this->server_types);
 
-    $locationsArray = [];
-    foreach ($locations[$this->locationsRetKey] as $location) {
-      $locationsArray[$location['id']] = $location['city'] . ', '. $location['country'];
-    }
-
+    $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'id'));
     $processed_server_types = [];
     foreach ($servers[$this->server_types] as $server) {
-      $key = $server_name = $server['id'];
       $price_key = implode(' (', [
         $server['monthly_cost'] . ' '. $currency .'/mo',
         $server['hourly_cost'] . ' '. $currency .'/hr)',
       ]);
 
-      $processed_value = implode('<br>', [
-        '<b>ID:</b> '.$server_name,
-        '<b>Specfications:</b><br> '.implode(', ', [
-          $server['cpu_vendor'],
-          '<b>'.$server['vcpu_count'].'</b>' . ' core(s)',
-          '<b>'.$server['ram'].'</b>' . ' MB RAM',
-          '<b>'.$server['disk'].'</b>' . ' GB SSD',
-        ]),
-      ]);
+      foreach ($server['locations'] as $sloc) {
+        $lv = $locations[$this->locations][$locationIds[$sloc]];
+        $loc = $lv['city'] . ', '. $lv['country'];
+        $processed_value = implode(' - ', [
+          $loc,
+          $server['id'],
+          implode(', ', [
+            $server['cpu_vendor'],
+            $server['vcpu_count'] . ' core(s)',
+            $server['ram'] . ' MB RAM',
+            $server['disk'] . ' GB SSD',
+            number_format($server['bandwidth']/1000, 1) . ' TB traffic',
+          ]),
+        ]);
 
-      $serverLocations = [];
-      foreach ($server['locations'] as $l) {
-        $serverLocations[] = $locationsArray[$l];
+        # Key format: 'server type ID'_'location ID'.
+        $processed_key = implode('_', [$server['id'], $lv['id']]);
+        # <select> option.
+        $processed_server_types[$price_key][$processed_key] = $processed_value;
       }
-
-      # Add locations.
-      $processed_value = implode('<br>', [
-        $processed_value,
-        '<b>Locations:</b><br> ' . implode('; ', $serverLocations),
-      ]);
-
-      # Key format: 'server type ID'_'location ID'.
-      $processed_key = implode('_', [$key]);
-
-      $processed_server_types[$price_key][$processed_key] = Markup::create($processed_value);
     }
     ksort($processed_server_types, SORT_NATURAL);
     return $processed_server_types;

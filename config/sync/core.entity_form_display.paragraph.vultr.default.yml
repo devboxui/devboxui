@@ -1,15 +1,15 @@
-uuid: 6d9347d8-2687-4f4b-bb23-cd6a251b82d7
+uuid: 1aff43fc-3d01-4c85-829c-b82cca27d578
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.hetzner.field_name
-    - field.field.paragraph.hetzner.field_response
-    - field.field.paragraph.hetzner.field_server_type
-    - paragraphs.paragraphs_type.hetzner
-id: paragraph.hetzner.default
+    - field.field.paragraph.vultr.field_name
+    - field.field.paragraph.vultr.field_response
+    - field.field.paragraph.vultr.field_server_type
+    - paragraphs.paragraphs_type.vultr
+id: paragraph.vultr.default
 targetEntityType: paragraph
-bundle: hetzner
+bundle: vultr
 mode: default
 content:
   field_name:

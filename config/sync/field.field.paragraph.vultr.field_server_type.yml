@@ -1,0 +1,21 @@
+uuid: 3d384103-b5cf-4072-ac2e-2150c4461823
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_server_type
+    - paragraphs.paragraphs_type.vultr
+  module:
+    - options
+id: paragraph.vultr.field_server_type
+field_name: field_server_type
+entity_type: paragraph
+bundle: vultr
+label: Server
+description: "Select the server type.<br>\r\nThe latest version of Ubuntu OS will be used."
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

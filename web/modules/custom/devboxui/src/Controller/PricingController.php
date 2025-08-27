@@ -81,10 +81,10 @@ class PricingController extends ControllerBase {
           [$locations[], $id, $specs] = explode(' - ', $vv);
         }
         $output[] = implode('<br>', [
-          '<b>Price:</b>' . $sk . '<br>',
-          '<b>ID:</b>' . $id,
+          '<b>Price:</b> ' . $sk . '<br>',
+          '<b>ID:</b> ' . $id,
           '<b>Specifications:</b><br>' . $specs,
-          '<b>Locations:</b><br>' . implode(', ', $locations),
+          '<b>Locations:</b><br>' . implode('; ', $locations),
         ]);
       }
     }

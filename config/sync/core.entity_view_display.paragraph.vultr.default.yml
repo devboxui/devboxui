@@ -1,17 +1,17 @@
-uuid: 295d3888-7652-439e-8593-410a77866fcf
+uuid: 5dd9c257-629a-49ae-8133-c330e10b775a
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.hetzner.field_name
-    - field.field.paragraph.hetzner.field_response
-    - field.field.paragraph.hetzner.field_server_type
-    - paragraphs.paragraphs_type.hetzner
+    - field.field.paragraph.vultr.field_name
+    - field.field.paragraph.vultr.field_response
+    - field.field.paragraph.vultr.field_server_type
+    - paragraphs.paragraphs_type.vultr
   module:
     - options
-id: paragraph.hetzner.default
+id: paragraph.vultr.default
 targetEntityType: paragraph
-bundle: hetzner
+bundle: vultr
 mode: default
 content:
   field_name:
@@ -22,6 +22,13 @@ content:
     third_party_settings: {  }
     weight: 0
     region: content
+  field_response:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
   field_server_type:
     type: list_default
     label: above
@@ -29,5 +36,4 @@ content:
     third_party_settings: {  }
     weight: 1
     region: content
-hidden:
-  field_response: true
+hidden: {  }

@@ -147,7 +147,6 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
     $currency = vpsCall($this->provider, $this->pricing)[$this->pricing][$this->currency];
     $locations = vpsCall($this->provider, $this->locations);
     $servers = vpsCall($this->provider, $this->server_types);
-    $server_types = array_column($servers[$this->server_types], 'description', 'id');
 
     $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'name'));
     $processed_server_types = [];
@@ -187,7 +186,6 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
 
         # Key format: 'server type ID'_'location ID'.
         $processed_key = implode('_', [$server['id'], $lv['id']]);
-
         # <select> option.
         $processed_server_types[$price_key][$processed_key] = $processed_value;
       }
