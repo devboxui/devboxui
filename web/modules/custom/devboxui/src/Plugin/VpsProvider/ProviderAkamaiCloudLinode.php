@@ -165,7 +165,7 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
 
       $processed_value = implode('<br>', [
         '<b>ID:</b> '.implode(' - ', [$server_name]),
-        '<b>Specs:</b> '.implode(', ', [
+        '<b>Specifications:</b><br> '.implode(', ', [
           '<b>'.$server['vcpus'].'</b>' . ' core(s)',
           '<b>'.$server['memory'].'</b>' . ' MB RAM',
           '<b>'.$server['disk'].'</b>' . ' MB SSD',
@@ -176,7 +176,7 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
       # Add locations.
       $processed_value = implode('<br>', [
         $processed_value,
-        '<b>Locations:</b> ' . implode('; ', $locationsArray),
+        '<b>Locations:</b><br> ' . implode('; ', $locationsArray),
       ]);
 
       # Process location exceptions.
@@ -192,7 +192,7 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
       if (!empty($exceptions)) {
         $processed_value = implode('<br>', [
           $processed_value,
-          '<b>Exceptions:</b> ' . implode('; ', $exceptions),
+          '<b>Exceptions:</b><br> ' . implode('; ', $exceptions),
         ]);
       }
 

@@ -49,6 +49,7 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
     $this->currency = 'currency';
     $this->images = 'os';
     $this->locations = 'regions';
+    $this->locationsRetKey = 'regions';
     $this->pricing = 'pricing';
     $this->provider = 'vultr';
     $this->providerName = 'Vultr';
@@ -147,7 +148,11 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
     $locations = vpsCall($this->provider, $this->locations);
     $servers = vpsCall($this->provider, $this->server_types);
 
-    $locationIds = array_flip(array_column($locations[$this->locations], 'id'));
+    $locationsArray = [];
+    foreach ($locations[$this->locationsRetKey] as $location) {
+      $locationsArray[$location['id']] = $location['city'] . ', '. $location['country'];
+    }
+
     $processed_server_types = [];
     foreach ($servers[$this->server_types] as $server) {
       $key = $server_name = $server['id'];
@@ -156,24 +161,31 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
         $server['hourly_cost'] . ' '. $currency .'/hr)',
       ]);
 
+      $processed_value = implode('<br>', [
+        '<b>ID:</b> '.$server_name,
+        '<b>Specfications:</b><br> '.implode(', ', [
+          $server['cpu_vendor'],
+          '<b>'.$server['vcpu_count'].'</b>' . ' core(s)',
+          '<b>'.$server['ram'].'</b>' . ' MB RAM',
+          '<b>'.$server['disk'].'</b>' . ' GB SSD',
+        ]),
+      ]);
+
+      $serverLocations = [];
       foreach ($server['locations'] as $l) {
-        $lv = $locations[$this->locations][$locationIds[$l]];
-        $location_key = Markup::create('<b>' . $lv['city'] . ', ' . $lv['country'] . ' (' . $lv['continent'] . ')</b>');
-        $processed_value = implode('<br>', [
-          implode(' - ', [$server_name, $location_key]),
-          implode(', ', [
-            $server['cpu_vendor'],
-            '<b>'.$server['vcpu_count'].'</b>' . ' core(s)',
-            '<b>'.$server['ram'].'</b>' . ' MB RAM',
-            '<b>'.$server['disk'].'</b>' . ' GB SSD',
-          ]),
-        ]);
-
-        # Key format: 'server type ID'
-        $processed_key = implode('_', [$key]);
-
-        $processed_server_types[$price_key][$processed_key] = Markup::create($processed_value);
+        $serverLocations[] = $locationsArray[$l];
       }
+
+      # Add locations.
+      $processed_value = implode('<br>', [
+        $processed_value,
+        '<b>Locations:</b><br> ' . implode('; ', $serverLocations),
+      ]);
+
+      # Key format: 'server type ID'
+      $processed_key = implode('_', [$key]);
+
+      $processed_server_types[$price_key][$processed_key] = Markup::create($processed_value);
     }
     ksort($processed_server_types, SORT_NATURAL);
     return $processed_server_types;

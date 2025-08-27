@@ -155,7 +155,6 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
       $locationsArray[$location['slug']] = $location['name'];
     }
 
-    $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'slug'));
     $processed_server_types = [];
     foreach ($servers[$this->server_types_ret_key] as $server) {
       $key = $server_name = $server['slug'];
@@ -166,12 +165,23 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
 
       $processed_value = implode('<br>', [
         '<b>ID:</b> '.implode(' - ', [$server_name]),
-        '<b>Specs:</b> '.implode(', ', [
+        '<b>Specfications:</b><br> '.implode(', ', [
           '<b>'.$server['vcpus'].'</b>' . ' core(s)',
           '<b>'.$server['memory'].'</b>' . ' MB RAM',
           '<b>'.$server['disk'].'</b>' . ' MB SSD',
           '<b>'.$server['transfer'].'</b>' . ' TB traffic',
         ]),
+      ]);
+
+      $serverLocations = [];
+      foreach($server['regions'] as $region) {
+        $serverLocations[] = $locationsArray[$region];
+      }
+
+      # Add locations.
+      $processed_value = implode('<br>', [
+        $processed_value,
+        '<b>Locations:</b><br> ' . implode('; ', $serverLocations),
       ]);
 
       # Key format: 'server type ID'.
