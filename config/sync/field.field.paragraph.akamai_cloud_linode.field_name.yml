@@ -1,0 +1,19 @@
+uuid: 727a9921-c43b-4753-87f9-070b39c4f1f4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_name
+    - paragraphs.paragraphs_type.akamai_cloud_linode
+id: paragraph.akamai_cloud_linode.field_name
+field_name: field_name
+entity_type: paragraph
+bundle: akamai_cloud_linode
+label: Name
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

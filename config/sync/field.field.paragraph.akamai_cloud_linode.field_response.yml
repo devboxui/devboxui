@@ -1,0 +1,19 @@
+uuid: b341dfe3-8ef1-49a1-994d-33f2360417e3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_response
+    - paragraphs.paragraphs_type.akamai_cloud_linode
+id: paragraph.akamai_cloud_linode.field_response
+field_name: field_response
+entity_type: paragraph
+bundle: akamai_cloud_linode
+label: Response
+description: 'API response. Should get filled in by the background processes calling the API.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

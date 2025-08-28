@@ -1,0 +1,39 @@
+uuid: 729ef68b-44cf-4137-b184-0ef74a7a72b4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.akamai_cloud_linode.field_name
+    - field.field.paragraph.akamai_cloud_linode.field_response
+    - field.field.paragraph.akamai_cloud_linode.field_server_type
+    - paragraphs.paragraphs_type.akamai_cloud_linode
+  module:
+    - options
+id: paragraph.akamai_cloud_linode.default
+targetEntityType: paragraph
+bundle: akamai_cloud_linode
+mode: default
+content:
+  field_name:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_response:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_server_type:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

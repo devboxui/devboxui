@@ -157,49 +157,45 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
 
     $processed_server_types = [];
     foreach ($servers[$this->server_types_ret_key] as $server) {
-      $key = $server_name = $server['id'];
       $price_key = implode(' (', [
         $server['price']['monthly'] . ' '. $currency .'/mo',
         $server['price']['hourly'] . ' '. $currency .'/hr)',
       ]);
 
-      $processed_value = implode('<br>', [
-        '<b>ID:</b> '.implode(' - ', [$server_name]),
-        '<b>Specifications:</b><br> '.implode(', ', [
-          '<b>'.$server['vcpus'].'</b>' . ' core(s)',
-          '<b>'.$server['memory'].'</b>' . ' MB RAM',
-          '<b>'.$server['disk'].'</b>' . ' MB SSD',
-          '<b>'.$server['network_out'].'</b>' . ' MB traffic',
-        ]),
+      $specs = implode(', ', [
+        $server['vcpus'] . ' core(s)',
+        $server['memory'] . ' MB RAM',
+        $server['disk'] . ' MB SSD',
+        $server['transfer']/1000 . ' TB traffic',
       ]);
 
-      # Add locations.
-      $processed_value = implode('<br>', [
-        $processed_value,
-        '<b>Locations:</b><br> ' . implode('; ', $locationsArray),
-      ]);
+      foreach ($locations[$this->locationsRetKey] as $sloc) {
+        #if ($sloc['status'] != 'ok') continue;
 
-      # Process location exceptions.
-      $exceptions = [];
-      foreach ($server['region_prices'] as $ex) {
-        $exceptions[] = $locationsArray[$ex['id']] . ' - '. implode(', ', [
-          $ex['monthly'] . ' '. $currency .'/mo',
-          $ex['hourly'] . ' '. $currency .'/hr',
+        $processed_value = implode(' - ', [
+          $sloc['label'],
+          $server['id'],
+          $specs,
         ]);
-      }
 
-      # Add location exceptions.
-      if (!empty($exceptions)) {
-        $processed_value = implode('<br>', [
-          $processed_value,
-          '<b>Exceptions:</b><br> ' . implode('; ', $exceptions),
-        ]);
-      }
+        # Get location exceptions.
+        $locationExcp = array_column($server['region_prices'], 'id');
+        if (in_array($sloc['id'], $locationExcp)) {
+          $locationExcpFlipped = array_flip($locationExcp);
 
-      # Key format: 'server type ID'.
-      $processed_key = implode('_', [$key]);
-      # Build the record.
-      $processed_server_types[$price_key][$processed_key] = Markup::create($processed_value);
+          # Get the exception price.
+          $exceptionPrice = $server['region_prices'][$locationExcpFlipped[$sloc['id']]];
+          $price_key = implode(' (', [
+            $exceptionPrice['monthly'] . ' '. $currency .'/mo',
+            $exceptionPrice['hourly'] . ' '. $currency .'/hr)',
+          ]);
+        }
+
+        # Key format: 'server type ID'.
+        $processed_key = implode('_', [$server['id'], $sloc['id']]);
+        # Build the record.
+        $processed_server_types[$price_key][$processed_key] = Markup::create($processed_value);
+      }
     }
     ksort($processed_server_types, SORT_NATURAL);
     return $processed_server_types;

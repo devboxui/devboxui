@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.storage.node.field_vps_provider
     - node.type.devbox
+    - paragraphs.paragraphs_type.akamai_cloud_linode
     - paragraphs.paragraphs_type.digitalocean
     - paragraphs.paragraphs_type.hetzner
     - paragraphs.paragraphs_type.vultr
@@ -26,9 +27,13 @@ settings:
     target_bundles:
       hetzner: hetzner
       vultr: vultr
+      akamai_cloud_linode: akamai_cloud_linode
       digitalocean: digitalocean
     negate: 0
     target_bundles_drag_drop:
+      akamai_cloud_linode:
+        weight: 16
+        enabled: true
       app:
         weight: 14
         enabled: false

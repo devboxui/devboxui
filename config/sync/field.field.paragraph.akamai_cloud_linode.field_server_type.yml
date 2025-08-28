@@ -1,0 +1,21 @@
+uuid: c3710407-bc2c-459b-9b69-9db9ed581b0f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_server_type
+    - paragraphs.paragraphs_type.akamai_cloud_linode
+  module:
+    - options
+id: paragraph.akamai_cloud_linode.field_server_type
+field_name: field_server_type
+entity_type: paragraph
+bundle: akamai_cloud_linode
+label: Server
+description: "Select the server type.<br>\r\nThe latest version of Ubuntu OS will be used."
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

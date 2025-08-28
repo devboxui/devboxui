@@ -180,7 +180,7 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
         ]);
 
         # Key format: 'server type ID'.
-        $processed_key = implode('_', [$server['slug'], $lv['id']]);
+        $processed_key = implode('_', [$server['slug'], $lv['slug']]);
         # Build the record.
         $processed_server_types[$price_key][$processed_key] = $processed_value;
       }
