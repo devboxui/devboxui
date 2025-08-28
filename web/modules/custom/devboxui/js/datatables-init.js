@@ -15,7 +15,8 @@
             regex: false,
             caseInsensitive: true
           },
-          autoWidth: false
+          autoWidth: false,
+          fixedHeader: true,
         });
 
         dt.on('draw.dt', function () {

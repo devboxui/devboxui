@@ -170,7 +170,7 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
       ]);
 
       foreach ($locations[$this->locationsRetKey] as $sloc) {
-        #if ($sloc['status'] != 'ok') continue;
+        if ($sloc['status'] != 'ok') continue;
 
         $processed_value = implode(' - ', [
           $sloc['label'],

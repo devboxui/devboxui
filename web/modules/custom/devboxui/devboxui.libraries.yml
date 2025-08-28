@@ -8,9 +8,11 @@ gtag:
 datatables:
   css:
     theme:
-      https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css: { type: external }
+      https://cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css: { type: external }
+      https://cdn.datatables.net/fixedheader/4.0.3/css/fixedHeader.dataTables.min.css: { type: external }
   js:
-    https://cdn.datatables.net/2.3.2/js/dataTables.min.js: { type: external }
+    https://cdn.datatables.net/2.3.3/js/dataTables.min.js: { type: external }
+    https://cdn.datatables.net/fixedheader/4.0.3/js/dataTables.fixedHeader.min.js: { type: external }
     js/datatables-init.js: {}
   dependencies:
     - core/jquery

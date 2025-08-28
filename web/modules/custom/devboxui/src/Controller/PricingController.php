@@ -50,6 +50,7 @@ class PricingController extends ControllerBase {
     $build['pricing_table'] = [
       '#type' => 'table',
       '#header' => $header,
+      '#caption' => 'NOTE: Presented data comes directly from the displayed VPS providers using their APIs.',
       '#rows' => $rows,
       '#attributes' => ['class' => ['vps-pricing-table']],
       '#empty' => $this->t('No pricing data available.'),
@@ -80,6 +81,7 @@ class PricingController extends ControllerBase {
         foreach ($sv as $vk => $vv) {
           [$locations[], $id, $specs] = explode(' - ', $vv);
         }
+        $locations = array_unique($locations);
         $output[] = implode('<br>', [
           '<b>Price:</b> ' . $sk . '<br>',
           '<b>ID:</b> ' . $id,
