@@ -155,39 +155,35 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
       $locationsArray[$location['slug']] = $location['name'];
     }
 
+    $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'slug'));
     $processed_server_types = [];
     foreach ($servers[$this->server_types_ret_key] as $server) {
-      $key = $server_name = $server['slug'];
       $price_key = implode(' (', [
         $server['price_monthly'] . ' '. $currency .'/mo',
         $server['price_hourly'] . ' '. $currency .'/hr)',
       ]);
 
-      $processed_value = implode('<br>', [
-        '<b>ID:</b> '.implode(' - ', [$server_name]),
-        '<b>Specfications:</b><br> '.implode(', ', [
-          '<b>'.$server['vcpus'].'</b>' . ' core(s)',
-          '<b>'.$server['memory'].'</b>' . ' MB RAM',
-          '<b>'.$server['disk'].'</b>' . ' MB SSD',
-          '<b>'.$server['transfer'].'</b>' . ' TB traffic',
-        ]),
-      ]);
+      foreach ($server['regions'] as $sloc) {
+        $lv = $locations[$this->locations][$locationIds[$sloc]];
+        if (!$lv['available']) continue;
+        $loc = $lv['name'];
 
-      $serverLocations = [];
-      foreach($server['regions'] as $region) {
-        $serverLocations[] = $locationsArray[$region];
+        $processed_value = implode(' - ', [
+          $loc,
+          $server['slug'],
+          implode(', ', [
+            $server['vcpus'] . ' core(s)',
+            $server['memory'] . ' MB RAM',
+            $server['disk'] . ' MB SSD',
+            $server['transfer'] . ' TB traffic',
+          ]),
+        ]);
+
+        # Key format: 'server type ID'.
+        $processed_key = implode('_', [$server['slug'], $lv['id']]);
+        # Build the record.
+        $processed_server_types[$price_key][$processed_key] = $processed_value;
       }
-
-      # Add locations.
-      $processed_value = implode('<br>', [
-        $processed_value,
-        '<b>Locations:</b><br> ' . implode('; ', $serverLocations),
-      ]);
-
-      # Key format: 'server type ID'.
-      $processed_key = implode('_', [$key]);
-      # Build the record.
-      $processed_server_types[$price_key][$processed_key] = Markup::create($processed_value);
     }
     ksort($processed_server_types, SORT_NATURAL);
     return $processed_server_types;

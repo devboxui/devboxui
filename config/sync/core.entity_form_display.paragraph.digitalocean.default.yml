@@ -1,0 +1,32 @@
+uuid: 72fccdde-a235-4cc6-b8f0-30cff87f9b36
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.digitalocean.field_name
+    - field.field.paragraph.digitalocean.field_response
+    - field.field.paragraph.digitalocean.field_server_type
+    - paragraphs.paragraphs_type.digitalocean
+id: paragraph.digitalocean.default
+targetEntityType: paragraph
+bundle: digitalocean
+mode: default
+content:
+  field_name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_server_type:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_response: true
+  status: true

@@ -14,7 +14,8 @@
             smart: false,
             regex: false,
             caseInsensitive: true
-          }
+          },
+          autoWidth: false
         });
 
         dt.on('draw.dt', function () {

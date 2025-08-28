@@ -1,0 +1,21 @@
+uuid: 59d8669e-617d-4976-8ab7-79a1ee655d58
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_server_type
+    - paragraphs.paragraphs_type.digitalocean
+  module:
+    - options
+id: paragraph.digitalocean.field_server_type
+field_name: field_server_type
+entity_type: paragraph
+bundle: digitalocean
+label: Server
+description: "Select the server type.<br>\r\nThe latest version of Ubuntu OS will be used."
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

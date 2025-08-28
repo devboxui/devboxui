@@ -1,0 +1,19 @@
+uuid: 645c9ae0-fa83-47b6-a518-5fd77d6190c6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_name
+    - paragraphs.paragraphs_type.digitalocean
+id: paragraph.digitalocean.field_name
+field_name: field_name
+entity_type: paragraph
+bundle: digitalocean
+label: Name
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,19 @@
+uuid: 206d4db3-a013-4c3d-a6e5-19d4e98fe25a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_response
+    - paragraphs.paragraphs_type.digitalocean
+id: paragraph.digitalocean.field_response
+field_name: field_response
+entity_type: paragraph
+bundle: digitalocean
+label: Response
+description: 'API response. Should get filled in by the background processes calling the API.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

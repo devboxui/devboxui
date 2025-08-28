@@ -84,7 +84,7 @@ class PricingController extends ControllerBase {
           '<b>Price:</b> ' . $sk . '<br>',
           '<b>ID:</b> ' . $id,
           '<b>Specifications:</b><br>' . $specs,
-          '<b>Locations:</b><br>' . implode('; ', $locations),
+          '<b>Locations ('.count($locations).'):</b><br>' . implode('; ', $locations),
         ]);
       }
     }

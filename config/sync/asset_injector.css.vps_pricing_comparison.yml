@@ -16,6 +16,16 @@ code: |-
   .path-vps-pricing-comparison .dt-search input {
   	box-shadow: none;
   }
+  .vps-pricing-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+  .vps-pricing-table th,
+  .vps-pricing-table td {
+    width: 1%;               /* let browser distribute equally */
+    vertical-align: top;     /* keep your earlier request */
+    word-break: break-word;  /* prevent overflow */
+  }
   .vps-pricing-table mark.dt-hl {
     background: yellow;
     font-weight: bold;

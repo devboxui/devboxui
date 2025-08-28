@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.storage.node.field_vps_provider
     - node.type.devbox
+    - paragraphs.paragraphs_type.digitalocean
     - paragraphs.paragraphs_type.hetzner
     - paragraphs.paragraphs_type.vultr
   module:
@@ -25,6 +26,7 @@ settings:
     target_bundles:
       hetzner: hetzner
       vultr: vultr
+      digitalocean: digitalocean
     negate: 0
     target_bundles_drag_drop:
       app:
@@ -36,6 +38,9 @@ settings:
       ddev:
         weight: 16
         enabled: false
+      digitalocean:
+        weight: 18
+        enabled: true
       docker_image:
         weight: 17
         enabled: false
