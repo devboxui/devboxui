@@ -10,7 +10,7 @@ field_name: field_docker_image
 entity_type: paragraph
 bundle: app
 label: 'Docker image'
-description: ''
+description: 'Popular repositories: <a href="https://hub.docker.com" target="_blank">hub.docker.com</a>, <a href="https://docs.linuxserver.io/images" target="_blank">docs.linuxserver.io/images</a>.'
 required: true
 translatable: false
 default_value: {  }
