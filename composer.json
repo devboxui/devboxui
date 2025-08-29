@@ -42,6 +42,7 @@
         "drupal/google_tag": "^2.0",
         "drupal/hook_event_dispatcher": "^4.2",
         "drupal/masquerade": "^2.0",
+        "drupal/menu_item_role_access": "^2.4",
         "drupal/paragraphs": "^1.19",
         "drupal/paragraphs_ee": "^10.0",
         "drupal/pathauto": "^1.13",
