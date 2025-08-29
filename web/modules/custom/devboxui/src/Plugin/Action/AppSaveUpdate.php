@@ -104,7 +104,7 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
     foreach ($currentAppValues as $app_node) {
       if (isset($app_node['subform'])) {
         $app_paragraph = entityManage('paragraph', $app_node['target_id']);
-        $app_paragraph->set('field_saved_config', json_encode($app_node['subform']['config_output_container']['config_output']));
+        $app_paragraph->set('field_saved_config', json_encode($this->processAppConfig($app_node)));
         $app_paragraph->save();
       }
 
@@ -126,6 +126,10 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
     }
 
     return $commands;
+  }
+
+  public function processAppConfig($appNode) {
+    return [];
   }
 
 }

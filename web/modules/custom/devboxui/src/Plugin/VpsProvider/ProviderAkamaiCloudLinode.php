@@ -206,15 +206,8 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
    *
    * @return void
    */
-  public function os_image($arch = 'x86') {
-    $results = vpsCall($this->provider, $this->images, [
-      'type' => 'system',
-      'status' => 'available',
-      'os_flavor' => 'ubuntu',
-      'sort' => 'name:desc',
-      'architecture' => $arch,
-      'per_page' => '1',
-    ]);
+  public function os_image() {
+    $results = vpsCall($this->provider, $this->images);
     return $results[$this->images][0]['id'];
   }
 

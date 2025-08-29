@@ -31,12 +31,6 @@ class PricingController extends ControllerBase {
         # Fill columns instead of rows.
         $rowCount = 0;
         foreach ($data as $d) {
-          # Account for different provider counts.
-          for ($i = 0; $i < $providerCount; $i++) {
-            if (!isset($rows[$rowCount][$i])) {
-              $rows[$rowCount][$i] = ['data' => ['#markup' => '']];
-            }
-          }
           # Add the current data.
           $rows[$rowCount][$providerCount] = ['data' => ['#markup' => $d]];
           # Increase counter.
@@ -50,8 +44,9 @@ class PricingController extends ControllerBase {
     $build['pricing_table'] = [
       '#type' => 'table',
       '#header' => $header,
-      '#caption' => 'NOTE: Presented data comes directly from the displayed VPS providers using their APIs.',
-      '#rows' => $rows,
+      '#caption' => 'NOTE: Presented data comes directly from the listed VPS providers using their APIs.',
+      #'#rows' => $rows,
+      '#rows' => $this->normalizeRows($rows, $providerCount),
       '#attributes' => ['class' => ['vps-pricing-table']],
       '#empty' => $this->t('No pricing data available.'),
       '#attached' => ['library' => ['devboxui/datatables']],
@@ -93,24 +88,18 @@ class PricingController extends ControllerBase {
     return $output;
   }
 
-  public function pretify($servers) {
-    $list = ['<ul>'];
-    foreach ($servers as $sk => $sv) {
-      $list[] = '<li>';
-      $list[] = $sk;
-      if (is_array($sv)) {
-        $list[] = '<ul>';
-        foreach ($sv as $vk => $vv) {
-          $list[] = '<li>';
-          $list[] = $vv;
-          $list[] = '</li>';
+  protected function normalizeRows(array $rows, int $colCount): array {
+    foreach ($rows as &$row) {
+      for ($i = 0; $i < $colCount; $i++) {
+        if (!isset($row[$i])) {
+          $row[$i] = ['data' => ['#markup' => '']];
         }
-        $list[] = '</ul>';
       }
-      $list[] = '</li>';
+      // Ensure consistent ordering (so col indexes line up).
+      ksort($row);
     }
-    $list[] = '</ul>';
-    return implode('', $list);
+    return $rows;
   }
+
 
 }
