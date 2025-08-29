@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -79,6 +80,8 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
    *   The UrlGenerator plugins manager.
    * @param \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface $memory_cache
    *   The memory cache.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *    The config factory.
    */
   public function __construct(
     array $configuration,
@@ -92,6 +95,7 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
     EntityManager $entities_manager,
     UrlGeneratorManager $url_generator_manager,
     MemoryCacheInterface $memory_cache,
+    ConfigFactoryInterface $config_factory,
   ) {
     parent::__construct(
       $configuration,
@@ -101,7 +105,8 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       $settings,
       $language_manager,
       $entity_type_manager,
-      $entity_helper
+      $entity_helper,
+      $config_factory
     );
     $this->entitiesManager = $entities_manager;
     $this->urlGeneratorManager = $url_generator_manager;
@@ -129,7 +134,8 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       $container->get('simple_sitemap.entity_helper'),
       $container->get('simple_sitemap.entity_manager'),
       $container->get('plugin.manager.simple_sitemap.url_generator'),
-      $container->get('entity.memory_cache')
+      $container->get('entity.memory_cache'),
+      $container->get('config.factory')
     );
   }
 

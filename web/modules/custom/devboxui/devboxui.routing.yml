@@ -4,4 +4,4 @@ devboxui.vps_pricing_comparison:
     _controller: '\Drupal\devboxui\Controller\PricingController::pricingTable'
     _title: 'VPS Pricing Comparison'
   requirements:
-    _role: 'administrator'
+    _access: 'TRUE'

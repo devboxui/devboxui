@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap_views\Plugin\simple_sitemap\UrlGenerator;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -65,6 +66,8 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
    *   Views sitemap data.
    * @param \Drupal\Core\Routing\RouteProviderInterface $route_provider
    *   The route provider.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *    The config factory.
    */
   public function __construct(
     array $configuration,
@@ -77,6 +80,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
     EntityHelper $entity_helper,
     SimpleSitemapViews $sitemap_views,
     RouteProviderInterface $route_provider,
+    ConfigFactoryInterface $config_factory,
   ) {
     parent::__construct(
       $configuration,
@@ -86,7 +90,8 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
       $settings,
       $language_manager,
       $entity_type_manager,
-      $entity_helper
+      $entity_helper,
+      $config_factory
     );
     $this->sitemapViews = $sitemap_views;
     $this->routeProvider = $route_provider;
@@ -106,7 +111,8 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
       $container->get('entity_type.manager'),
       $container->get('simple_sitemap.entity_helper'),
       $container->get('simple_sitemap.views'),
-      $container->get('router.route_provider')
+      $container->get('router.route_provider'),
+      $container->get('config.factory')
     );
   }
 

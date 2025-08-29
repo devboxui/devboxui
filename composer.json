@@ -16,7 +16,7 @@
     ],
     "require": {
         "composer/installers": "^2.3",
-        "cweagans/composer-patches": "^1.7",
+        "cweagans/composer-patches": "~1.0",
         "drupal/admin_dialogs": "^1.0",
         "drupal/admin_toolbar": "^3.6",
         "drupal/alter_route_title": "^1.0",
@@ -137,6 +137,9 @@
         },
         "enable-patching": true,
         "patches": {
+            "drupal/simple_sitemap": {
+                "3264573: Respect front page configuration": "https://www.drupal.org/files/issues/2025-04-21/3264573-16075329.patch"
+            }
         }
     }
 }

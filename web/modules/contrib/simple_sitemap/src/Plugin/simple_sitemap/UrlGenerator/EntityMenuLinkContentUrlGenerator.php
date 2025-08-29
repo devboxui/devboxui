@@ -3,6 +3,7 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\Component\Plugin\Exception\PluginException;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
@@ -76,6 +77,8 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
    *   The menu tree service.
    * @param \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager
    *   The menu link plugin manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *    The config factory.
    */
   public function __construct(
     array $configuration,
@@ -89,6 +92,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     EntityManager $entities_manager,
     MenuLinkTreeInterface $menu_link_tree,
     MenuLinkManagerInterface $menu_link_manager,
+    ConfigFactoryInterface $config_factory,
   ) {
     parent::__construct(
       $configuration,
@@ -98,7 +102,8 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
       $settings,
       $language_manager,
       $entity_type_manager,
-      $entity_helper
+      $entity_helper,
+      $config_factory
     );
     $this->entitiesManager = $entities_manager;
     $this->menuLinkTree = $menu_link_tree;
@@ -125,7 +130,8 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
       $container->get('simple_sitemap.entity_helper'),
       $container->get('simple_sitemap.entity_manager'),
       $container->get('menu.link_tree'),
-      $container->get('plugin.manager.menu.link')
+      $container->get('plugin.manager.menu.link'),
+      $container->get('config.factory')
     );
   }
 

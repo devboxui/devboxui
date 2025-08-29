@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
@@ -10,6 +11,7 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Url;
 use Drupal\file\FileInterface;
+use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\media\MediaInterface;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\paragraphs_library\LibraryItemInterface;
@@ -40,6 +42,13 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
   protected $defaultLanguageId;
 
   /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -61,6 +70,20 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
   protected $entityHelper;
 
   /**
+   * The configuration factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * The default front page per language.
+   *
+   * @var string[]
+   */
+  protected $frontPage = [];
+
+  /**
    * EntityUrlGeneratorBase constructor.
    *
    * @param array $configuration
@@ -79,6 +102,8 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
    *   The entity type manager.
    * @param \Drupal\simple_sitemap\Entity\EntityHelper $entity_helper
    *   Helper class for working with entities.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *    The config factory.
    */
   public function __construct(
     array $configuration,
@@ -89,13 +114,16 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entity_helper,
+    ConfigFactoryInterface $config_factory,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $logger, $settings);
     $this->languages = $language_manager->getLanguages();
     $this->defaultLanguageId = $language_manager->getDefaultLanguage()->getId();
+    $this->languageManager = $language_manager;
     $this->entityTypeManager = $entity_type_manager;
     $this->anonUser = new AnonymousUserSession();
     $this->entityHelper = $entity_helper;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -110,7 +138,8 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
       $container->get('simple_sitemap.settings'),
       $container->get('language_manager'),
       $container->get('entity_type.manager'),
-      $container->get('simple_sitemap.entity_helper')
+      $container->get('simple_sitemap.entity_helper'),
+      $container->get('config.factory')
     );
   }
 
@@ -180,6 +209,15 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
    */
   protected function getAlternateUrlsForDefaultLanguage(Url $url): array {
     $alternate_urls = [];
+
+    // Exchange the url with one pointing to the front route in case the
+    // internal url is configured as the front page.
+    if (($entity = $this->entityHelper->getEntityFromUrlObject($url)) instanceof ContentEntityInterface) {
+      if ($this->getFrontPagePath($entity->language()->getId()) === $url->getInternalPath()) {
+        $url = Url::fromRoute('<front>');
+      }
+    }    
+
     if ($url->access($this->anonUser)) {
       $alternate_urls[$this->defaultLanguageId] = $this->replaceBaseUrlWithCustom($url
         ->setAbsolute()->setOption('language', $this->languages[$this->defaultLanguageId])->toString()
@@ -204,9 +242,16 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
     $alternate_urls = [];
 
     foreach ($entity->getTranslationLanguages() as $language) {
-      if (!isset($this->settings->get('excluded_languages')[$language->getId()]) || $language->isDefault()) {
-        if ($entity->getTranslation($language->getId())->access('view', $this->anonUser)) {
-          $alternate_urls[$language->getId()] = $this->replaceBaseUrlWithCustom($url
+      $langcode = $language->getId();
+      if (!isset($this->settings->get('excluded_languages')[$langcode]) || $language->isDefault()) {
+        if ($entity->getTranslation($langcode)->access('view', $this->anonUser)) {
+          // Exchange the url with one pointing to the front route in case the
+          // internal url is configured as the front page.
+          if ($this->getFrontPagePath($langcode) === $url->getInternalPath()) {
+            $url = Url::fromRoute('<front>');
+          }
+
+          $alternate_urls[$langcode] = $this->replaceBaseUrlWithCustom($url
             ->setAbsolute()->setOption('language', $language)->toString()
           );
         }
@@ -325,6 +370,34 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
     }
 
     return $path_data;
+  }
+
+  /**
+   * Returns the front page path for the given language code.
+   *
+   * @param string $langcode
+   *   The language code.
+   *
+   * @return string
+   *   The front page path.
+   */
+  protected function getFrontPagePath(string $langcode) {
+    if (!isset($this->frontPage[$langcode])) {
+      $path = NULL;
+      if ($this->languageManager instanceof ConfigurableLanguageManagerInterface) {
+        $config = $this->languageManager->getLanguageConfigOverride($langcode, 'system.site');
+        $path = $config->get('page.front');
+      }
+
+      if ($path === NULL) {
+        $config = $this->configFactory->get('system.site');
+        $path = $config->get('page.front');
+      }
+
+      $path = ltrim($path, '/');
+      $this->frontPage[$langcode] = $path;
+    }
+    return $this->frontPage[$langcode];
   }
 
 }

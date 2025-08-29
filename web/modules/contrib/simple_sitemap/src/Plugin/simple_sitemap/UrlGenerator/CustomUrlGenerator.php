@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\PathValidatorInterface;
@@ -64,6 +65,8 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
    *   The simple_sitemap.custom_link_manager service.
    * @param \Drupal\Core\Path\PathValidatorInterface $path_validator
    *   The path validator service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *    The config factory.
    */
   public function __construct(
     array $configuration,
@@ -76,6 +79,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     EntityHelper $entity_helper,
     CustomLinkManager $custom_links,
     PathValidatorInterface $path_validator,
+    ConfigFactoryInterface $config_factory,
   ) {
     parent::__construct(
       $configuration,
@@ -85,7 +89,8 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
       $settings,
       $language_manager,
       $entity_type_manager,
-      $entity_helper
+      $entity_helper,
+      $config_factory
     );
     $this->customLinks = $custom_links;
     $this->pathValidator = $path_validator;
@@ -110,7 +115,8 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
       $container->get('entity_type.manager'),
       $container->get('simple_sitemap.entity_helper'),
       $container->get('simple_sitemap.custom_link_manager'),
-      $container->get('path.validator')
+      $container->get('path.validator'),
+      $container->get('config.factory')
     );
   }
 
