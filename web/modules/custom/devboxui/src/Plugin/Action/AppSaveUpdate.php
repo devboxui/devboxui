@@ -57,11 +57,11 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
       $status = $node->get('status')->getString() == '1';
       // Created.
       if ($node->isNew() && $status) {
-        $this->processAppToolNodes($node);
+        $this->processAppNodes($node);
       }
       else { // Updated.
         if ($status) {
-          $this->processAppToolNodes(
+          $this->processAppNodes(
             // Current values, after update.
             $node,
             // Original values, before update.
@@ -72,8 +72,8 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
     }
   }
 
-  public function processAppToolNodes($current, $original = NULL) {
-    $title = "Processing app/tool installation request";
+  private function processAppNodes($current, $original = NULL) {
+    $title = "Processing app installation request";
 
     $commands = [];
     // Updated
@@ -98,18 +98,29 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
     }
   }
 
-  public function processCurrOrigApps($currentAppValues, $originalAppValues = []) {
+  private function processCurrOrigApps($currentAppValues, $originalAppValues = []) {
     $commands = [];
     // Use $appValues to create App nodes that were added.
     foreach ($currentAppValues as $app_node) {
       if (isset($app_node['subform'])) {
         $app_paragraph = entityManage('paragraph', $app_node['target_id']);
-        $app_paragraph->set('field_saved_config', json_encode($this->processAppConfig($app_node)));
+        $app_paragraph->set('field_saved_config', $this->processAppConfig($app_node));
         $app_paragraph->save();
-      }
 
-      $pid = $app_node['target_id'];
-      $commands["App created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_provision_app']];
+        $pid = $app_node['target_id'];
+        $commands["App created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_provision_app']];
+      }
+      else {
+        $app_paragraph = entityManage('paragraph', $app_node['target_id']);
+        $saved_config = json_decode($app_paragraph->get('field_saved_config')->getString(), TRUE);
+        if (empty($saved_config)) {
+          $app_paragraph->set('field_saved_config', $this->processAppConfig($app_node));
+          $app_paragraph->save();
+
+          $pid = $app_node['target_id'];
+          $commands["App created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_provision_app']];
+        }
+      }
     }
 
     if ($originalAppValues) {
@@ -128,8 +139,16 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
     return $commands;
   }
 
-  public function processAppConfig($appNode) {
-    return [];
+  private function processAppConfig($appNode) {
+    $app_config = [];
+    # Submitted values, process them.
+    if (isset($appNode['subform'])) {
+
+    }
+    else {
+
+    }
+    return json_encode($app_config);
   }
 
 }

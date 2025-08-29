@@ -511,7 +511,7 @@ function apiCall($api_url, $path, $params = [], $method = 'GET', $token = '', $c
  * @return void
  */
 function vpsCall($provider, $path, $params = [], $method = 'GET', $cached = TRUE, $cache_time = 300) {
-  $uid = \Drupal::currentUser()->id() < '1' ? '1' : \Drupal::currentUser()->id();
+  $uid = \Drupal::currentUser()->id() < 1 ? 1 : \Drupal::currentUser()->id();
 
   $method = strtoupper($method);
   $user = User::load($uid);
