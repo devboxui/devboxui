@@ -23,7 +23,7 @@ class PricingController extends ControllerBase {
     foreach ($providers as $p) {
       if ($data = $this->processProvider($p)) {
         $provider_name = ucwords(str_replace('_', ' ', $p));
-        if ($provider_name == 'Digitalocean') {
+        if (strtolower($provider_name) == 'digitalocean') {
           $provider_name = 'DigitalOcean';
         }
         $header[] = $provider_name;
