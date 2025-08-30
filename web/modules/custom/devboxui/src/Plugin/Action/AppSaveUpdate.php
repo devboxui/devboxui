@@ -113,6 +113,7 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
       else {
         $app_paragraph = entityManage('paragraph', $app_node['target_id']);
         $saved_config = json_decode($app_paragraph->get('field_saved_config')->getString(), TRUE);
+        # In case the configs have not been saved.
         if (empty($saved_config)) {
           $app_paragraph->set('field_saved_config', $this->processAppConfig($app_node));
           $app_paragraph->save();
@@ -123,12 +124,12 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
       }
     }
 
+    // Use $originalAppValues to delete App nodes that were removed.
     if ($originalAppValues) {
       $currentIds = array_column($currentAppValues, 'target_id');
-      // Use $originalAppValues to delete App nodes that were removed.
       foreach ($originalAppValues as $app_node) {
         $pid = $app_node['target_id'];
-        // Delete app.
+        // Delete app if it does not exist.
         if (!in_array($pid, $currentIds)) {
           $commands["App deleted (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_delete_app']];
           $commands["App cleanup (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_app_cleanup']];
