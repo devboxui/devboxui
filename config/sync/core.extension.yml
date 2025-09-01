@@ -61,6 +61,14 @@ module:
   menu_item_role_access: 0
   menu_link_content: 0
   menu_ui: 0
+  metatag: 0
+  metatag_custom_tags: 0
+  metatag_google_cse: 0
+  metatag_hreflang: 0
+  metatag_mobile: 0
+  metatag_routes: 0
+  metatag_verification: 0
+  metatag_views: 0
   mysql: 0
   node: 0
   options: 0
@@ -69,6 +77,8 @@ module:
   path: 0
   path_alias: 0
   pcb: 0
+  redirect: 0
+  redirect_404: 0
   search: 0
   shortcut: 0
   simple_global_filter: 0

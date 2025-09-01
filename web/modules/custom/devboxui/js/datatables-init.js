@@ -17,6 +17,9 @@
           },
           autoWidth: false,
           fixedHeader: true,
+          columnDefs: [
+            { width: "250px", targets: "_all" }
+          ],
         });
 
         dt.on('draw.dt', function () {
