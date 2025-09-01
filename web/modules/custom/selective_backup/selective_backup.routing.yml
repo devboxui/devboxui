@@ -1,0 +1,7 @@
+selective_backup.settings:
+  path: '/admin/config/development/selective-backup'
+  defaults:
+    _form: '\Drupal\selective_backup\Form\BackupSettingsForm'
+    _title: 'Selective Backup Settings'
+  requirements:
+    _permission: 'access administration pages'

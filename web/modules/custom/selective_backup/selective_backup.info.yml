@@ -1,0 +1,5 @@
+name: 'Selective Backup'
+type: module
+description: 'Allows selective backup of entities to Cloudflare KV.'
+package: Custom
+core_version_requirement: ^10 || ^11
