@@ -449,4 +449,15 @@ class DevBoxBatchService {
     self::ssh_app_wrapper($paragraph_id, $command, $context);
   }
 
+  /**
+   * Batch callback for running SSH commands.
+   * Use phpseclib to connect via SSH and run the command(s).
+   */
+  public static function ssh_reboot($step, $paragraph_id, &$context): void {
+    $context['message'] = t('@step', ['@step' => $step]);
+
+    // Run the command.
+    self::ssh_app_wrapper($paragraph_id, 'reboot', $context);
+  }
+
 }

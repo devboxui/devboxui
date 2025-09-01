@@ -1,0 +1,15 @@
+uuid: 005a9c55-42d9-49ab-a3e3-b1ec53840479
+langcode: en
+status: true
+dependencies: {  }
+id: modal
+label: Modal
+code: |-
+  #drupal-modal .node__content {
+  	margin-bottom: 30px;
+  }
+media: all
+preprocess: true
+conditions: {  }
+contexts: {  }
+conditions_require_all: true

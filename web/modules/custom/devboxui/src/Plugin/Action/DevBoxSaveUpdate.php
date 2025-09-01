@@ -115,6 +115,8 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
         $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
         $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
       }
+      // Reboot
+      $commands["Reboot (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_reboot']];
     }
     // Run the batch operation.
     if (!empty($commands)) {
