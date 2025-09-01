@@ -1,0 +1,25 @@
+uuid: 7be5f47a-e7d8-42d2-92d0-7fd4a6df85c4
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.footer
+  module:
+    - system
+  theme:
+    - gin
+id: gin_footer
+theme: gin
+region: content
+weight: 0
+provider: null
+plugin: 'system_menu_block:footer'
+settings:
+  id: 'system_menu_block:footer'
+  label: Footer
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: null
+  expand_all_items: false
+visibility: {  }

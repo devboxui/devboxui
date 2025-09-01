@@ -1,0 +1,24 @@
+uuid: 13b6dd43-0a82-4555-bd45-607b305f9754
+langcode: en
+status: true
+dependencies: {  }
+id: footer
+label: Footer
+code: |-
+  #block-gin-footer {
+  	position: relative;
+    bottom: 0;
+    margin: 15px 0;
+  }
+  #block-gin-footer ul {
+  	margin: 0;
+  }
+  #block-gin-footer li {
+  	display: inline;
+  	margin-right: 15px;
+  }
+media: all
+preprocess: true
+conditions: {  }
+contexts: {  }
+conditions_require_all: true
