@@ -82,6 +82,7 @@ module:
   redirect_404: 0
   search: 0
   selective_backup: 0
+  serialization: 0
   shortcut: 0
   simple_global_filter: 0
   simple_sitemap: 0

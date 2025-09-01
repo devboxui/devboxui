@@ -2,7 +2,7 @@ services:
   # The primary service for handling Cloudflare KV backups.
   selective_backup.service:
     class: Drupal\selective_backup\Service\CloudflareBackupService
-    arguments: ['@http_client', '@serializer.json', '@state']
+    arguments: ['@http_client', '@serializer', '@state']
 
   # The dedicated event subscriber.
   # This service listens for specific events and triggers the main service's methods.
