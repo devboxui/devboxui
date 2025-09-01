@@ -66,6 +66,7 @@ class BackupSettingsForm extends ConfigFormBase {
       }
     }
 
+    ksort($options, SORT_NATURAL);
     $form['backup_entities'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Entity Types to Backup'),
