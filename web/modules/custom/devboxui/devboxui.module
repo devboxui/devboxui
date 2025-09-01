@@ -5,6 +5,7 @@
  * Contains \Drupal\devboxui\DevboxUiModule.
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Render\Markup;
@@ -722,4 +723,22 @@ function devboxuiConfigOverrides(&$config, $selected_app = '', $savedConfig = ''
       unset($index);
     }
   }
+}
+
+function devboxui_node_access(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Session\AccountInterface $account) : \Drupal\Core\Access\AccessResultInterface {
+  // Only the owner can access VPS data.
+  if ($entity->get('uid')->getString() != $account->id()) {
+    return AccessResult::forbidden();
+  }
+  // No opinion.
+  return AccessResult::neutral();
+}
+
+function devboxui_user_access(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Session\AccountInterface $account) : \Drupal\Core\Access\AccessResultInterface {
+  // Only the owner can access user data.
+  if ($entity->id() != $account->id()) {
+    return AccessResult::forbidden();
+  }
+  // No opinion.
+  return AccessResult::neutral();
 }
