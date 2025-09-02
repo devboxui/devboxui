@@ -16,6 +16,9 @@ code: |-
   #block-gin-useraccountmenu {
   	padding: 30px 0 15px 0;
   }
+  .user-logged-in #block-gin-useraccountmenu a[href="/user/password"] {
+  	display: none;
+  }
 media: all
 preprocess: true
 conditions: {  }
