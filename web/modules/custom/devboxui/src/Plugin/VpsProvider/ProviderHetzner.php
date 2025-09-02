@@ -143,10 +143,10 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
    *
    * @return void
    */
-  public function server_type() {
-    $currency = vpsCall($this->provider, $this->pricing)[$this->pricing][$this->currency];
-    $locations = vpsCall($this->provider, $this->locations);
-    $servers = vpsCall($this->provider, $this->server_types);
+  public function server_type($uid = '') {
+    $currency = vpsCall($this->provider, $this->pricing, [], 'GET', $uid)[$this->pricing][$this->currency];
+    $locations = vpsCall($this->provider, $this->locations, [], 'GET', $uid);
+    $servers = vpsCall($this->provider, $this->server_types, [], 'GET', $uid);
 
     $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'name'));
     $processed_server_types = [];

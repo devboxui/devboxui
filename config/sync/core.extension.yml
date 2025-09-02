@@ -24,7 +24,6 @@ module:
   content_moderation: 0
   contextual: 0
   datetime: 0
-  dblog: 0
   devboxui: 0
   dynamic_page_cache: 0
   eca: 0

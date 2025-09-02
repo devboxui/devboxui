@@ -145,10 +145,10 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
    *
    * @return void
    */
-  public function server_type() {
+  public function server_type($uid = '') {
     $currency = 'USD';
-    $locations = vpsCall($this->provider, $this->locations);
-    $servers = vpsCall($this->provider, $this->server_types);
+    $locations = vpsCall($this->provider, $this->locations, [], 'GET', $uid);
+    $servers = vpsCall($this->provider, $this->server_types, [], 'GET', $uid);
 
     $locationsArray = [];
     foreach ($locations[$this->locationsRetKey] as $location) {

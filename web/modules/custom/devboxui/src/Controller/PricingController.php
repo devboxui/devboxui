@@ -45,7 +45,6 @@ class PricingController extends ControllerBase {
       '#type' => 'table',
       '#header' => $header,
       '#caption' => 'NOTE: Presented data comes directly from the listed VPS providers using their APIs.',
-      #'#rows' => $rows,
       '#rows' => $this->normalizeRows($rows, $providerCount),
       '#attributes' => ['class' => ['vps-pricing-table']],
       '#empty' => $this->t('No pricing data available.'),
@@ -60,7 +59,7 @@ class PricingController extends ControllerBase {
     if (!empty($user->get('field_vps_'.$p)->getString())) {
       $plugin_manager = \Drupal::service('plugin.manager.vps_provider');
       if ($plugin_manager->hasDefinition($p)) {
-        $servers = $plugin_manager->createInstance($p)->server_type();
+        $servers = $plugin_manager->createInstance($p)->server_type('1');
         return $this->arrayOfStrings($servers);
       }
       return [];
