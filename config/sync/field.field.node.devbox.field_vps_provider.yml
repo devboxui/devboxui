@@ -16,7 +16,7 @@ field_name: field_vps_provider
 entity_type: node
 bundle: devbox
 label: VPS
-description: 'Add one or more VPS servers that make up your project/cluster.'
+description: "Add one or more VPS servers that make up your project/cluster.<br>\r\nNOTE: please make sure you have inserted an API key in your profile (see My account > Edit) for the provider that you want to use."
 required: false
 translatable: false
 default_value: {  }
