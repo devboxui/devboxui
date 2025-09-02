@@ -18,6 +18,10 @@ code: |-
     width: 49%;
     vertical-align: top;
   }
+  span.running {
+  	color: green;
+  	font-weight: bold;
+  }
 media: all
 preprocess: true
 conditions: {  }
