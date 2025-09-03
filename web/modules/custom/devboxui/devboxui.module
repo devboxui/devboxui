@@ -75,14 +75,13 @@ function devboxui_form_alter(&$form, &$form_state, $form_id) {
       $form['title']['widget']['0']['value']['#description'] = 'A meaningful name for your server or group of servers.<br>You can use this as a cluster/project name if you want to group several VPS servers.';
     }
 
-    if ($uid == '6') {
-      $current_user = entityManage('user', $uid);
-      $providers = devboxui_get_providers_list();
-      foreach ($providers as $provider) {
-        $provider_api_key = $current_user->get('field_vps_' . $provider)->getString();
-        if (empty($provider_api_key)) {
-          $form['field_vps_provider']['widget']['add_more']['add_more_button_'.$provider]['#disabled'] = TRUE;
-        }
+    # VPS buttons are active if they have API keys enabled.
+    $current_user = entityManage('user', $uid);
+    $providers = devboxui_get_providers_list();
+    foreach ($providers as $provider) {
+      $provider_api_key = $current_user->get('field_vps_' . $provider)->getString();
+      if (empty($provider_api_key)) {
+        $form['field_vps_provider']['widget']['add_more']['add_more_button_'.$provider]['#disabled'] = TRUE;
       }
     }
   }
