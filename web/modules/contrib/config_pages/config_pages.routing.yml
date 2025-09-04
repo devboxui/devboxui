@@ -36,16 +36,6 @@ entity.config_pages.canonical:
   requirements:
     _entity_access: 'config_pages.update'
 
-entity.config_pages.edit_form:
-  path: '/admin/structure/config_pages/{config_pages}/edit'
-  defaults:
-    _entity_form: 'config_pages.edit'
-    _title: 'Edit'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _entity_access: 'config_pages.update'
-
 config_pages.type_add:
   path: '/admin/structure/config_pages/types/add'
   defaults:
@@ -79,4 +69,12 @@ entity.config_pages.clear_confirmation:
     _controller: '\Drupal\config_pages\Controller\ConfigPagesController::clearConfirmation'
     _title: 'Purge all config page values'
   requirements:
-    _permission: 'administer config_pages types'
+    _permission: 'access config_pages clear values option'
+
+entity.config_pages.import_confirmation:
+  path: '/admin/structure/config_pages/{config_pages}/confirmImport/{imported_entity_id}'
+  defaults:
+    _controller: '\Drupal\config_pages\Controller\ConfigPagesController::importConfirmation'
+    _title: 'Import config page values'
+  requirements:
+    _permission: 'context import config_pages entity'

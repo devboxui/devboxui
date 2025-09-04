@@ -2,7 +2,8 @@ services:
   ckeditor5_plugin_pack.core_library_version_checker:
     class: Drupal\ckeditor5_plugin_pack\Utility\LibraryVersionChecker
     arguments:
-      - '@library.discovery'
+      - '@module_handler'
+      - '@config.factory'
   ckeditor5_plugin_pack.config_handler.settings:
     class: Drupal\ckeditor5_plugin_pack\Config\SettingsConfigHandler
     arguments:

@@ -1,0 +1,13 @@
+name: HTTP Client Manager - Example
+type: module
+description: "Example module for HTTP Client Manager."
+# version: VERSION
+core_version_requirement: ^10.3 || ^11
+package: Web services
+dependencies:
+  - http_client_manager:http_client_manager
+
+# Information added by Drupal.org packaging script on 2025-08-20
+version: '11.0.0'
+project: 'http_client_manager'
+datestamp: 1755674638

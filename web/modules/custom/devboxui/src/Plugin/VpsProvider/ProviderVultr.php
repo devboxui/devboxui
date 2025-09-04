@@ -208,12 +208,13 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
       $vpsName = $paragraph->uuid();
       [$server_type, $location] = explode('_', $paragraph->get('field_server_type')->getValue()[0]['value'], 2);
 
+      $osid = $this->os_image();
       # Create the server.
       $ret = vpsCall($this->provider, 'instances', [
         'name' => $vpsName,
         'region' => $location,
         'plan' => $server_type,
-        'os_id' => $this->os_image(),
+        'os_id' => $osid,
         'sshkey_id' => [$this->sshKeyName],
       ], 'POST');
 
@@ -237,7 +238,7 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
     $server_info = json_decode($paragraph->get('field_response')->getString(), TRUE);
 
     # Delete the server.
-    vpsCall($this->provider, 'servers/'.$server_info['id'], [], 'DELETE');
+    vpsCall($this->provider, 'instances/'.$server_info['id'], [], 'DELETE');
   }
 
 }

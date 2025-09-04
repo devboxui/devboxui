@@ -113,6 +113,23 @@ function turnstile_library_info_build() {
   $config = \Drupal::config('turnstile.settings');
   $turnstile_src = $config->get('turnstile_src');
 
+  // Parse the URL so we can add elements to the querystring if we need to.
+  $turnstile_src_pieces = parse_url($turnstile_src);
+  $turnstile_src = '';
+
+  // Piece the URL back together.
+  $turnstile_src .= ($turnstile_src_pieces['scheme'] ?? 'https') . '://';
+  $turnstile_src .= $turnstile_src_pieces['host'] ?? 'challenges.cloudflare.com';
+  $turnstile_src .= (isset($turnstile_src_pieces['port']) && $turnstile_src_pieces['port']) ? ':' . $turnstile_src_pieces['port'] : '';
+  $turnstile_src .= $turnstile_src_pieces['path'] ?? '';
+  parse_str(($turnstile_src_pieces['query'] ?? ''), $turnstile_src_query);
+
+  // Modify the rendering behavior so that we can call it explicitly.
+  $turnstile_src_query['onload'] = 'onloadTurnstileCallback';
+  $turnstile_src_query['render'] = 'explicit';
+  $turnstile_src .= '?' . http_build_query($turnstile_src_query);
+  $turnstile_src .= (isset($turnstile_src_pieces['fragment']) && $turnstile_src_pieces['fragment']) ? '#' . $turnstile_src_pieces['fragment'] : '';
+
   $libraries = [];
 
   $libraries['turnstile.remote'] = [

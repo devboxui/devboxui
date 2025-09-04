@@ -7,7 +7,7 @@ dependencies:
   - ckeditor5_plugin_pack:ckeditor5_plugin_pack
   - ckeditor5_premium_features:ckeditor5_premium_features_wproofreader
 
-# Information added by Drupal.org packaging script on 2025-07-02
-version: '1.4.0'
+# Information added by Drupal.org packaging script on 2025-09-03
+version: '1.4.1'
 project: 'ckeditor5_plugin_pack'
-datestamp: 1751452592
+datestamp: 1756889889

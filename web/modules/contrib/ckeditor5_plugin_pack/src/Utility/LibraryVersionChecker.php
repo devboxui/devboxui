@@ -9,7 +9,9 @@ declare(strict_types=1);
 
 namespace Drupal\ckeditor5_plugin_pack\Utility;
 
-use Drupal\Core\Asset\LibraryDiscoveryInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Provides the library version checker for ckeditor5.
@@ -26,14 +28,31 @@ class LibraryVersionChecker {
   /**
    * Constructor.
    *
-   * @param \Drupal\Core\Asset\LibraryDiscoveryInterface $libraryDiscovery
-   *   LibraryDiscovery.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   Module handler.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   Config factory.
    */
   public function __construct(
-    protected LibraryDiscoveryInterface $libraryDiscovery,
+    protected ModuleHandlerInterface $moduleHandler,
+    protected ConfigFactoryInterface $configFactory,
   ) {
-    $lib = $libraryDiscovery->getLibraryByName('core', 'ckeditor5');
-    $this->ckeditor5Version = $lib['version'];
+    if ($this->moduleHandler->moduleExists('ckeditor5_premium_features_version_override')) {
+      $versionOverride = $this->configFactory->get('ckeditor5_premium_features_version_override.settings');
+      $enabled = $versionOverride->get('enabled');
+      $version = $versionOverride->get('version');
+      if ($enabled && $version) {
+        $this->ckeditor5Version = $version;
+        return;
+      }
+    }
+
+    $filePath = DRUPAL_ROOT . '/core/core.libraries.yml';
+    $fileContents = file_get_contents($filePath);
+    $ymlData = Yaml::parse($fileContents);
+
+    $this->ckeditor5Version = $ymlData['ckeditor5']['version'];
   }
 
   /**

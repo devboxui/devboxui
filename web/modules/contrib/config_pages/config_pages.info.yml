@@ -7,7 +7,7 @@ dependencies:
 configure: entity.config_pages.collection
 core_version_requirement: ^8 || ^9 || ^10 || ^11
 
-# Information added by Drupal.org packaging script on 2025-07-30
-version: '8.x-2.18'
+# Information added by Drupal.org packaging script on 2025-09-03
+version: '8.x-2.19'
 project: 'config_pages'
-datestamp: 1753876821
+datestamp: 1756896074

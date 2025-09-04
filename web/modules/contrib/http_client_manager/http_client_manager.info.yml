@@ -1,0 +1,12 @@
+name: HTTP Client Manager
+type: module
+description: Manage Guzzle based HTTP Clients instances and configurations.
+# version: VERSION
+core_version_requirement: ^10.3 || ^11
+package: Web services
+configure: http_client_manager.preview
+
+# Information added by Drupal.org packaging script on 2025-08-20
+version: '11.0.0'
+project: 'http_client_manager'
+datestamp: 1755674638

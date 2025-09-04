@@ -218,6 +218,21 @@ class ConfigPagesController extends ControllerBase {
   }
 
   /**
+   * Presents the config page import confirmation form.
+   *
+   * @param \Drupal\config_pages\ConfigPagesInterface $config_pages
+   *   Config Page.
+   * @param string $imported_entity_id
+   *   The ID of the entity to import from.
+   *
+   * @return array
+   *   A form array as expected by drupal_render().
+   */
+  public function importConfirmation(ConfigPagesInterface $config_pages, $imported_entity_id) {
+    return \Drupal::formBuilder()->getForm('Drupal\config_pages\Form\ConfigPagesImportConfirmationForm', $config_pages->id(), $imported_entity_id);
+  }
+
+  /**
    * Page title callback for config page edit forms.
    *
    * @param string|null $label
