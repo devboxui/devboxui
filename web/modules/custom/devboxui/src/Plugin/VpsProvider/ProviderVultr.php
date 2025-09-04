@@ -3,7 +3,6 @@
 namespace Drupal\devboxui\Plugin\VpsProvider;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\devboxui\Plugin\VpsProvider\VpsProviderPluginBase;
 use Drupal\user\Entity\User;
 use Drupal\user\UserDataInterface;
@@ -150,31 +149,37 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
 
     $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'id'));
     $processed_server_types = [];
-    foreach ($servers[$this->server_types] as $server) {
-      $price_key = implode(' (', [
-        $server['monthly_cost'] . ' '. $currency .'/mo',
-        $server['hourly_cost'] . ' '. $currency .'/hr)',
-      ]);
-
-      foreach ($server['locations'] as $sloc) {
-        $lv = $locations[$this->locations][$locationIds[$sloc]];
-        $loc = $lv['city'] . ', '. $lv['country'];
-        $processed_value = implode(' - ', [
-          $loc,
-          $server['id'],
-          implode(', ', [
-            $server['cpu_vendor'],
-            $server['vcpu_count'] . ' core(s)',
-            $server['ram'] . ' MB RAM',
-            $server['disk'] . ' GB SSD',
-            number_format($server['bandwidth']/1000, 1) . ' TB traffic',
-          ]),
+    while (!empty($servers['meta']['links']['next'])) {
+      foreach ($servers[$this->server_types] as $server) {
+        $price_key = implode(' (', [
+          $server['monthly_cost'] . ' '. $currency .'/mo',
+          $server['hourly_cost'] . ' '. $currency .'/hr)',
         ]);
 
-        # Key format: 'server type ID'_'location ID'.
-        $processed_key = implode('_', [$server['id'], $lv['id']]);
-        # <select> option.
-        $processed_server_types[$price_key][$processed_key] = $processed_value;
+        foreach ($server['locations'] as $sloc) {
+          $lv = $locations[$this->locations][$locationIds[$sloc]];
+          $loc = $lv['city'] . ', '. $lv['country'];
+          $processed_value = implode(' - ', [
+            $loc,
+            $server['id'],
+            implode(', ', [
+              $server['cpu_vendor'],
+              $server['vcpu_count'] . ' core(s)',
+              $server['ram'] . ' MB RAM',
+              $server['disk'] . ' GB ' . $server['disk_type'],
+              number_format($server['bandwidth']/1000, 1) . ' TB traffic',
+            ]),
+          ]);
+
+          # Key format: 'server type ID'_'location ID'.
+          $processed_key = implode('_', [$server['id'], $lv['id']]);
+          # <select> option.
+          $processed_server_types[$price_key][$processed_key] = $processed_value;
+        }
+      }
+
+      if (!empty($servers['meta']['links']['next'])) {
+        $servers = vpsCall($this->provider, $this->server_types, ['cursor' => $servers['meta']['links']['next']], 'GET', $uid);
       }
     }
     ksort($processed_server_types, SORT_NATURAL);
@@ -191,7 +196,7 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
 
     $osid = 0;
     foreach ($results[$this->images] as $os) {
-      if ($os['family'] == 'ubuntu') {
+      if ($os['family'] == 'debian') {
         if ($osid < $os['id']) {
           $osid = $os['id'];
         }
@@ -215,7 +220,8 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
         'region' => $location,
         'plan' => $server_type,
         'os_id' => $osid,
-        'sshkey_id' => [$this->sshKeyName],
+        'sshkey_id' => [$this->getSshKeyId()],
+        'backups' => 'disabled',
       ], 'POST');
 
       # Save the server ID to the paragraph field.
@@ -232,6 +238,14 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
         $paragraph->save();
       }
     }
+  }
+
+  private function getSshKeyId() {
+    if ($sshResp = $this->userData->get('devboxui', $this->user->id(), $this->sshRespField)) {
+      $key_resp = json_decode($sshResp, TRUE);
+      return $key_resp[$this->ssh_keys_ret_key]['id'];
+    }
+    return '';
   }
 
   public function delete_vps($paragraph) {
