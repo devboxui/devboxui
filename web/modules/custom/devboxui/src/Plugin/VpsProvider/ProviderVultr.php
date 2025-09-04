@@ -186,16 +186,19 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
    *
    * @return void
    */
-  public function os_image($arch = 'x86') {
-    $results = vpsCall($this->provider, $this->images, [
-      'type' => 'system',
-      'status' => 'available',
-      'os_flavor' => 'ubuntu',
-      'sort' => 'name:desc',
-      'architecture' => $arch,
-      'per_page' => '1',
-    ]);
-    return $results[$this->images][0]['id'];
+  public function os_image() {
+    $results = vpsCall($this->provider, $this->images);
+
+    $osid = 0;
+    foreach ($results[$this->images] as $os) {
+      if ($os['family'] == 'ubuntu') {
+        if ($osid < $os['id']) {
+          $osid = $os['id'];
+        }
+      }
+    }
+
+    return $osid;
   }
 
   public function create_vps($paragraph) {
@@ -204,15 +207,13 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
     if (empty($server_info)) {
       $vpsName = $paragraph->uuid();
       [$server_type, $location] = explode('_', $paragraph->get('field_server_type')->getValue()[0]['value'], 2);
-      $chosen_server_type = vpsCall($this->provider, $this->server_types.'/'.$server_type, [], 'GET', FALSE);
-      $arch = $chosen_server_type['server_type']['architecture'];
 
       # Create the server.
       $ret = vpsCall($this->provider, 'instances', [
         'name' => $vpsName,
         'region' => $location,
         'plan' => $server_type,
-        'os_id' => $this->os_image($arch),
+        'os_id' => $this->os_image(),
         'sshkey_id' => [$this->sshKeyName],
       ], 'POST');
 
