@@ -150,44 +150,50 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
 
     $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'name'));
     $processed_server_types = [];
-    foreach ($servers[$this->server_types] as $server) {
-      $specs = implode(', ', [
-        $server['architecture'],
-        $server['cores'] . ' core(s)',
-        $server['memory'] . ' GB RAM',
-        $server['disk'] . ' GB SSD',
-        $server['category'],
-      ]);
-
-      foreach ($server['prices'] as $pv) {
-        // Skip if no price is available for current location.
-        if (!isset($pv)) continue;
-        $monthly_price = $pv['price_monthly']['gross'];
-        // Skip if no monthly price is available.
-        if (empty($monthly_price)) continue;
-        $hourly_price = $pv['price_hourly']['gross'];
-
-        $price_key = implode(' (', [
-          number_format($monthly_price, 4) . ' '. $currency .'/mo',
-          number_format($hourly_price, 5) . ' '. $currency .'/hr)',
+    while (!empty($servers['meta']['pagination']['next_page'])) {
+      foreach ($servers[$this->server_types] as $server) {
+        $specs = implode(', ', [
+          $server['architecture'],
+          $server['cores'] . ' core(s)',
+          $server['memory'] . ' GB RAM',
+          $server['disk'] . ' GB SSD',
+          $server['category'],
         ]);
 
-        $lv = $locations[$this->locations][$locationIds[$pv['location']]];
-        $loc = $lv['city'] . ', ' . $lv['country'] . ' (' . $lv['network_zone'] . ')';
+        foreach ($server['prices'] as $pv) {
+          // Skip if no price is available for current location.
+          if (!isset($pv)) continue;
+          $monthly_price = $pv['price_monthly']['gross'];
+          // Skip if no monthly price is available.
+          if (empty($monthly_price)) continue;
+          $hourly_price = $pv['price_hourly']['gross'];
 
-        $oneTerabyte = bcpow(10, 12);
-        $traffic = bcdiv($pv['included_traffic'], $oneTerabyte, 0) . ' TB traffic';
+          $price_key = implode(' (', [
+            number_format($monthly_price, 4) . ' '. $currency .'/mo',
+            number_format($hourly_price, 5) . ' '. $currency .'/hr)',
+          ]);
 
-        $processed_value = implode(' - ', [
-          $loc,
-          $server['name'],
-          $specs . ', ' . $traffic,
-        ]);
+          $lv = $locations[$this->locations][$locationIds[$pv['location']]];
+          $loc = $lv['city'] . ', ' . $lv['country'] . ' (' . $lv['network_zone'] . ')';
 
-        # Key format: 'server type ID'_'location ID'.
-        $processed_key = implode('_', [$server['id'], $lv['id']]);
-        # <select> option.
-        $processed_server_types[$price_key][$processed_key] = $processed_value;
+          $oneTerabyte = bcpow(10, 12);
+          $traffic = bcdiv($pv['included_traffic'], $oneTerabyte, 0) . ' TB traffic';
+
+          $processed_value = implode(' - ', [
+            $loc,
+            $server['name'],
+            $specs . ', ' . $traffic,
+          ]);
+
+          # Key format: 'server type ID'_'location ID'.
+          $processed_key = implode('_', [$server['id'], $lv['id']]);
+          # <select> option.
+          $processed_server_types[$price_key][$processed_key] = $processed_value;
+        }
+      }
+
+      if (!empty($servers['meta']['pagination']['next_page'])) {
+        $servers = vpsCall($this->provider, $this->server_types, ['page' => $servers['meta']['pagination']['next_page']], 'GET', $uid);
       }
     }
 
