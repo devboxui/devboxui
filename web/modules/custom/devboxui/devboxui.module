@@ -755,7 +755,7 @@ function devboxui_node_access(\Drupal\Core\Entity\EntityInterface $entity, $oper
 
 function devboxui_user_access(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Session\AccountInterface $account) : \Drupal\Core\Access\AccessResultInterface {
   // Only the owner can access user data.
-  if ($entity->id() != $account->id()) {
+  if (in_array($operation, ['view', 'update']) && $entity->id() != $account->id()) {
     return AccessResult::forbidden();
   }
   // No opinion.
