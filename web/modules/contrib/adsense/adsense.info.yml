@@ -1,0 +1,11 @@
+name: 'AdSense'
+type: module
+description: 'Displays Google AdSense ads on your site to earn revenue.'
+package: Adsense
+core_version_requirement: ^9.3 || ^10 || ^11
+configure: adsense.main_settings
+
+# Information added by Drupal.org packaging script on 2024-05-06
+version: '8.x-1.5'
+project: 'adsense'
+datestamp: 1715038127
