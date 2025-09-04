@@ -36,6 +36,12 @@ code: |-
   .config-text {
   	margin-block: var(--space-m);
   }
+  fieldset.captcha {
+  	border-width: 0;
+  }
+  fieldset.captcha legend {
+  	display: none;
+  }
 media: all
 preprocess: true
 conditions: {  }
