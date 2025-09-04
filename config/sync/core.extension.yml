@@ -80,6 +80,7 @@ module:
   pcb: 0
   redirect: 0
   redirect_404: 0
+  s3fs: 0
   search: 0
   selective_backup: 0
   serialization: 0

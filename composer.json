@@ -52,6 +52,7 @@
         "drupal/quicktabs": "^4.0",
         "drupal/redirect": "^1.12",
         "drupal/require_login": "^3.0",
+        "drupal/s3fs": "^3.9",
         "drupal/s_r_c_html5_validation": "^3.0",
         "drupal/simple_global_filter": "^2.1",
         "drupal/simple_sitemap": "^4.2",

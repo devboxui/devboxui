@@ -73,6 +73,8 @@ function devboxui_form_alter(&$form, &$form_state, $form_id) {
       // Field descriptions.
       $form['status']['widget']['value']['#description'] = 'Leave this unpublished to keep in draft mode.<br> Set it to published and hit Save in order to create the VPS server.';
       $form['title']['widget']['0']['value']['#description'] = 'A meaningful name for your server or group of servers.<br>You can use this as a cluster/project name if you want to group several VPS servers.';
+
+      $form['status']['#access'] = TRUE;
     }
 
     # VPS buttons are active if they have API keys enabled.

@@ -208,17 +208,12 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
       $arch = $chosen_server_type['server_type']['architecture'];
 
       # Create the server.
-      $ret = vpsCall($this->provider, 'servers', [
+      $ret = vpsCall($this->provider, 'instances', [
         'name' => $vpsName,
-        'location' => $location,
-        'server_type' => $server_type,
-        'image' => $this->os_image($arch),
-        'start_after_create' => TRUE,
-        'public_net' => [
-          'enable_ipv4' => TRUE,
-          'enable_ipv6' => TRUE,
-        ],
-        'ssh_keys' => [$this->sshKeyName],
+        'region' => $location,
+        'plan' => $server_type,
+        'os_id' => $this->os_image($arch),
+        'sshkey_id' => [$this->sshKeyName],
       ], 'POST');
 
       # Save the server ID to the paragraph field.
