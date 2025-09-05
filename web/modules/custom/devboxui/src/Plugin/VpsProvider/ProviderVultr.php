@@ -149,7 +149,7 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
 
     $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'id'));
     $processed_server_types = [];
-    while (!empty($servers['meta']['links']['next'])) {
+    #while (!empty($servers['meta']['links']['next'])) {
       foreach ($servers[$this->server_types] as $server) {
         $price_key = implode(' (', [
           $server['monthly_cost'] . ' '. $currency .'/mo',
@@ -178,10 +178,12 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
         }
       }
 
+      /*
       if (!empty($servers['meta']['links']['next'])) {
         $servers = vpsCall($this->provider, $this->server_types, ['cursor' => $servers['meta']['links']['next']], 'GET', $uid);
       }
     }
+    */
     ksort($processed_server_types, SORT_NATURAL);
     return $processed_server_types;
   }
