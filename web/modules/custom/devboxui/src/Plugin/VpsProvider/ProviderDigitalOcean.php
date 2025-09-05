@@ -157,34 +157,42 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
 
     $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'slug'));
     $processed_server_types = [];
-    foreach ($servers[$this->server_types_ret_key] as $server) {
-      $price_key = implode(' (', [
-        $server['price_monthly'] . ' '. $currency .'/mo',
-        $server['price_hourly'] . ' '. $currency .'/hr)',
-      ]);
-
-      foreach ($server['regions'] as $sloc) {
-        $lv = $locations[$this->locations][$locationIds[$sloc]];
-        if (!$lv['available']) continue;
-        $loc = $lv['name'];
-
-        $processed_value = implode(' - ', [
-          $loc,
-          $server['slug'],
-          implode(', ', [
-            $server['vcpus'] . ' core(s)',
-            $server['memory'] . ' MB RAM',
-            $server['disk'] . ' MB SSD',
-            $server['transfer'] . ' TB traffic',
-          ]),
+    #while (!empty($servers['links']['next'])) {
+      foreach ($servers[$this->server_types_ret_key] as $server) {
+        $price_key = implode(' (', [
+          $server['price_monthly'] . ' '. $currency .'/mo',
+          $server['price_hourly'] . ' '. $currency .'/hr)',
         ]);
 
-        # Key format: 'server type ID'.
-        $processed_key = implode('_', [$server['slug'], $lv['slug']]);
-        # Build the record.
-        $processed_server_types[$price_key][$processed_key] = $processed_value;
+        foreach ($server['regions'] as $sloc) {
+          $lv = $locations[$this->locations][$locationIds[$sloc]];
+          if (!$lv['available']) continue;
+          $loc = $lv['name'];
+
+          $processed_value = implode(' - ', [
+            $loc,
+            $server['slug'],
+            implode(', ', [
+              $server['vcpus'] . ' core(s)',
+              $server['memory'] . ' MB RAM',
+              $server['disk'] . ' MB SSD',
+              $server['transfer'] . ' TB traffic',
+            ]),
+          ]);
+
+          # Key format: 'server type ID'.
+          $processed_key = implode('_', [$server['slug'], $lv['slug']]);
+          # Build the record.
+          $processed_server_types[$price_key][$processed_key] = $processed_value;
+        }
+      }
+
+      /*
+      if (!empty($servers['meta']['links']['next'])) {
+        $servers = vpsCall($this->provider, $this->server_types, ['page' => $servers['links']['next']], 'GET', $uid);
       }
     }
+    */
     ksort($processed_server_types, SORT_NATURAL);
     return $processed_server_types;
   }
