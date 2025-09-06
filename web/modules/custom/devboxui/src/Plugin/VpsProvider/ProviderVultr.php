@@ -224,19 +224,20 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
         'os_id' => $osid,
         'sshkey_id' => [$this->getSshKeyId()],
         'backups' => 'disabled',
+        'disable_public_ipv4' => 'false',
       ], 'POST');
 
       # Save the server ID to the paragraph field.
-      if (isset($ret['server'])) {
-        $server_status = $ret['server']['status'];
+      if (isset($ret['instance'])) {
+        $server_status = $ret['instance']['server_status'];
         // Loop until the server is ready to use.
-        while ($server_status != 'running') {
+        while ($server_status != 'ok') {
           sleep(3); // Wait for 3 seconds before checking again.
-          $ret = vpsCall($this->provider, 'servers/'.$ret['server']['id'], [], 'GET', FALSE);
-          $server_status = $ret['server']['status'];
+          $ret = vpsCall($this->provider, 'instances/'.$ret['instance']['id'], [], 'GET', '', FALSE);
+          $server_status = $ret['instance']['server_status'];
         }
 
-        $paragraph->set('field_response', json_encode($ret['server']));
+        $paragraph->set('field_response', json_encode($ret['instance']));
         $paragraph->save();
       }
     }
