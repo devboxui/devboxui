@@ -221,11 +221,19 @@ class DevBoxBatchService {
 
       # Get the IP from the paragraph's field_response field.
       $paragraph_response = json_decode($paragraph->get('field_response')->getString(), TRUE);
-      if (isset($paragraph_response['public_net']['ipv4'])) {
+      // get paragraph type
+      $provider = $paragraph->getType();
+      if ($provider == 'hetzner') {
         $host = $paragraph_response['public_net']['ipv4']['ip'];
       }
-      else {
-        $host = $paragraph_response['public_net']['ipv6']['ip'];
+      else if ($provider == 'vultr') {
+        $host = $paragraph_response['main_ip'];
+      }
+      else if ($provider == 'digitalocean') {
+        $host = $paragraph_response['networks']['v4'][0]['ip_address'];
+      }
+      else if ($provider == 'akamai_cloud_linode') {
+        $host = $paragraph_response['ipv4'][0];
       }
 
       if ($root) {
