@@ -148,7 +148,7 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
   public function server_type($uid = '') {
     $currency = 'USD';
     $locations = vpsCall($this->provider, $this->locations, [], 'GET', $uid);
-    $servers = vpsCall($this->provider, $this->server_types, [], 'GET', $uid);
+    $servers = vpsCall($this->provider, $this->server_types, [], 'GET', $uid, FALSE);
 
     $locationsArray = [];
     foreach ($locations[$this->locationsRetKey] as $location) {
@@ -192,7 +192,7 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
       if ($condition) {
         $query_params = parse_url($servers['links']['pages']['next'], PHP_URL_QUERY);
         parse_str($query_params, $page);
-        $servers = vpsCall($this->provider, $this->server_types, ['page' => $page['page']], 'GET', $uid);
+        $servers = vpsCall($this->provider, $this->server_types, ['page' => $page['page']], 'GET', $uid, FALSE);
       }
     }
     ksort($processed_server_types, SORT_NATURAL);
@@ -204,16 +204,22 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
    *
    * @return void
    */
-  public function os_image($arch = 'x86') {
+  public function os_image() {
     $results = vpsCall($this->provider, $this->images, [
-      'type' => 'system',
-      'status' => 'available',
-      'os_flavor' => 'ubuntu',
-      'sort' => 'name:desc',
-      'architecture' => $arch,
-      'per_page' => '1',
+      'type' => 'distribution',
+      'private' => 'false',
     ]);
-    return $results[$this->images][0]['id'];
+
+    $osid = 0;
+    foreach ($results[$this->images] as $os) {
+      if (strtolower($os['distribution']) == 'debian') {
+        if ($osid < $os['id']) {
+          $osid = $os['id'];
+        }
+      }
+    }
+
+    return $osid;
   }
 
   public function create_vps($paragraph) {
@@ -222,44 +228,46 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
     if (empty($server_info)) {
       $vpsName = $paragraph->uuid();
       [$server_type, $location] = explode('_', $paragraph->get('field_server_type')->getValue()[0]['value'], 2);
-      $chosen_server_type = vpsCall($this->provider, $this->server_types.'/'.$server_type, [], 'GET', FALSE);
-      $arch = $chosen_server_type['server_type']['architecture'];
 
+      $os = $this->os_image();
       # Create the server.
-      $ret = vpsCall($this->provider, 'servers', [
+      $ret = vpsCall($this->provider, 'droplets', [
         'name' => $vpsName,
-        'location' => $location,
-        'server_type' => $server_type,
-        'image' => $this->os_image($arch),
-        'start_after_create' => TRUE,
-        'public_net' => [
-          'enable_ipv4' => TRUE,
-          'enable_ipv6' => TRUE,
-        ],
-        'ssh_keys' => [$this->sshKeyName],
+        'region' => $location,
+        'size' => $server_type,
+        'image' => $os,
+        'ssh_keys' => [$this->getSshKeyId()],
       ], 'POST');
 
       # Save the server ID to the paragraph field.
-      if (isset($ret['server'])) {
-        $server_status = $ret['server']['status'];
+      if (isset($ret['droplet'])) {
+        $server_status = $ret['droplet']['status'];
         // Loop until the server is ready to use.
-        while ($server_status != 'running') {
+        while ($server_status != 'active') {
           sleep(3); // Wait for 3 seconds before checking again.
-          $ret = vpsCall($this->provider, 'servers/'.$ret['server']['id'], [], 'GET', FALSE);
-          $server_status = $ret['server']['status'];
+          $ret = vpsCall($this->provider, 'droplets/'.$ret['droplet']['id'], [], 'GET', '', FALSE);
+          $server_status = $ret['droplet']['status'];
         }
 
-        $paragraph->set('field_response', json_encode($ret['server']));
+        $paragraph->set('field_response', json_encode($ret['droplet']));
         $paragraph->save();
       }
     }
+  }
+
+  private function getSshKeyId() {
+    if ($sshResp = $this->userData->get('devboxui', $this->user->id(), $this->sshRespField)) {
+      $key_resp = json_decode($sshResp, TRUE);
+      return $key_resp[$this->ssh_keys_ret_key]['id'];
+    }
+    return '';
   }
 
   public function delete_vps($paragraph) {
     $server_info = json_decode($paragraph->get('field_response')->getString(), TRUE);
 
     # Delete the server.
-    vpsCall($this->provider, 'servers/'.$server_info['id'], [], 'DELETE');
+    vpsCall($this->provider, 'droplets/'.$server_info['id'], [], 'DELETE');
   }
 
 }
