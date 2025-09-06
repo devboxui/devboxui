@@ -149,7 +149,7 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
 
     $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'id'));
     $processed_server_types = [];
-    $condition = count($servers['plans']) <= $servers['meta']['total'];
+    $condition = count($servers[$this->server_types]) <= $servers['meta']['total'];
     while ($condition) {
       foreach ($servers[$this->server_types] as $server) {
         $price_key = implode(' (', [
