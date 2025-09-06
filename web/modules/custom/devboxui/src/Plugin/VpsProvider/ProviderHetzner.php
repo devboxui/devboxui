@@ -150,7 +150,8 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
 
     $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'name'));
     $processed_server_types = [];
-    #while (!empty($servers['meta']['pagination']['next_page'])) {
+    $condition = count($servers[$this->server_types]) <= $servers['meta']['pagination']['total_entries'];
+    while ($condition) {
       foreach ($servers[$this->server_types] as $server) {
         $specs = implode(', ', [
           $server['architecture'],
@@ -190,9 +191,12 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
           # <select> option.
           $processed_server_types[$price_key][$processed_key] = $processed_value;
         }
-      #}
+      }
 
-      $servers = vpsCall($this->provider, $this->server_types, ['page' => $servers['meta']['pagination']['next_page']], 'GET', $uid);
+      $condition = !empty($servers['meta']['pagination']['next_page']);
+      if ($condition) {
+        $servers = vpsCall($this->provider, $this->server_types, ['page' => $servers['meta']['pagination']['next_page']], 'GET', $uid);
+      }
     }
 
     ksort($processed_server_types, SORT_NATURAL);
