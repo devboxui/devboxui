@@ -92,7 +92,7 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
   /**
    * $sshKeyName is always the user's uuid.
    */
-  public function ssh_key() {
+  public function ssh_key($keyid = '') {
     if ($sshResp = $this->userData->get('devboxui', $this->user->id(), $this->sshRespField)) {
       $key_resp = json_decode($sshResp, TRUE);
       // Don't upload if the current and previously stored keys are the same.
@@ -208,7 +208,28 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
    */
   public function os_image() {
     $results = vpsCall($this->provider, $this->images);
-    return $results[$this->images][0]['id'];
+
+    $osid = 0;
+    foreach ($results['data'] as $os) {
+      if (strtolower($os['vendor']) == 'debian' && preg_match('/^linode\/debian[0-9]+$/', $os['id'])) {
+        if ($osid < $os['id']) {
+          $osid = $os['id'];
+        }
+      }
+    }
+
+    return $osid;
+  }
+
+  private function generatePassword(int $length = 128): string {
+    // Character set that includes uppercase, lowercase, numbers, and special characters.
+    $characterSet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=';
+    $characterSetLength = strlen($characterSet);
+    $password = '';
+    for ($i = 0; $i < $length; $i++) {
+      $password .= $characterSet[random_int(0, $characterSetLength - 1)];
+    }
+    return $password;
   }
 
   public function create_vps($paragraph) {
@@ -217,34 +238,32 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
     if (empty($server_info)) {
       $vpsName = $paragraph->uuid();
       [$server_type, $location] = explode('_', $paragraph->get('field_server_type')->getValue()[0]['value'], 2);
-      $chosen_server_type = vpsCall($this->provider, $this->server_types.'/'.$server_type, [], 'GET', FALSE);
-      $arch = $chosen_server_type['server_type']['architecture'];
 
+      $os = $this->os_image();
       # Create the server.
-      $ret = vpsCall($this->provider, 'servers', [
-        'name' => $vpsName,
-        'location' => $location,
-        'server_type' => $server_type,
-        'image' => $this->os_image($arch),
-        'start_after_create' => TRUE,
-        'public_net' => [
-          'enable_ipv4' => TRUE,
-          'enable_ipv6' => TRUE,
-        ],
-        'ssh_keys' => [$this->sshKeyName],
+      $ret = vpsCall($this->provider, 'linode/instances', [
+        'label' => $vpsName,
+        'region' => $location,
+        'type' => $server_type,
+        'image' => $os,
+        'authorized_keys' => [$this->pbkey],
+        'root_pass' => $this->generatePassword(),
+        'booted' => true,
+        'backups_enabled' => false,
+        'disk_encryption' => 'disabled',
       ], 'POST');
 
       # Save the server ID to the paragraph field.
-      if (isset($ret['server'])) {
-        $server_status = $ret['server']['status'];
+      if (isset($ret['id'])) {
+        $server_status = $ret['status'];
         // Loop until the server is ready to use.
         while ($server_status != 'running') {
           sleep(3); // Wait for 3 seconds before checking again.
-          $ret = vpsCall($this->provider, 'servers/'.$ret['server']['id'], [], 'GET', FALSE);
-          $server_status = $ret['server']['status'];
+          $ret = vpsCall($this->provider, 'linode/instances/'.$ret['id'], [], 'GET', '', FALSE);
+          $server_status = $ret['status'];
         }
 
-        $paragraph->set('field_response', json_encode($ret['server']));
+        $paragraph->set('field_response', json_encode($ret));
         $paragraph->save();
       }
     }
@@ -254,7 +273,7 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
     $server_info = json_decode($paragraph->get('field_response')->getString(), TRUE);
 
     # Delete the server.
-    vpsCall($this->provider, 'servers/'.$server_info['id'], [], 'DELETE');
+    vpsCall($this->provider, 'linode/instances/'.$server_info['id'], [], 'DELETE');
   }
 
 }
