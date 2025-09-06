@@ -157,7 +157,8 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
 
     $locationIds = array_flip(array_column($locations[$this->locationsRetKey], 'slug'));
     $processed_server_types = [];
-    #while (!empty($servers['links']['next'])) {
+    $condition = count($servers[$this->server_types_ret_key]) <= $servers['meta']['total'];
+    while ($condition) {
       foreach ($servers[$this->server_types_ret_key] as $server) {
         $price_key = implode(' (', [
           $server['price_monthly'] . ' '. $currency .'/mo',
@@ -187,12 +188,13 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
         }
       }
 
-      /*
-      if (!empty($servers['meta']['links']['next'])) {
-        $servers = vpsCall($this->provider, $this->server_types, ['page' => $servers['links']['next']], 'GET', $uid);
+      $condition = isset($servers['links']['pages']['next']);
+      if ($condition) {
+        $query_params = parse_url($servers['links']['pages']['next'], PHP_URL_QUERY);
+        parse_str($query_params, $page);
+        $servers = vpsCall($this->provider, $this->server_types, ['page' => $page['page']], 'GET', $uid);
       }
     }
-    */
     ksort($processed_server_types, SORT_NATURAL);
     return $processed_server_types;
   }
