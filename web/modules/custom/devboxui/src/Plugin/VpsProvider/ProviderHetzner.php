@@ -249,7 +249,7 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
         // Loop until the server is ready to use.
         while ($server_status != 'running') {
           sleep(3); // Wait for 3 seconds before checking again.
-          $ret = vpsCall($this->provider, 'servers/'.$ret['server']['id'], [], 'GET', FALSE);
+          $ret = vpsCall($this->provider, 'servers/'.$ret['server']['id'], [], 'GET', '', FALSE);
           $server_status = $ret['server']['status'];
         }
 
