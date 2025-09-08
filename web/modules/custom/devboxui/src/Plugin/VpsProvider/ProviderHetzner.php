@@ -212,7 +212,7 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
     $results = vpsCall($this->provider, $this->images, [
       'type' => 'system',
       'status' => 'available',
-      'os_flavor' => 'ubuntu',
+      'os_flavor' => 'debian',
       'sort' => 'name:desc',
       'architecture' => $arch,
       'per_page' => '1',

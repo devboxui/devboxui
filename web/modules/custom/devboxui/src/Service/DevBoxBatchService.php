@@ -114,15 +114,15 @@ class DevBoxBatchService {
     $context['message'] = t('@step', ['@step' => $step]);
 
     // Make sure we don't have any conflicting packages.
-    self::ssh_wrapper($paragraph_id, 'for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do apt -y remove $pkg; done', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do apt -y remove $pkg; done', $context, TRUE);
     // Add Docker's official GPG key.
     self::ssh_wrapper($paragraph_id, 'apt update', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'apt -y install ca-certificates curl', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'install -m 0755 -d /etc/apt/keyrings', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'url -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'chmod a+r /etc/apt/keyrings/docker.asc', $context, TRUE);
     # Add the repository to Apt sources.
-    self::ssh_wrapper($paragraph_id, 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'apt update', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin', $context, TRUE);
   }

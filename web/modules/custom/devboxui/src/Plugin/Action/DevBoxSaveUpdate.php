@@ -86,10 +86,10 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
         // Create server only if it does not exist.
         if (empty($server_info)) {
           $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];
-          $commands["Ubuntu packages updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
-          $commands["Ubuntu packages upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
-          $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
+          $commands["OS package info updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
+          $commands["OS system upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
           $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
+          $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
           $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
         }
       }
@@ -109,10 +109,10 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
       foreach ($currentValues as $vps_node) {
         $pid = $vps_node['target_id'];
         $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];
-        $commands["Ubuntu packages updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
-        $commands["Ubuntu packages upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
-        $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
+        $commands["OS package info updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
+        $commands["OS system upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
         $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
+        $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
         $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
       }
       // Reboot
