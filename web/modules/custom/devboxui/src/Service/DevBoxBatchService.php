@@ -190,6 +190,20 @@ class DevBoxBatchService {
    * Batch callback for running SSH commands.
    * Use phpseclib to connect via SSH and run the command(s).
    */
+  public static function ssh_ohmybash($step, $paragraph_id, &$context): void {
+    $context['message'] = t('@step', ['@step' => $step]);
+
+    $sshUser = str_replace('-', '', entityManage('user', \Drupal::currentUser()->id())->uuid());
+    // Install OhMyBash globally.
+    self::ssh_wrapper($paragraph_id, "apt install -y git curl && git clone --depth=1 https://github.com/ohmybash/oh-my-bash.git /usr/share/oh-my-bash && cp /usr/share/oh-my-bash/templates/bashrc.osh-template /etc/skel/.bashrc && sed -i 's|^export OSH=.*|export OSH=/usr/share/oh-my-bash|' /etc/skel/.bashrc && sed -i 's|^OSH_THEME=.*|OSH_THEME=\"90210\"|' /etc/skel/.bashrc", $context, TRUE);
+    // Update the existing root user with OhMyBash.
+    self::ssh_wrapper($paragraph_id, "cp /usr/share/oh-my-bash/templates/bashrc.osh-template /root/.bashrc && sed -i 's|^export OSH=.*|export OSH=/usr/share/oh-my-bash|' /root/.bashrc && sed -i 's|^OSH_THEME=.*|OSH_THEME=\"90210\"|' /root/.bashrc", $context, TRUE);
+  }
+
+  /**
+   * Batch callback for running SSH commands.
+   * Use phpseclib to connect via SSH and run the command(s).
+   */
   public static function ssh_create_user_devbox($step, $paragraph_id, &$context): void {
     $context['message'] = t('@step', ['@step' => $step]);
 

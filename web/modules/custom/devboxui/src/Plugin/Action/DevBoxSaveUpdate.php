@@ -89,6 +89,7 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
           $commands["OS package info updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
           $commands["OS system upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
           $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
+          $commands["OhMyBash installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ohmybash']];
           $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
           $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
         }
@@ -112,6 +113,7 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
         $commands["OS package info updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
         $commands["OS system upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
         $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
+        $commands["OhMyBash installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ohmybash']];
         $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
         $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
       }

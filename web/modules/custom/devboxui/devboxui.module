@@ -800,13 +800,23 @@ function processVpsDetails($provider, $details) {
     $output[] = '<b>IP</b><br>'.$details['main_ip'];
     $output[] = '<b>User</b><br>'.str_replace('-', '', $user->uuid());
   }
+  else if ($provider == 'akamai_cloud_linode') {
+    $output[] = '<b>Status</b><br>'.vps_status($details['status']);
+    $output[] = '<b>IP</b><br>'.$details['ipv4']['0'];
+    $output[] = '<b>User</b><br>'.str_replace('-', '', $user->uuid());
+  }
+  else if ($provider == 'digitalocean') {
+    $output[] = '<b>Status</b><br>'.vps_status($details['status']);
+    $output[] = '<b>IP</b><br>'.$details['networks']['v4']['0']['ip_address'];
+    $output[] = '<b>User</b><br>'.str_replace('-', '', $user->uuid());
+  }
 
   return implode('<br>', $output);
 }
 
 function vps_status($status) {
-  if (in_array($status, ['running', 'ok'])) {
-    return '<span class="'.$status.'">'.$status.'</span>';
+  if (in_array($status, ['running', 'ok', 'active'])) {
+    return '<span class="running">'.strtoupper($status).'</span>';
   }
   return $status;
 }

@@ -22,13 +22,6 @@ content:
     third_party_settings: {  }
     weight: 0
     region: content
-  field_response:
-    type: basic_string
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    weight: 1
-    region: content
   field_server_type:
     type: list_default
     label: above
@@ -36,4 +29,5 @@ content:
     third_party_settings: {  }
     weight: 1
     region: content
-hidden: {  }
+hidden:
+  field_response: true
