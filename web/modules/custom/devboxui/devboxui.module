@@ -19,6 +19,7 @@ function devboxui_form_alter(&$form, &$form_state, $form_id) {
   $uid = \Drupal::currentUser()->id();
 
   if ($form_id == 'user_form') {
+    $affInfo = getVpsAffInfo();
     $vps_count = 1;
     foreach ($form as $field_name => $field) {
       if (preg_match('/^field_vps_/', $field_name)) {
@@ -32,6 +33,7 @@ function devboxui_form_alter(&$form, &$form_state, $form_id) {
           #$vps_count.'.',
           implode(' ', $field_title),
         ]);
+
         # Alter weight.
         $weight = 50 + $vps_count;
         $form[$field_name]['#weight'] = $weight;
@@ -314,7 +316,17 @@ function devboxui_getImageConfigs(array &$form, FormStateInterface $form_state) 
  * Get the description for a user field.
  */
 function devboxuiGetUserFieldDescription($field_name) {
-  return '';
+  $uid = \Drupal::currentUser()->id();
+  if ($uid != '1') {
+    return '';
+  }
+  else {
+    return '';
+  }
+}
+
+function getVpsAffInfo() {
+  return;
 }
 
 /**
