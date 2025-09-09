@@ -1,25 +1,25 @@
 _core:
   default_config_hash: VV0HFGFvi0Pou7lakptNvL-oNLy6iIUp5m6b6gf4xos
 credentials_file: ''
-bucket: ''
+bucket: devboxui
 region: us-east-1
 use_cname: false
 domain_root: none
-use_customhost: false
-hostname: ''
+use_customhost: true
+hostname: 'https://acd43f7fef2daed6bc2b608d058db15b.r2.cloudflarestorage.com'
 domain: ''
 use_path_style_endpoint: false
-disable_version_sync: false
+disable_version_sync: true
 cache_control_header: ''
 encryption: ''
-use_https: false
+use_https: true
 ignore_cache: false
 read_only: false
 disable_cert_verify: false
 redirect_styles_ttl: 0
 root_folder: ''
-public_folder: ''
-private_folder: ''
+public_folder: s3fs-public
+private_folder: s3fs-private
 presigned_urls: ''
 saveas: ''
 torrents: ''
@@ -28,6 +28,6 @@ cssjs_host: ''
 use_credentials_cache: false
 credentials_cache_dir: ''
 keymodule:
-  access_key_name: ''
-  secret_key_name: ''
+  secret_key_name: r2_secret_key
+  access_key_name: r2_access_key
 disable_shared_config_files: false

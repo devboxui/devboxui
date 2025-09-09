@@ -612,7 +612,7 @@ $settings['update_free_access'] = FALSE;
  * See https://www.drupal.org/documentation/modules/file for more information
  * about securing private files.
  */
-# $settings['file_private_path'] = '';
+$settings['file_private_path'] = '../private';
 
 /**
  * Temporary file path:
@@ -883,3 +883,5 @@ if (getenv('IS_DDEV_PROJECT') == 'true' && file_exists(__DIR__ . '/settings.ddev
 # }
 
 $settings['cache']['bins']['devboxui'] = 'cache.backend.permanent_database';
+
+$settings['s3fs.use_s3_for_public'] = TRUE;

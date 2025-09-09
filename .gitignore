@@ -7,3 +7,6 @@ config/sync/smtp.settings.yml
 config/sync/eca.eca.process_xs2zvsm.yml
 config/sync/eca.model.process_xs2zvsm.yml
 turnstile.keys
+r2-access.key
+r2-secret.key
+private
