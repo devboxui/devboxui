@@ -1,0 +1,10 @@
+uuid: 8bcc6c65-2471-4b38-b238-db39d7fe84b8
+langcode: en
+status: true
+dependencies: {  }
+id: manual
+label: Custom
+icon_uuid: null
+icon_default: null
+description: "Custom server setup covers cases where the VPS provider does not have an API and hourly billing.<br>\r\nYou create your server manually in your provider's interface and then use the given IP in order to setup and manage it for development."
+behavior_plugins: {  }

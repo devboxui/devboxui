@@ -786,7 +786,12 @@ function devboxui_entity_view_alter(array &$build, \Drupal\Core\Entity\EntityInt
               $suffix = '';
             }
             $provider = $vps['#paragraph']->get('type')->getString();
-            $vpsDetails = json_decode($vps['#paragraph']->get('field_response')->getString(), TRUE);
+            if ($provider == 'manual') {
+              $vpsDetails = ['manual'];
+            }
+            else {
+              $vpsDetails = json_decode($vps['#paragraph']->get('field_response')->getString(), TRUE);
+            }
             $build['field_vps_provider'][$prop]['connection_details'] = [
               '#markup' => processVpsDetails($provider, $vpsDetails),
               '#weight' => 1000,
@@ -805,23 +810,20 @@ function processVpsDetails($provider, $details) {
   if ($provider == 'hetzner') {
     $output[] = '<b>Status</b><br>'.vps_status($details['status']);
     $output[] = '<b>IP</b><br>'.$details['public_net']['ipv4']['ip'];
-    $output[] = '<b>User</b><br>'.str_replace('-', '', $user->uuid());
   }
   else if ($provider == 'vultr') {
     $output[] = '<b>Status</b><br>'.vps_status($details['server_status']);
     $output[] = '<b>IP</b><br>'.$details['main_ip'];
-    $output[] = '<b>User</b><br>'.str_replace('-', '', $user->uuid());
   }
   else if ($provider == 'akamai_cloud_linode') {
     $output[] = '<b>Status</b><br>'.vps_status($details['status']);
     $output[] = '<b>IP</b><br>'.$details['ipv4']['0'];
-    $output[] = '<b>User</b><br>'.str_replace('-', '', $user->uuid());
   }
   else if ($provider == 'digitalocean') {
     $output[] = '<b>Status</b><br>'.vps_status($details['status']);
     $output[] = '<b>IP</b><br>'.$details['networks']['v4']['0']['ip_address'];
-    $output[] = '<b>User</b><br>'.str_replace('-', '', $user->uuid());
   }
+  $output[] = '<b>User</b><br>'.str_replace('-', '', $user->uuid());
 
   return implode('<br>', $output);
 }
@@ -831,4 +833,26 @@ function vps_status($status) {
     return '<span class="running">'.strtoupper($status).'</span>';
   }
   return $status;
+}
+
+
+/**
+ * Implements hook_views_post_render().
+ */
+function devboxui_views_post_render(\Drupal\views\ViewExecutable $view, array &$output, $display) {
+  if ($view->id() === 'dashboard' && $view->current_display === 'page_1') {
+    try {
+      #$data = apiCall('https://api.digitalocean.com/v2', 'customers/my/balance');
+    }
+    catch (\Exception $e) {
+      $data = ['error' => $e->getMessage()];
+    }
+    $output['header']['api_data'] = [
+      '#markup' => '<div class="api-header">Extra header text here</div>',
+      '#weight' => -10,
+      '#cache' => [
+        'max-age' => 0,  // no caching
+      ],
+    ];
+  }
 }

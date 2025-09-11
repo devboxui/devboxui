@@ -1,0 +1,19 @@
+uuid: 6da50255-ac0b-458c-82a3-9008c6c8f043
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_server_ip
+    - paragraphs.paragraphs_type.manual
+id: paragraph.manual.field_server_ip
+field_name: field_server_ip
+entity_type: paragraph
+bundle: manual
+label: 'Server IP'
+description: "Insert your server IP.<br>\r\nIMPORTANT: Do not forget to add your current SSH public key to the server when you create it."
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

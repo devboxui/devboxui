@@ -72,7 +72,9 @@ class DevBoxBatchService {
 
     // Load the paragraph entity and get the response field.
     $paragraph = entityManage('paragraph', $paragraph_id);
-    \Drupal::service('plugin.manager.vps_provider')->createInstance($paragraph->getType())->create_vps($paragraph);
+    if ($paragraph->getType() != 'manual') {
+      \Drupal::service('plugin.manager.vps_provider')->createInstance($paragraph->getType())->create_vps($paragraph);
+    }
   }
 
   /**
@@ -83,7 +85,9 @@ class DevBoxBatchService {
 
     // Load the paragraph entity and get the response field.
     $paragraph = entityManage('paragraph', $paragraph_id);
-    \Drupal::service('plugin.manager.vps_provider')->createInstance($paragraph->getType())->delete_vps($paragraph);
+    if ($paragraph->getType() != 'manual') {
+      \Drupal::service('plugin.manager.vps_provider')->createInstance($paragraph->getType())->delete_vps($paragraph);
+    }
   }
 
   /**
@@ -233,21 +237,26 @@ class DevBoxBatchService {
       $user = entityManage('user', \Drupal::currentUser()->id());
       $private_key = $user->get('field_ssh_private_key')->getString();
 
-      # Get the IP from the paragraph's field_response field.
-      $paragraph_response = json_decode($paragraph->get('field_response')->getString(), TRUE);
-      // get paragraph type
-      $provider = $paragraph->getType();
-      if ($provider == 'hetzner') {
-        $host = $paragraph_response['public_net']['ipv4']['ip'];
+      if ($paragraph->getType() != 'manual') {
+        # Get the IP from the paragraph's field_response field.
+        $paragraph_response = json_decode($paragraph->get('field_response')->getString(), TRUE);
+        // get paragraph type
+        $provider = $paragraph->getType();
+        if ($provider == 'hetzner') {
+          $host = $paragraph_response['public_net']['ipv4']['ip'];
+        }
+        else if ($provider == 'vultr') {
+          $host = $paragraph_response['main_ip'];
+        }
+        else if ($provider == 'digitalocean') {
+          $host = $paragraph_response['networks']['v4'][0]['ip_address'];
+        }
+        else if ($provider == 'akamai_cloud_linode') {
+          $host = $paragraph_response['ipv4'][0];
+        }
       }
-      else if ($provider == 'vultr') {
-        $host = $paragraph_response['main_ip'];
-      }
-      else if ($provider == 'digitalocean') {
-        $host = $paragraph_response['networks']['v4'][0]['ip_address'];
-      }
-      else if ($provider == 'akamai_cloud_linode') {
-        $host = $paragraph_response['ipv4'][0];
+      else {
+        $host = $paragraph->get('field_server_ip')->getString();
       }
 
       if ($root) {
@@ -479,7 +488,7 @@ class DevBoxBatchService {
     $context['message'] = t('@step', ['@step' => $step]);
 
     // Run the command.
-    self::ssh_app_wrapper($paragraph_id, 'reboot', $context);
+    self::ssh_app_wrapper($paragraph_id, 'shutdown -r now', $context);
   }
 
 }

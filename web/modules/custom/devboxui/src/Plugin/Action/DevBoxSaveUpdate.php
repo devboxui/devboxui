@@ -82,7 +82,12 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
       foreach ($currentValues as $vps_node) {
         $pid = $vps_node['target_id'];
         $paragraph = entityManage('paragraph', $pid);
-        $server_info = json_decode($paragraph->get('field_response')->getString(), TRUE);
+        if ($paragraph->getType() == 'manual') {
+          $server_info = $paragraph->get('field_server_ip')->getString();
+        }
+        else {
+          $server_info = json_decode($paragraph->get('field_response')->getString(), TRUE);
+        }
         // Create server only if it does not exist.
         if (empty($server_info)) {
           $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];

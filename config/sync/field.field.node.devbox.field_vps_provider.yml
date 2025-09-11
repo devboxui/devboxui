@@ -8,6 +8,7 @@ dependencies:
     - paragraphs.paragraphs_type.akamai_cloud_linode
     - paragraphs.paragraphs_type.digitalocean
     - paragraphs.paragraphs_type.hetzner
+    - paragraphs.paragraphs_type.manual
     - paragraphs.paragraphs_type.vultr
   module:
     - entity_reference_revisions
@@ -29,6 +30,7 @@ settings:
       vultr: vultr
       akamai_cloud_linode: akamai_cloud_linode
       digitalocean: digitalocean
+      manual: manual
     negate: 0
     target_bundles_drag_drop:
       akamai_cloud_linode:
@@ -61,6 +63,9 @@ settings:
       lando:
         weight: 21
         enabled: false
+      manual:
+        weight: 27
+        enabled: true
       ports:
         weight: 22
         enabled: false

@@ -1,0 +1,32 @@
+uuid: 5c78444d-c317-4928-8053-3d8ee9fd7344
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.manual.field_name
+    - field.field.paragraph.manual.field_server_ip
+    - paragraphs.paragraphs_type.manual
+id: paragraph.manual.default
+targetEntityType: paragraph
+bundle: manual
+mode: default
+content:
+  field_name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_server_ip:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
