@@ -439,8 +439,13 @@ class DevBoxBatchService {
 
       # Get the IP from the paragraph's field_response field.
       $devbox_paragraph = entityManage('paragraph', $app_paragraph->get('field_devbox_vps')->getString());
-      $devbox_response = json_decode($devbox_paragraph->get('field_response')->getString(), TRUE);
-      $host = $devbox_response['public_net']['ipv4']['ip'];
+      if ($devbox_paragraph->getType() != 'manual') {
+        $devbox_response = json_decode($devbox_paragraph->get('field_response')->getString(), TRUE);
+        $host = $devbox_response['public_net']['ipv4']['ip'];
+      }
+      else {
+        $host = $devbox_paragraph->get('field_server_ip')->getString();
+      }
       $username = str_replace('-', '', entityManage('user', \Drupal::currentUser()->id())->uuid());
 
       $ssh = new SSH2($host);
@@ -488,7 +493,7 @@ class DevBoxBatchService {
     $context['message'] = t('@step', ['@step' => $step]);
 
     // Run the command.
-    self::ssh_app_wrapper($paragraph_id, 'shutdown -r now', $context);
+    self::ssh_wrapper($paragraph_id, 'reboot', $context);
   }
 
 }
