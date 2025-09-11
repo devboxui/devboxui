@@ -17,7 +17,6 @@ dependencies:
     - field.field.paragraph.app.field_volumes
     - paragraphs.paragraphs_type.app
   module:
-    - entity_reference_revisions
     - options
 id: paragraph.app.default
 targetEntityType: paragraph
@@ -32,13 +31,11 @@ content:
     weight: 1
     region: content
   field_caps:
-    type: entity_reference_revisions_entity_view
+    type: basic_string
     label: above
-    settings:
-      view_mode: default
-      link: ''
+    settings: {  }
     third_party_settings: {  }
-    weight: 6
+    weight: 14
     region: content
   field_devbox_vps:
     type: list_default
@@ -56,13 +53,11 @@ content:
     weight: 7
     region: content
   field_env_vars:
-    type: entity_reference_revisions_entity_view
+    type: basic_string
     label: above
-    settings:
-      view_mode: default
-      link: ''
+    settings: {  }
     third_party_settings: {  }
-    weight: 3
+    weight: 12
     region: content
   field_max_retries:
     type: number_integer
@@ -74,13 +69,11 @@ content:
     weight: 10
     region: content
   field_ports:
-    type: entity_reference_revisions_entity_view
+    type: basic_string
     label: above
-    settings:
-      view_mode: default
-      link: ''
+    settings: {  }
     third_party_settings: {  }
-    weight: 5
+    weight: 11
     region: content
   field_restart:
     type: list_default
@@ -90,22 +83,18 @@ content:
     weight: 9
     region: content
   field_sysctl:
-    type: entity_reference_revisions_entity_view
+    type: basic_string
     label: above
-    settings:
-      view_mode: default
-      link: ''
+    settings: {  }
     third_party_settings: {  }
-    weight: 8
+    weight: 15
     region: content
   field_volumes:
-    type: entity_reference_revisions_entity_view
+    type: basic_string
     label: above
-    settings:
-      view_mode: default
-      link: ''
+    settings: {  }
     third_party_settings: {  }
-    weight: 4
+    weight: 13
     region: content
 hidden:
   field_app_response: true

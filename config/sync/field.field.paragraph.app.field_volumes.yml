@@ -1,52 +1,19 @@
-uuid: 354d683c-69d7-4715-9767-a7dcd8008ef4
+uuid: ccbf41d8-58b5-4822-874b-499812d72574
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.paragraph.field_volumes
     - paragraphs.paragraphs_type.app
-    - paragraphs.paragraphs_type.volumes
-  module:
-    - entity_reference_revisions
 id: paragraph.app.field_volumes
 field_name: field_volumes
 entity_type: paragraph
 bundle: app
 label: Volumes
-description: ''
+description: "The volumes attribute define mount host paths or named volumes that are accessible by service containers. You can use volumes to define multiple types of mounts; volume, bind, tmpfs, or npipe.<br><br>\r\nIf the mount is a host path and is only used by a single service, it can be declared as part of the service definition. To reuse a volume across multiple services, a named volume must be declared in the volumes top-level element."
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings:
-  handler: 'default:paragraph'
-  handler_settings:
-    target_bundles:
-      volumes: volumes
-    negate: 0
-    target_bundles_drag_drop:
-      app:
-        weight: 6
-        enabled: false
-      caps:
-        weight: 10
-        enabled: false
-      docker_image:
-        weight: 7
-        enabled: false
-      env_vars:
-        weight: 8
-        enabled: false
-      hetzner:
-        weight: 9
-        enabled: false
-      ports:
-        weight: 14
-        enabled: false
-      volumes:
-        weight: 11
-        enabled: true
-      vultr:
-        weight: 10
-        enabled: false
-field_type: entity_reference_revisions
+settings: {  }
+field_type: string_long

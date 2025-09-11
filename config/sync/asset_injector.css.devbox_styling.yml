@@ -22,6 +22,24 @@ code: |-
   	color: green;
   	font-weight: bold;
   }
+  .field--name-field-env-vars .form-textarea-wrapper,
+  .field--name-field-ports .form-textarea-wrapper,
+  .field--name-field-volumes .form-textarea-wrapper,
+  .field--name-field-caps .form-textarea-wrapper,
+  .field--name-field-sysctl .form-textarea-wrapper {
+  	width: 50%;
+    display: inline-block;
+  }
+  .field--name-field-env-vars .form-item__description,
+  .field--name-field-ports .form-item__description,
+  .field--name-field-volumes .form-item__description,
+  .field--name-field-caps .form-item__description,
+  .field--name-field-sysctl .form-item__description {
+    width: 48%;
+    display: inline-block;
+    vertical-align: top;
+    padding-left: 1%;
+  }
 media: all
 preprocess: true
 conditions: {  }

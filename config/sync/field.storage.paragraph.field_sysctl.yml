@@ -1,19 +1,18 @@
-uuid: 208fb149-0ea6-49ab-9b8b-6df76f8e0de0
+uuid: 324ac7de-01cc-456d-8f73-1aba2dbef507
 langcode: en
 status: true
 dependencies:
   module:
-    - entity_reference_revisions
     - paragraphs
 id: paragraph.field_sysctl
 field_name: field_sysctl
 entity_type: paragraph
-type: entity_reference_revisions
+type: string_long
 settings:
-  target_type: paragraph
-module: entity_reference_revisions
+  case_sensitive: false
+module: core
 locked: false
-cardinality: -1
+cardinality: 1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false

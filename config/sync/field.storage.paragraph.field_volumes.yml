@@ -1,19 +1,18 @@
-uuid: 65affc5f-ef6a-4663-ae70-9bc5e0228475
+uuid: 8111a240-0cee-47a9-9cec-4172f274ec17
 langcode: en
 status: true
 dependencies:
   module:
-    - entity_reference_revisions
     - paragraphs
 id: paragraph.field_volumes
 field_name: field_volumes
 entity_type: paragraph
-type: entity_reference_revisions
+type: string_long
 settings:
-  target_type: paragraph
-module: entity_reference_revisions
+  case_sensitive: false
+module: core
 locked: false
-cardinality: -1
+cardinality: 1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false

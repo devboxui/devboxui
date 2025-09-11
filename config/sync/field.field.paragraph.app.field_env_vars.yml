@@ -1,52 +1,19 @@
-uuid: f85070db-e1cf-472c-8e33-4baed1fd3ebc
+uuid: b49325b4-2bb3-4448-8e81-f427ec69ff58
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.paragraph.field_env_vars
     - paragraphs.paragraphs_type.app
-    - paragraphs.paragraphs_type.env_vars
-  module:
-    - entity_reference_revisions
 id: paragraph.app.field_env_vars
 field_name: field_env_vars
 entity_type: paragraph
 bundle: app
-label: 'Env Vars'
-description: ''
+label: 'Env vars'
+description: "The environment attribute defines environment variables set in the container and it can use either an array or a map. Any boolean values; true, false, yes, no, should be enclosed in quotes to ensure they are not converted to True or False by the YAML parser.<br><br>\r\nEnvironment variables can be declared by a single key (no value to equals sign). In this case Compose relies on you to resolve the value. If the value is not resolved, the variable is unset and is removed from the service container environment."
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings:
-  handler: 'default:paragraph'
-  handler_settings:
-    target_bundles:
-      env_vars: env_vars
-    negate: 0
-    target_bundles_drag_drop:
-      app:
-        weight: 6
-        enabled: false
-      caps:
-        weight: 10
-        enabled: false
-      docker_image:
-        weight: 7
-        enabled: false
-      env_vars:
-        weight: 8
-        enabled: true
-      hetzner:
-        weight: 9
-        enabled: false
-      ports:
-        weight: 14
-        enabled: false
-      volumes:
-        weight: 15
-        enabled: false
-      vultr:
-        weight: 10
-        enabled: false
-field_type: entity_reference_revisions
+settings: {  }
+field_type: string_long

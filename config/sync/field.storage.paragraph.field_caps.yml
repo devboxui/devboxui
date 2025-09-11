@@ -1,19 +1,18 @@
-uuid: b5423545-65af-45da-ba15-4b10362ff7a5
+uuid: f7cdf182-7fea-4f90-bd36-08f47d42024c
 langcode: en
 status: true
 dependencies:
   module:
-    - entity_reference_revisions
     - paragraphs
 id: paragraph.field_caps
 field_name: field_caps
 entity_type: paragraph
-type: entity_reference_revisions
+type: string_long
 settings:
-  target_type: paragraph
-module: entity_reference_revisions
+  case_sensitive: false
+module: core
 locked: false
-cardinality: -1
+cardinality: 1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false

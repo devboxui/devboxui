@@ -11,7 +11,7 @@ id: paragraph.app.field_devbox_vps
 field_name: field_devbox_vps
 entity_type: paragraph
 bundle: app
-label: DevBox/VPS
+label: DevBox
 description: 'Select the VPS this app will get install into.'
 required: true
 translatable: false

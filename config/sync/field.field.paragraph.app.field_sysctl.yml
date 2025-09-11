@@ -1,64 +1,19 @@
-uuid: b1fe0b14-0f83-46e5-ae04-67d2e0046901
+uuid: 6c2ff2e4-8b52-41aa-9a6f-041c903a55fe
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.paragraph.field_sysctl
     - paragraphs.paragraphs_type.app
-    - paragraphs.paragraphs_type.sysctl
-  module:
-    - entity_reference_revisions
 id: paragraph.app.field_sysctl
 field_name: field_sysctl
 entity_type: paragraph
 bundle: app
-label: SysCtl
-description: ''
+label: "SysCtl\t"
+description: "sysctls defines kernel parameters to set in the container. sysctls can use either an array or a map.<br>\r\nYou can only use sysctls that are namespaced in the kernel. Docker does not support changing sysctls inside a container that also modify the host system. For an overview of supported sysctls, refer to https://docs.docker.com/reference/cli/docker/container/run/#sysctl."
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings:
-  handler: 'default:paragraph'
-  handler_settings:
-    target_bundles:
-      sysctl: sysctl
-    negate: 0
-    target_bundles_drag_drop:
-      app:
-        weight: 12
-        enabled: false
-      caps:
-        weight: 13
-        enabled: false
-      ddev:
-        weight: 14
-        enabled: false
-      docker_image:
-        weight: 15
-        enabled: false
-      docksal:
-        weight: 16
-        enabled: false
-      env_vars:
-        weight: 17
-        enabled: false
-      hetzner:
-        weight: 18
-        enabled: false
-      lando:
-        weight: 19
-        enabled: false
-      ports:
-        weight: 20
-        enabled: false
-      sysctl:
-        weight: 22
-        enabled: true
-      volumes:
-        weight: 21
-        enabled: false
-      vultr:
-        weight: 22
-        enabled: false
-field_type: entity_reference_revisions
+settings: {  }
+field_type: string_long

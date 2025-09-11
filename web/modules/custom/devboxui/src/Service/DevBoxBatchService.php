@@ -439,7 +439,7 @@ class DevBoxBatchService {
 
       # Get the IP from the paragraph's field_response field.
       $devbox_paragraph = entityManage('paragraph', $app_paragraph->get('field_devbox_vps')->getString());
-      if ($devbox_paragraph->getType() != 'manual') {
+      if ($devbox_paragraph->get('type')->getString() != 'manual') {
         $devbox_response = json_decode($devbox_paragraph->get('field_response')->getString(), TRUE);
         $host = $devbox_response['public_net']['ipv4']['ip'];
       }

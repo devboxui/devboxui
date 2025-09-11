@@ -420,6 +420,10 @@ function devboxui_options_allowed_values(FieldStorageConfig $definition, Content
 }
 
 function vps_node_description($vps_node) {
+  if ($vps_node->get('type')->getString() == 'manual') {
+    return '';
+  }
+
   $vps_info = json_decode($vps_node->get('field_response')->getString(), TRUE);
   $description = ' (' . implode(', ',[
     $vps_info['id'],

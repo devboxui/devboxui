@@ -1,52 +1,19 @@
-uuid: c0430a95-38d0-4c88-be32-e16631856838
+uuid: d11d6804-0742-4f86-997d-7879c4b198fe
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.paragraph.field_caps
     - paragraphs.paragraphs_type.app
-    - paragraphs.paragraphs_type.caps
-  module:
-    - entity_reference_revisions
 id: paragraph.app.field_caps
 field_name: field_caps
 entity_type: paragraph
 bundle: app
 label: Caps
-description: ''
+description: "Add Linux capabilities.<br>\r\nIt can have fine grain control over the capabilities using --cap-add and --cap-drop. By default, Docker has a default list of capabilities that are kept. The following table lists the Linux capability options which are allowed by default and can be dropped.<br>\r\nhttps://docs.docker.com/engine/containers/run/#runtime-privilege-and-linux-capabilities"
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings:
-  handler: 'default:paragraph'
-  handler_settings:
-    target_bundles:
-      caps: caps
-    negate: 0
-    target_bundles_drag_drop:
-      app:
-        weight: 9
-        enabled: false
-      caps:
-        weight: 10
-        enabled: true
-      docker_image:
-        weight: 11
-        enabled: false
-      env_vars:
-        weight: 12
-        enabled: false
-      hetzner:
-        weight: 13
-        enabled: false
-      ports:
-        weight: 14
-        enabled: false
-      volumes:
-        weight: 15
-        enabled: false
-      vultr:
-        weight: 16
-        enabled: false
-field_type: entity_reference_revisions
+settings: {  }
+field_type: string_long

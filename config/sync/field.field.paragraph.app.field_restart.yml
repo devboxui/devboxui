@@ -12,7 +12,7 @@ field_name: field_restart
 entity_type: paragraph
 bundle: app
 label: Restart
-description: ''
+description: "restart defines the policy that the platform applies on container termination.<br>\r\n- no: The default restart policy. It does not restart the container under any circumstances.<br>\r\n- always: The policy always restarts the container until its removal.<br>\r\n- on-failure[:max-retries]: The policy restarts the container if the exit code indicates an error. Optionally, limit the number of restart retries the Docker daemon attempts.<br>\r\n- unless-stopped: The policy restarts the container irrespective of the exit code but stops restarting when the service is stopped or removed."
 required: true
 translatable: false
 default_value:

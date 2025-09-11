@@ -1,19 +1,18 @@
-uuid: 3fb552f3-e331-4c2f-b4ef-ad405ced50e9
+uuid: f2c4595f-820a-47ed-9c2e-991ee0651cba
 langcode: en
 status: true
 dependencies:
   module:
-    - entity_reference_revisions
     - paragraphs
 id: paragraph.field_ports
 field_name: field_ports
 entity_type: paragraph
-type: entity_reference_revisions
+type: string_long
 settings:
-  target_type: paragraph
-module: entity_reference_revisions
+  case_sensitive: false
+module: core
 locked: false
-cardinality: -1
+cardinality: 1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false
