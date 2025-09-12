@@ -168,10 +168,12 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
           foreach ($operators as $op) {
             if (str_contains($v, $op)) {
               [$left, $right] = explode($op, $v);
+
               $left_array = explode(' ', $left);
               $left = end($left_array);
               $right_array = explode(' ', $right);
               $right = reset($right_array);
+
               $line = implode($op, [
                 $left,
                 $right,

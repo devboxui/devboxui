@@ -4,7 +4,7 @@ status: true
 dependencies: {  }
 id: devbox_styling
 label: 'DevBox/App styling'
-code: |-
+code: |
   .node-devbox-form .entity-meta,
   .node-devbox-edit-form .entity-meta {
   	display: none;
@@ -39,6 +39,15 @@ code: |-
     display: inline-block;
     vertical-align: top;
     padding-left: 1%;
+  }
+  .node--unpublished {
+  	background-color: initial !important;
+  	border-left: 2px solid orange;
+    padding-left: 15px;
+  }
+  article:not(.node--unpublished) {
+  	border-left: 2px solid green;
+    padding-left: 15px;
   }
 media: all
 preprocess: true
