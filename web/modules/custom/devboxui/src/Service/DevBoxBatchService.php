@@ -338,19 +338,15 @@ class DevBoxBatchService {
         }
       }
       else {
-        if ($ck == 'docker_image') {
-          $image = [$cv];
-        }
+        $options = array_merge($options, [$cv]);
       }
     }
     $cmd = [
       'docker run -d',
-      '--name=' . $app->uuid(),
+      '--name=' . str_replace('-', '', $app->uuid()),
       !empty($options) ? implode(" \\\n", $options) : '',
-      '--restart unless-stopped',
-      !empty($image) ? implode(' ', $image) : '',
     ];
-    $command = implode(" \\\n", $cmd);
+    $command = implode(" \\\n", array_filter($cmd));
 
     // Run the command.
     self::ssh_app_wrapper($paragraph_id, $command, $context);

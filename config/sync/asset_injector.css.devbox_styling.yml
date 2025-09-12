@@ -40,12 +40,12 @@ code: |
     vertical-align: top;
     padding-left: 1%;
   }
-  .node--unpublished {
+  .user-logged-in .node--unpublished {
   	background-color: initial !important;
   	border-left: 2px solid orange;
     padding-left: 15px;
   }
-  article:not(.node--unpublished) {
+  .user-logged-in article:not(.node--unpublished) {
   	border-left: 2px solid green;
     padding-left: 15px;
   }

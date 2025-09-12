@@ -167,7 +167,20 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
         foreach ($values as $v) {
           foreach ($operators as $op) {
             if (str_contains($v, $op)) {
-              [$left, $right] = explode($op, $v);
+              # Some pre-formatting to guarantee parsing.
+              $v = str_replace(' = ', '=', $v);
+
+              if ($op == '=') {
+                if (substr_count($v, $op) > 1) {
+                  [$left, $right] = explode('="', $v);
+                }
+                else {
+                  [$left, $right] = explode($op, $v);
+                }
+              }
+              else {
+                [$left, $right] = explode($op, $v);
+              }
 
               $left_array = explode(' ', $left);
               $left = end($left_array);
@@ -176,7 +189,7 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
 
               $line = implode($op, [
                 $left,
-                $right,
+                trim($right, '"'),
               ]);
               $app_config[] = (isset($attributes[$fk]) ? $attributes[$fk] : '') . $line;
             }
