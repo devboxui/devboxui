@@ -54,20 +54,17 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
    */
   public function execute(ContentEntityInterface $node = NULL): void {
     if ($node) {
-      $status = $node->get('status')->getString() == '1';
       // Created.
-      if ($node->isNew() && $status) {
+      if ($node->isNew()) {
         $this->processAppNodes($node);
       }
       else { // Updated.
-        if ($status) {
-          $this->processAppNodes(
-            // Current values, after update.
-            $node,
-            // Original values, before update.
-            $node->getOriginal()
-          );
-        }
+        $this->processAppNodes(
+          // Current values, after update.
+          $node,
+          // Original values, before update.
+          $node->getOriginal()
+        );
       }
     }
   }
@@ -82,14 +79,14 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
       $originalAppValues = $original->get('field_app')->getValue();
       $commands = array_merge(
         $commands,
-        $this->processCurrOrigApps($currentAppValues, $originalAppValues)
+        $this->processCurrOrigApps($currentAppValues, $current->get('status')->getString(), $originalAppValues)
       );
     }
     else { // Created
       $currentAppValues = $current->get('field_app')->getValue();
       $commands = array_merge(
         $commands,
-        $this->processCurrOrigApps($currentAppValues)
+        $this->processCurrOrigApps($currentAppValues, $current->get('status')->getString())
       );
     }
     // Run the batch operation.
@@ -98,7 +95,7 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
     }
   }
 
-  private function processCurrOrigApps($currentAppValues, $originalAppValues = []) {
+  private function processCurrOrigApps($currentAppValues, $currentStatus, $originalAppValues = []) {
     $commands = [];
     // Use $appValues to create App nodes that were added.
     foreach ($currentAppValues as $app_node) {
@@ -107,19 +104,27 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
         $app_paragraph->set('field_saved_config', $this->processAppConfig($app_node));
         $app_paragraph->save();
 
-        $pid = $app_node['target_id'];
-        $commands["App created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_provision_app']];
+        if ($currentStatus == '1') {
+          $pid = $app_node['target_id'];
+          $commands["App created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_provision_app']];
+        }
       }
       else {
         $app_paragraph = entityManage('paragraph', $app_node['target_id']);
         $saved_config = json_decode($app_paragraph->get('field_saved_config')->getString(), TRUE);
-        # In case the configs have not been saved.
-        if (empty($saved_config)) {
-          $app_paragraph->set('field_saved_config', $this->processAppConfig($app_node));
-          $app_paragraph->save();
+        
+        # Save if changes made.
+        $updates = $this->processAppConfig($app_node);
+        if (!empty($updates)) {
+          if (strcmp($saved_config, $updates) !== 0) {
+            $app_paragraph->set('field_saved_config', $updates);
+            $app_paragraph->save();
 
-          $pid = $app_node['target_id'];
-          $commands["App created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_provision_app']];
+            if ($currentStatus == '1') {
+              $pid = $app_node['target_id'];
+              $commands["App created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_provision_app']];
+            }
+          }
         }
       }
     }
@@ -142,12 +147,44 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
 
   private function processAppConfig($appNode) {
     $app_config = [];
-    # Submitted values, process them.
+    $operators = ['=', ':'];
+    $attributes = [
+      'field_env_vars' => '-e ',
+      'field_ports' => '-p ',
+      'field_volumes' => '-v ',
+    ];
+    # Submitted values (on changes made), process them. 
     if (isset($appNode['subform'])) {
+      $docker_image = '';
+      foreach ($appNode['subform'] as $fk => $fv) {
+        if ($fk == 'field_docker_image') {
+          $docker_image = $fv[0]['value'];
+          continue;
+        }
+        if (in_array($fk, ['field_devbox_vps', 'field_max_retries'])) continue;
 
-    }
-    else {
+        $values = explode("\n", $fv[0]['value']);
+        foreach ($values as $v) {
+          foreach ($operators as $op) {
+            if (str_contains($v, $op)) {
+              [$left, $right] = explode($op, $v);
+              $left_array = explode(' ', $left);
+              $left = end($left_array);
+              $right_array = explode(' ', $right);
+              $right = reset($right_array);
+              $line = implode($op, [
+                $left,
+                $right,
+              ]);
+              $app_config[] = (isset($attributes[$fk]) ? $attributes[$fk] : '') . $line;
+            }
+          }
+        }
+      }
 
+      if (!empty($docker_image)) {
+        $app_config[] = $docker_image;
+      }
     }
     return json_encode($app_config);
   }
