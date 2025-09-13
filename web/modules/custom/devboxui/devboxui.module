@@ -799,7 +799,7 @@ function devboxui_entity_view_alter(array &$build, \Drupal\Core\Entity\EntityInt
             $build['field_vps_provider'][$prop]['connection_details'] = [
               '#markup' => processVpsDetails($provider, $vpsDetails),
               '#weight' => 1000,
-              '#suffix' => $suffix,
+              #'#suffix' => $suffix,
             ];
           }
         }
@@ -812,24 +812,24 @@ function processVpsDetails($provider, $details) {
   $output = [];
   $user = entityManage('user', \Drupal::currentUser()->id());
   if ($provider == 'hetzner') {
-    $output[] = '<b>Status</b><br>'.vps_status($details['status']);
-    $output[] = '<b>IP</b><br>'.$details['public_net']['ipv4']['ip'];
+    $output[] = vps_field_wrapper('status', $details['status']);
+    $output[] = vps_field_wrapper('ip', $details['public_net']['ipv4']['ip']);
   }
   else if ($provider == 'vultr') {
-    $output[] = '<b>Status</b><br>'.vps_status($details['server_status']);
-    $output[] = '<b>IP</b><br>'.$details['main_ip'];
+    $output[] = vps_field_wrapper('status', $details['server_status']);
+    $output[] = vps_field_wrapper('ip', $details['main_ip']);
   }
   else if ($provider == 'akamai_cloud_linode') {
-    $output[] = '<b>Status</b><br>'.vps_status($details['status']);
-    $output[] = '<b>IP</b><br>'.$details['ipv4']['0'];
+    $output[] = vps_field_wrapper('status', $details['status']);
+    $output[] = vps_field_wrapper('ip', $details['ipv4']['0']);
   }
   else if ($provider == 'digitalocean') {
-    $output[] = '<b>Status</b><br>'.vps_status($details['status']);
-    $output[] = '<b>IP</b><br>'.$details['networks']['v4']['0']['ip_address'];
+    $output[] = vps_field_wrapper('status', $details['status']);
+    $output[] = vps_field_wrapper('ip', $details['networks']['v4']['0']['ip_address']);
   }
-  $output[] = '<b>User</b><br>'.str_replace('-', '', $user->uuid());
+  $output[] = vps_field_wrapper('user', str_replace('-', '', $user->uuid()));
 
-  return implode('<br>', $output);
+  return implode('', $output);
 }
 
 function vps_status($status) {
@@ -839,6 +839,12 @@ function vps_status($status) {
   return $status;
 }
 
+function vps_field_wrapper($label, $value) {
+  return ' <div class="field field--custom-'.$label.' field--type-string field--label-above">
+    <div class="field__label">'.ucwords(str_replace('-', ' ', $label)).'</div>
+    <div class="field__item">'.$value.'</div>
+  </div>';
+}
 
 /**
  * Implements hook_views_post_render().

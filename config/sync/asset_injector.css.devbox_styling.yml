@@ -4,7 +4,7 @@ status: true
 dependencies: {  }
 id: devbox_styling
 label: 'DevBox/App styling'
-code: |
+code: |-
   .node-devbox-form .entity-meta,
   .node-devbox-edit-form .entity-meta {
   	display: none;
@@ -40,14 +40,32 @@ code: |
     vertical-align: top;
     padding-left: 1%;
   }
+
   .user-logged-in .node--unpublished {
   	background-color: initial !important;
   	border-left: 2px solid orange;
     padding-left: 15px;
   }
+  .user-logged-in .node--unpublished .field .field__item {
+  	border-left: 1px solid orange;
+    margin: 10px;
+    padding-left: 10px;
+  }
+  .user-logged-in .node--unpublished .field__items > .field__item {
+  	margin-bottom: 30px;
+  }
+
   .user-logged-in article:not(.node--unpublished) {
   	border-left: 2px solid green;
     padding-left: 15px;
+  }
+  .user-logged-in article:not(.node--unpublished) .field .field__item {
+  	border-left: 1px solid green;
+    margin: 10px;
+    padding-left: 10px;
+  }
+  .user-logged-in article:not(.node--unpublished) .field__items > .field__item {
+  	margin-bottom: 30px;
   }
 media: all
 preprocess: true

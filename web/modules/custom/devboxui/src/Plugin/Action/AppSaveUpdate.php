@@ -99,6 +99,7 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
     $commands = [];
     // Use $appValues to create App nodes that were added.
     foreach ($currentAppValues as $app_node) {
+      # If subform exists, changes were made.
       if (isset($app_node['subform'])) {
         $app_paragraph = entityManage('paragraph', $app_node['target_id']);
         $app_paragraph->set('field_saved_config', $this->processAppConfig($app_node));
@@ -107,24 +108,6 @@ final class AppSaveUpdate extends ActionBase implements ContainerFactoryPluginIn
         if ($currentStatus == '1') {
           $pid = $app_node['target_id'];
           $commands["App created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_provision_app']];
-        }
-      }
-      else {
-        $app_paragraph = entityManage('paragraph', $app_node['target_id']);
-        $saved_config = json_decode($app_paragraph->get('field_saved_config')->getString(), TRUE);
-        
-        # Save if changes made.
-        $updates = $this->processAppConfig($app_node);
-        if (!empty($updates)) {
-          if (strcmp($saved_config, $updates) !== 0) {
-            $app_paragraph->set('field_saved_config', $updates);
-            $app_paragraph->save();
-
-            if ($currentStatus == '1') {
-              $pid = $app_node['target_id'];
-              $commands["App created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_provision_app']];
-            }
-          }
         }
       }
     }
