@@ -108,6 +108,7 @@ class DevBoxBatchService {
     $context['message'] = t('@step', ['@step' => $step]);
 
     self::ssh_wrapper($paragraph_id, 'apt -y upgrade', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'apt -y install curl git', $context, TRUE);
   }
 
   /**
@@ -123,7 +124,7 @@ class DevBoxBatchService {
     self::ssh_wrapper($paragraph_id, 'apt update', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'apt -y install ca-certificates curl', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'install -m 0755 -d /etc/apt/keyrings', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'url -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'chmod a+r /etc/apt/keyrings/docker.asc', $context, TRUE);
     # Add the repository to Apt sources.
     self::ssh_wrapper($paragraph_id, 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null', $context, TRUE);
@@ -199,7 +200,7 @@ class DevBoxBatchService {
 
     $sshUser = str_replace('-', '', entityManage('user', \Drupal::currentUser()->id())->uuid());
     // Install OhMyBash globally.
-    self::ssh_wrapper($paragraph_id, "apt install -y git curl && git clone --depth=1 https://github.com/ohmybash/oh-my-bash.git /usr/share/oh-my-bash && cp /usr/share/oh-my-bash/templates/bashrc.osh-template /etc/skel/.bashrc && sed -i 's|^export OSH=.*|export OSH=/usr/share/oh-my-bash|' /etc/skel/.bashrc && sed -i 's|^OSH_THEME=.*|OSH_THEME=\"90210\"|' /etc/skel/.bashrc", $context, TRUE);
+    self::ssh_wrapper($paragraph_id, "git clone --depth=1 https://github.com/ohmybash/oh-my-bash.git /usr/share/oh-my-bash; cp /usr/share/oh-my-bash/templates/bashrc.osh-template /etc/skel/.bashrc && sed -i 's|^export OSH=.*|export OSH=/usr/share/oh-my-bash|' /etc/skel/.bashrc; sed -i 's|^OSH_THEME=.*|OSH_THEME=\"90210\"|' /etc/skel/.bashrc", $context, TRUE);
     // Update the existing root user with OhMyBash.
     self::ssh_wrapper($paragraph_id, "cp /usr/share/oh-my-bash/templates/bashrc.osh-template /root/.bashrc && sed -i 's|^export OSH=.*|export OSH=/usr/share/oh-my-bash|' /root/.bashrc && sed -i 's|^OSH_THEME=.*|OSH_THEME=\"90210\"|' /root/.bashrc", $context, TRUE);
   }

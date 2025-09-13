@@ -213,11 +213,19 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
       'type' => 'system',
       'status' => 'available',
       'os_flavor' => 'debian',
-      'sort' => 'name:desc',
       'architecture' => $arch,
-      'per_page' => '1',
     ]);
-    return $results[$this->images][0]['id'];
+    $oslist = array_column($results[$this->images], 'name', 'id');
+    $osid = 0; $osname = '';
+    foreach ($oslist as $osk => $osv) {
+      if (str_starts_with($osv, 'debian')) {
+        if ($osname < $osv) {
+          $osid = $osk;
+          $osname = $osv;
+        }
+      }
+    }
+    return $osid;
   }
 
   public function create_vps($paragraph) {
