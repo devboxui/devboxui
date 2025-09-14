@@ -6,6 +6,7 @@ dependencies:
     - field.field.paragraph.hetzner.field_name
     - field.field.paragraph.hetzner.field_response
     - field.field.paragraph.hetzner.field_server_type
+    - field.field.paragraph.hetzner.field_tools
     - paragraphs.paragraphs_type.hetzner
 id: paragraph.hetzner.default
 targetEntityType: paragraph
@@ -23,6 +24,12 @@ content:
   field_server_type:
     type: options_select
     weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_tools:
+    type: options_buttons
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }

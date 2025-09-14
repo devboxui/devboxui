@@ -1,0 +1,23 @@
+uuid: 801a514a-2ce3-4dff-88b4-e558e9d36f95
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_tools
+    - paragraphs.paragraphs_type.hetzner
+  module:
+    - options
+id: paragraph.hetzner.field_tools
+field_name: field_tools
+entity_type: paragraph
+bundle: hetzner
+label: Tools
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: oh_my_bash
+default_value_callback: ''
+settings: {  }
+field_type: list_string

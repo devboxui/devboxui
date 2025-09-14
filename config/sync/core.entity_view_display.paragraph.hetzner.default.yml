@@ -6,6 +6,7 @@ dependencies:
     - field.field.paragraph.hetzner.field_name
     - field.field.paragraph.hetzner.field_response
     - field.field.paragraph.hetzner.field_server_type
+    - field.field.paragraph.hetzner.field_tools
     - paragraphs.paragraphs_type.hetzner
   module:
     - options
@@ -28,6 +29,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 1
+    region: content
+  field_tools:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
     region: content
 hidden:
   field_response: true

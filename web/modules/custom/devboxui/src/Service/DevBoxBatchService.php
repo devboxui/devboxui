@@ -97,7 +97,7 @@ class DevBoxBatchService {
   public static function ssh_system_update($step, $paragraph_id, &$context): void {
     $context['message'] = t('@step', ['@step' => $step]);
 
-    self::ssh_wrapper($paragraph_id, 'apt update', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'apt-get update', $context, TRUE);
   }
 
   /**
@@ -107,8 +107,7 @@ class DevBoxBatchService {
   public static function ssh_system_upgrade($step, $paragraph_id, &$context): void {
     $context['message'] = t('@step', ['@step' => $step]);
 
-    self::ssh_wrapper($paragraph_id, 'apt -y upgrade', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'apt -y install curl git', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'apt-get -y upgrade', $context, TRUE);
   }
 
   /**
@@ -119,17 +118,17 @@ class DevBoxBatchService {
     $context['message'] = t('@step', ['@step' => $step]);
 
     // Make sure we don't have any conflicting packages.
-    self::ssh_wrapper($paragraph_id, 'for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do apt -y remove $pkg; done', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do apt-get -y remove $pkg; done', $context, TRUE);
     // Add Docker's official GPG key.
-    self::ssh_wrapper($paragraph_id, 'apt update', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'apt -y install ca-certificates curl', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'apt-get update', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'apt-get -y install ca-certificates curl', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'install -m 0755 -d /etc/apt/keyrings', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'chmod a+r /etc/apt/keyrings/docker.asc', $context, TRUE);
-    # Add the repository to Apt sources.
+    # Add the repository to apt-get sources.
     self::ssh_wrapper($paragraph_id, 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'apt update', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'apt-get update', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin', $context, TRUE);
   }
 
   /**
@@ -156,13 +155,13 @@ class DevBoxBatchService {
     $context['message'] = t('@step', ['@step' => $step]);
 
     # Add DDEV’s GPG key to your keyring
-    self::ssh_wrapper($paragraph_id, 'apt update && apt install -y curl', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'apt-get update && apt-get install -y curl', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'install -m 0755 -d /etc/apt/keyrings', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'curl -fsSL https://pkg.ddev.com/apt/gpg.key | gpg --dearmor | tee /etc/apt/keyrings/ddev.gpg > /dev/null chmod a+r /etc/apt/keyrings/ddev.gpg', $context, TRUE);
     # Add DDEV releases to your package repository
     self::ssh_wrapper($paragraph_id, 'echo "deb [signed-by=/etc/apt/keyrings/ddev.gpg] https://pkg.ddev.com/apt/ * *" | tee /etc/apt/sources.list.d/ddev.list >/dev/null', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'apt update', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'apt -y ddev', $context, 'devbox');
+    self::ssh_wrapper($paragraph_id, 'apt-get update', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'apt-get -y ddev', $context, 'devbox');
     # One-time initialization of mkcert
     self::ssh_wrapper($paragraph_id, 'mkcert -install', $context, 'devbox');
   }
@@ -200,6 +199,8 @@ class DevBoxBatchService {
 
     $sshUser = str_replace('-', '', entityManage('user', \Drupal::currentUser()->id())->uuid());
     // Install OhMyBash globally.
+    self::ssh_wrapper($paragraph_id, 'apt-get update', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'apt-get -y install curl git', $context, TRUE);
     self::ssh_wrapper($paragraph_id, "git clone --depth=1 https://github.com/ohmybash/oh-my-bash.git /usr/share/oh-my-bash; cp /usr/share/oh-my-bash/templates/bashrc.osh-template /etc/skel/.bashrc && sed -i 's|^export OSH=.*|export OSH=/usr/share/oh-my-bash|' /etc/skel/.bashrc; sed -i 's|^OSH_THEME=.*|OSH_THEME=\"90210\"|' /etc/skel/.bashrc", $context, TRUE);
     // Update the existing root user with OhMyBash.
     self::ssh_wrapper($paragraph_id, "cp /usr/share/oh-my-bash/templates/bashrc.osh-template /root/.bashrc && sed -i 's|^export OSH=.*|export OSH=/usr/share/oh-my-bash|' /root/.bashrc && sed -i 's|^OSH_THEME=.*|OSH_THEME=\"90210\"|' /root/.bashrc", $context, TRUE);

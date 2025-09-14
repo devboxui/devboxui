@@ -1,4 +1,4 @@
-uuid: 7d48896a-6490-4179-bdf3-95a422151c94
+uuid: d0673815-e1e1-458f-ad87-a89c56156d80
 langcode: en
 status: true
 dependencies:
@@ -12,21 +12,15 @@ type: list_string
 settings:
   allowed_values:
     -
-      value: docker
-      label: Docker
+      value: oh_my_bash
+      label: 'Oh My BASH!'
     -
       value: ddev
       label: DDEV
-    -
-      value: lando
-      label: Lando
-    -
-      value: docksal
-      label: Docksal
   allowed_values_function: ''
 module: options
 locked: false
-cardinality: 1
+cardinality: -1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false
