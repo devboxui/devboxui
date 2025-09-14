@@ -131,6 +131,9 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
     }
     $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
     $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
+    if (array_search('ddev', $tools) !== FALSE) {
+      $commands["OhMyBASH! installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ddev_install']];
+    }
   }
 
 }
