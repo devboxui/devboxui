@@ -68,7 +68,10 @@ code: |-
   	margin-bottom: 30px;
   }
   .view.view-dashboard.view-id-dashboard.view-display-id-block_2 {
-  	padding: 10px !important;
+  	padding: 0 !important;
+  }
+  .view.view-dashboard.view-id-dashboard.view-display-id-block_2 > .view-content {
+  	padding: 10px;
   }
 media: all
 preprocess: true
