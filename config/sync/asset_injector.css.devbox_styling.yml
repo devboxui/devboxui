@@ -67,6 +67,7 @@ code: |-
   .user-logged-in article:not(.node--unpublished) .field__items > .field__item {
   	margin-bottom: 30px;
   }
+
   .view.view-dashboard.view-id-dashboard.view-display-id-block_2 {
   	padding: 0 !important;
   }
@@ -86,6 +87,34 @@ code: |-
   }
   .gin--dark-mode .view.view-dashboard.view-id-dashboard.view-display-id-block_2 > .view-content > div {
   	border-color: darkgreen;
+  }
+
+  .view.view-dashboard.view-id-dashboard.view-display-id-block_3 {
+  	padding: 0 !important;
+  }
+  .view.view-dashboard.view-id-dashboard.view-display-id-block_3 > .view-content {
+  	padding: 0;
+  	box-shadow: none;
+  	background: none;
+  	border: none;
+  }
+  .view.view-dashboard.view-id-dashboard.view-display-id-block_3 > .view-content > div {
+  	box-shadow: 0 6px 16px var(--gin-border-color-layer);
+  	background: var(--gin-bg-layer);
+  	border: 1px solid var(--gin-border-color-layer);
+  	margin-top: 10px;
+    border-radius: 10px;
+    padding: 10px;
+  }
+  .gin--dark-mode .view.view-dashboard.view-id-dashboard.view-display-id-block_3 > .view-content > div {
+  	border-color: darkgreen;
+  }
+
+  .view.view-dashboard .italic {
+  	font-style: italic;
+  }
+  .view.view-dashboard .gray {
+  	color: gray;
   }
 media: all
 preprocess: true

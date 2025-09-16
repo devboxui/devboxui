@@ -121,8 +121,12 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
   }
 
   private function vpsBuildCmds($paragraph, &$commands, $pid) {
+    $type = $paragraph->get('type')->getString();
     $tools = array_column($paragraph->get('field_tools')->getValue(), 'value');
-    $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];
+
+    if ($type != 'manual') {
+      $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];
+    }
     $commands["OS package info updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
     $commands["OS system upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
     $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
