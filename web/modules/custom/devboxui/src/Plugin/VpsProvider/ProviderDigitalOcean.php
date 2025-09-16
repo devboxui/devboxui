@@ -176,7 +176,7 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
             implode(', ', [
               $server['vcpus'] . ' core(s)',
               $server['memory'] . ' MB RAM',
-              $server['disk'] . ' MB SSD',
+              $server['disk'] . ' GB SSD',
               $server['transfer'] . ' TB traffic',
             ]),
           ]);
