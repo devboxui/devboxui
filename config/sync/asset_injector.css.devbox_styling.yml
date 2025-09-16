@@ -71,7 +71,18 @@ code: |-
   	padding: 0 !important;
   }
   .view.view-dashboard.view-id-dashboard.view-display-id-block_2 > .view-content {
-  	padding: 10px;
+  	padding: 0;
+  	box-shadow: none;
+  	background: none;
+  	border: none;
+  }
+  .view.view-dashboard.view-id-dashboard.view-display-id-block_2 > .view-content > div {
+  	box-shadow: 0 6px 16px var(--gin-border-color-layer);
+  	background: var(--gin-bg-layer);
+  	border: 1px solid var(--gin-border-color-layer);
+  	margin-top: 10px;
+    border-radius: 10px;
+    padding: 10px;
   }
 media: all
 preprocess: true
