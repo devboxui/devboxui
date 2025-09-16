@@ -157,13 +157,13 @@ class DevBoxBatchService {
     # Add DDEV’s GPG key to your keyring
     self::ssh_wrapper($paragraph_id, 'apt-get update && apt-get install -y curl', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'install -m 0755 -d /etc/apt/keyrings', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'curl -fsSL https://pkg.ddev.com/apt/gpg.key | gpg --dearmor | tee /etc/apt/keyrings/ddev.gpg > /dev/null chmod a+r /etc/apt/keyrings/ddev.gpg', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, 'curl -fsSL https://pkg.ddev.com/apt/gpg.key | gpg --dearmor | tee /etc/apt/keyrings/ddev.gpg > /dev/null; chmod a+r /etc/apt/keyrings/ddev.gpg', $context, TRUE);
     # Add DDEV releases to your package repository
     self::ssh_wrapper($paragraph_id, 'echo "deb [signed-by=/etc/apt/keyrings/ddev.gpg] https://pkg.ddev.com/apt/ * *" | tee /etc/apt/sources.list.d/ddev.list >/dev/null', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'apt-get update', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'apt-get -y ddev', $context, 'devbox');
+    self::ssh_wrapper($paragraph_id, 'apt-get -y install ddev', $context, TRUE);
     # One-time initialization of mkcert
-    self::ssh_wrapper($paragraph_id, 'mkcert -install', $context, 'devbox');
+    self::ssh_wrapper($paragraph_id, 'mkcert -install', $context, TRUE);
   }
 
   /**

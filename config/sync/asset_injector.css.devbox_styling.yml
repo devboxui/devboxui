@@ -67,6 +67,9 @@ code: |-
   .user-logged-in article:not(.node--unpublished) .field__items > .field__item {
   	margin-bottom: 30px;
   }
+  .view.view-dashboard.view-id-dashboard.view-display-id-block_2 {
+  	padding: 10px !important;
+  }
 media: all
 preprocess: true
 conditions: {  }

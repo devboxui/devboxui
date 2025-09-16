@@ -99,6 +99,7 @@ module:
   turnstile: 0
   update: 0
   user: 0
+  views_field_view: 0
   views_ui: 0
   workflows: 0
   eca_form: 1
