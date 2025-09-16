@@ -1,0 +1,23 @@
+uuid: c05964f0-773c-4eb7-87f8-75dc104c7cb2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_tools
+    - paragraphs.paragraphs_type.digitalocean
+  module:
+    - options
+id: paragraph.digitalocean.field_tools
+field_name: field_tools
+entity_type: paragraph
+bundle: digitalocean
+label: Tools
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: oh_my_bash
+default_value_callback: ''
+settings: {  }
+field_type: list_string

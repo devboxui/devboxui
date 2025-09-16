@@ -1,0 +1,23 @@
+uuid: 8d281ec4-5e69-4a3c-b727-75b1a50e79ba
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_tools
+    - paragraphs.paragraphs_type.manual
+  module:
+    - options
+id: paragraph.manual.field_tools
+field_name: field_tools
+entity_type: paragraph
+bundle: manual
+label: Tools
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: oh_my_bash
+default_value_callback: ''
+settings: {  }
+field_type: list_string

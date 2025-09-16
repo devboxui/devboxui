@@ -1,0 +1,23 @@
+uuid: 9f6d0f4e-4f7a-4b24-b265-8504d2a07b9b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_tools
+    - paragraphs.paragraphs_type.akamai_cloud_linode
+  module:
+    - options
+id: paragraph.akamai_cloud_linode.field_tools
+field_name: field_tools
+entity_type: paragraph
+bundle: akamai_cloud_linode
+label: Tools
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: oh_my_bash
+default_value_callback: ''
+settings: {  }
+field_type: list_string

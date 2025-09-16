@@ -170,6 +170,16 @@ class DevBoxBatchService {
    * Batch callback for running SSH commands.
    * Use phpseclib to connect via SSH and run the command(s).
    */
+  public static function ssh_composer_install($step, $paragraph_id, &$context): void {
+    $context['message'] = t('@step', ['@step' => $step]);
+
+    self::ssh_wrapper($paragraph_id, 'apt-get update && apt-get install -y composer', $context, TRUE);
+  }
+
+  /**
+   * Batch callback for running SSH commands.
+   * Use phpseclib to connect via SSH and run the command(s).
+   */
   public static function ssh_create_user($step, $paragraph_id, &$context): void {
     $context['message'] = t('@step', ['@step' => $step]);
 

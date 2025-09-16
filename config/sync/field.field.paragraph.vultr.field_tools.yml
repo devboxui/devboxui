@@ -1,0 +1,23 @@
+uuid: 7530e9a7-a34f-4a08-a884-bb347ed26aba
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_tools
+    - paragraphs.paragraphs_type.vultr
+  module:
+    - options
+id: paragraph.vultr.field_tools
+field_name: field_tools
+entity_type: paragraph
+bundle: vultr
+label: Tools
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: oh_my_bash
+default_value_callback: ''
+settings: {  }
+field_type: list_string

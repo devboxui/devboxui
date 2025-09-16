@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.paragraph.manual.field_name
     - field.field.paragraph.manual.field_server_ip
+    - field.field.paragraph.manual.field_tools
     - paragraphs.paragraphs_type.manual
 id: paragraph.manual.default
 targetEntityType: paragraph
@@ -26,6 +27,12 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_tools:
+    type: options_buttons
+    weight: 2
+    region: content
+    settings: {  }
     third_party_settings: {  }
 hidden:
   created: true

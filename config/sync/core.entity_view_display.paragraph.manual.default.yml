@@ -5,7 +5,10 @@ dependencies:
   config:
     - field.field.paragraph.manual.field_name
     - field.field.paragraph.manual.field_server_ip
+    - field.field.paragraph.manual.field_tools
     - paragraphs.paragraphs_type.manual
+  module:
+    - options
 id: paragraph.manual.default
 targetEntityType: paragraph
 bundle: manual
@@ -26,5 +29,12 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     weight: 1
+    region: content
+  field_tools:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
     region: content
 hidden: {  }

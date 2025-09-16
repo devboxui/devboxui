@@ -17,6 +17,9 @@ settings:
     -
       value: ddev
       label: DDEV
+    -
+      value: composer
+      label: Composer
   allowed_values_function: ''
 module: options
 locked: false
