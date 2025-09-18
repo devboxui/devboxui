@@ -1,0 +1,21 @@
+uuid: 6e5834a3-31e9-4a73-9f5c-c4bac7c7b8b8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_php_version
+    - paragraphs.paragraphs_type.hetzner
+id: paragraph.hetzner.field_php_version
+field_name: field_php_version
+entity_type: paragraph
+bundle: hetzner
+label: 'PHP Version'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: '8.3'
+default_value_callback: ''
+settings: {  }
+field_type: string

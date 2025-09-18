@@ -20,6 +20,9 @@ settings:
     -
       value: composer
       label: Composer
+    -
+      value: php
+      label: PHP
   allowed_values_function: ''
 module: options
 locked: false

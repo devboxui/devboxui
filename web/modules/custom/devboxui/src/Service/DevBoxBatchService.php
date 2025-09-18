@@ -43,10 +43,20 @@ class DevBoxBatchService {
       if (is_array($command)) {
         $paragraph_id = key($command);
         $callback = current($command);
-        $operations[] = [
-          $callback,
-          [$step, $paragraph_id],
-        ];
+        $cmd = next($command);
+        if ($cmd == 'ssh_php_install') {
+          $php_version = end($command);
+          $operations[] = [
+            $callback,
+            [$step, $paragraph_id, $php_version],
+          ];
+        }
+        else {
+          $operations[] = [
+            $callback,
+            [$step, $paragraph_id],
+          ];
+        }
       }
     }
     $batch = [
@@ -164,6 +174,17 @@ class DevBoxBatchService {
     self::ssh_wrapper($paragraph_id, 'apt-get -y install ddev', $context, TRUE);
     # One-time initialization of mkcert
     self::ssh_wrapper($paragraph_id, 'mkcert -install', $context, TRUE);
+  }
+
+  /**
+   * Batch callback for running SSH commands.
+   * Use phpseclib to connect via SSH and run the command(s).
+   */
+  public static function ssh_php_install($step, $paragraph_id, $php_version = '8.3', &$context): void {
+    $context['message'] = t('@step', ['@step' => $step]);
+
+    self::ssh_wrapper($paragraph_id, 'curl -L https://raw.githubusercontent.com/phpenv/phpenv-installer/master/bin/phpenv-installer | bash', $context);
+    self::ssh_wrapper($paragraph_id, 'phpenv global '.$php_version, $context);
   }
 
   /**

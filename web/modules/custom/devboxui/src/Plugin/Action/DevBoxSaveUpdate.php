@@ -89,9 +89,7 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
           $server_info = json_decode($paragraph->get('field_response')->getString(), TRUE);
         }
         // Create server only if it does not exist.
-        if (empty($server_info)) {
-          $this->vpsBuildCmds($paragraph, $commands, $pid);
-        }
+        $this->vpsBuildCmds($paragraph, $commands, $pid, empty($server_info));
       }
 
       $currentIds = array_column($currentValues, 'target_id');
@@ -120,27 +118,41 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
     }
   }
 
-  private function vpsBuildCmds($paragraph, &$commands, $pid) {
+  private function vpsBuildCmds($paragraph, &$commands, $pid, $server_exists = FALSE) {
     $type = $paragraph->get('type')->getString();
     $tools = array_column($paragraph->get('field_tools')->getValue(), 'value');
 
-    if ($type != 'manual') {
-      $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];
+    if (!$server_exists) {
+      if ($type != 'manual') {
+        $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];
+      }
+      $commands["OS package info updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
+      $commands["OS system upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
+      $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
+      $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
+      $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
     }
-    $commands["OS package info updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
-    $commands["OS system upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
-    $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
-    if (array_search('oh_my_bash', $tools) !== FALSE) {
-      $commands["OhMyBASH! installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ohmybash']];
+    else { # Tools
+      if (array_search('oh_my_bash', $tools) !== FALSE) {
+        $commands["OhMyBASH! installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ohmybash']];
+      }
+      if (array_search('ddev', $tools) !== FALSE) {
+        $commands["DDEV installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ddev_install']];
+      }
+      if (array_search('composer', $tools) !== FALSE) {
+        $commands["PHP installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_php_install', $this->phpVersion($paragraph)]];
+        $commands["Composer installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_composer_install']];
+      }
+      else {
+        if (array_search('php', $tools) !== FALSE) {
+          $commands["PHP installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_php_install', $this->phpVersion($paragraph)]];
+        }
+      }
     }
-    $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
-    $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
-    if (array_search('ddev', $tools) !== FALSE) {
-      $commands["DDEV installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ddev_install']];
-    }
-    if (array_search('composer', $tools) !== FALSE) {
-      $commands["Composer installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_composer_install']];
-    }
+  }
+
+  private function phpVersion($paragraph) {
+    return $paragraph->get('field_php_version')->getString();
   }
 
 }
