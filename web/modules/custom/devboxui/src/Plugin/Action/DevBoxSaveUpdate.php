@@ -140,12 +140,12 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
         $commands["DDEV installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ddev_install']];
       }
       if (array_search('composer', $tools) !== FALSE) {
-        $commands["PHP installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_php_install', $this->phpVersion($paragraph)]];
-        $commands["Composer installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_composer_install']];
+        #$commands["PHP installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_php_install', $this->phpVersion($paragraph)]];
+        #$commands["Composer installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_composer_install']];
       }
       else {
         if (array_search('php', $tools) !== FALSE) {
-          $commands["PHP installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_php_install', $this->phpVersion($paragraph)]];
+          #$commands["PHP installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_php_install', $this->phpVersion($paragraph)]];
         }
       }
     }

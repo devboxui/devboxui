@@ -1300,7 +1300,7 @@ display:
           admin_label: ''
           plugin_id: text_custom
           empty: true
-          content: '<div class="no-vps gray">No VPS created. <a href="/node/add/devbox">+ DevBox</a></div>'
+          content: '<div class="no-vps gray">No VPS created.</div>'
           tokenize: false
       sorts:
         created:
@@ -1634,7 +1634,7 @@ display:
           admin_label: ''
           plugin_id: text_custom
           empty: true
-          content: '<div class="no-ap gray">No App created. <a href="/node/add/app">+ App</a></div>'
+          content: '<div class="no-ap gray">No App created.</div>'
           tokenize: false
       sorts:
         created:
