@@ -112,7 +112,7 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
         $this->vpsBuildCmds($paragraph, $commands, $pid);
       }
       // Reboot
-      $commands["Reboot (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_reboot']];
+      #$commands["Reboot (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_reboot']];
     }
     // Run the batch operation.
     if (!empty($commands)) {
@@ -127,13 +127,19 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
     if ($type != 'manual') {
       $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];
     }
-    $commands["OS package info updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
-    $commands["OS system upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
+    if (array_search('ubuntu_package_updates', $tools) !== FALSE) {
+      $commands["OS package info updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
+    }
+    if (array_search('ubuntu_package_upgrades', $tools) !== FALSE) {
+      $commands["OS system upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
+    }
     $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
     if (array_search('oh_my_bash', $tools) !== FALSE) {
       $commands["OhMyBASH! installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ohmybash']];
     }
-    $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
+    if (array_search('docker_engine', $tools) !== FALSE) {
+      $commands["Docker installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
+    }
     $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
     if (array_search('ddev', $tools) !== FALSE) {
       $commands["DDEV installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ddev_install']];

@@ -12,11 +12,20 @@ type: list_string
 settings:
   allowed_values:
     -
-      value: oh_my_bash
-      label: 'Oh My BASH!'
+      value: ubuntu_package_updates
+      label: 'Ubuntu package updates'
+    -
+      value: ubuntu_package_upgrades
+      label: 'Ubuntu package upgrades'
+    -
+      value: docker_engine
+      label: 'Docker engine'
     -
       value: ddev
       label: DDEV
+    -
+      value: oh_my_bash
+      label: 'Oh My BASH!'
     -
       value: composer
       label: Composer

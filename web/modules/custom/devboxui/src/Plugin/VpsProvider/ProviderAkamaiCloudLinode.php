@@ -211,7 +211,7 @@ class ProviderAkamaiCloudLinode extends VpsProviderPluginBase implements Contain
 
     $osid = 0;
     foreach ($results['data'] as $os) {
-      if (strtolower($os['vendor']) == 'debian' && preg_match('/^linode\/debian[0-9]+$/', $os['id'])) {
+      if (strtolower($os['vendor']) == 'ubuntu' && preg_match('/^linode\/ubuntu[0-9]+$/', $os['id'])) {
         if ($osid < $os['id']) {
           $osid = $os['id'];
         }

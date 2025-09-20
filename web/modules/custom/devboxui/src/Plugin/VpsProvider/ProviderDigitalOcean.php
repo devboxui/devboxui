@@ -212,7 +212,7 @@ class ProviderDigitalOcean extends VpsProviderPluginBase implements ContainerFac
 
     $osid = 0;
     foreach ($results[$this->images] as $os) {
-      if (strtolower($os['distribution']) == 'debian') {
+      if (strtolower($os['distribution']) == 'ubuntu') {
         if ($osid < $os['id']) {
           $osid = $os['id'];
         }

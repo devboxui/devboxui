@@ -212,13 +212,13 @@ class ProviderHetzner extends VpsProviderPluginBase implements ContainerFactoryP
     $results = vpsCall($this->provider, $this->images, [
       'type' => 'system',
       'status' => 'available',
-      'os_flavor' => 'debian',
+      'os_flavor' => 'ubuntu',
       'architecture' => $arch,
     ]);
     $oslist = array_column($results[$this->images], 'name', 'id');
     $osid = 0; $osname = '';
     foreach ($oslist as $osk => $osv) {
-      if (str_starts_with($osv, 'debian')) {
+      if (str_starts_with($osv, 'ubuntu')) {
         if ($osname < $osv) {
           $osid = $osk;
           $osname = $osv;

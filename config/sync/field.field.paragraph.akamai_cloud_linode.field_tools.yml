@@ -17,6 +17,8 @@ required: false
 translatable: false
 default_value:
   -
+    value: ubuntu_package_updates
+  -
     value: oh_my_bash
 default_value_callback: ''
 settings: {  }

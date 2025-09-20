@@ -198,7 +198,7 @@ class ProviderVultr extends VpsProviderPluginBase implements ContainerFactoryPlu
 
     $osid = 0;
     foreach ($results[$this->images] as $os) {
-      if ($os['family'] == 'debian') {
+      if ($os['family'] == 'ubuntu') {
         if ($osid < $os['id']) {
           $osid = $os['id'];
         }
