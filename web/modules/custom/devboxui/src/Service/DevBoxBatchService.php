@@ -149,12 +149,7 @@ class DevBoxBatchService {
     $context['message'] = t('@step', ['@step' => $step]);
 
     // Set keep alive settings for SSH.
-    self::ssh_wrapper($paragraph_id, "sed -i 's/^#\?TCPKeepAlive.*/TCPKeepAlive yes/' /etc/ssh/sshd_config", $context, TRUE);
-    self::ssh_wrapper($paragraph_id, "sed -i 's/^#\?ClientAliveInterval.*/ClientAliveInterval 60/' /etc/ssh/sshd_config", $context, TRUE);
-    self::ssh_wrapper($paragraph_id, "sed -i 's/^#\?ClientAliveCountMax.*/ClientAliveCountMax 5/' /etc/ssh/sshd_config", $context, TRUE);
-    # Enable ssh on boot.
-    self::ssh_wrapper($paragraph_id, 'systemctl enable ssh', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'systemctl restart ssh', $context, TRUE);
+    self::ssh_wrapper($paragraph_id, "sed -i 's/^#\?TCPKeepAlive.*/TCPKeepAlive yes/' /etc/ssh/sshd_config; sed -i 's/^#\?ClientAliveInterval.*/ClientAliveInterval 60/' /etc/ssh/sshd_config; sed -i 's/^#\?ClientAliveCountMax.*/ClientAliveCountMax 5/' /etc/ssh/sshd_config; systemctl enable ssh; systemctl restart ssh", $context, TRUE);
   }
 
   /**
@@ -164,16 +159,8 @@ class DevBoxBatchService {
   public static function ssh_ddev_install($step, $paragraph_id, &$context): void {
     $context['message'] = t('@step', ['@step' => $step]);
 
-    # Add DDEV’s GPG key to your keyring
-    self::ssh_wrapper($paragraph_id, 'apt update && apt install -y curl', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'install -m 0755 -d /etc/apt/keyrings', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'curl -fsSL https://pkg.ddev.com/apt/gpg.key | gpg --dearmor | tee /etc/apt/keyrings/ddev.gpg > /dev/null; chmod a+r /etc/apt/keyrings/ddev.gpg', $context, TRUE);
-    # Add DDEV releases to your package repository
-    self::ssh_wrapper($paragraph_id, 'echo "deb [signed-by=/etc/apt/keyrings/ddev.gpg] https://pkg.ddev.com/apt/ * *" | tee /etc/apt/sources.list.d/ddev.list >/dev/null', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'apt update', $context, TRUE);
-    self::ssh_wrapper($paragraph_id, 'apt -y install ddev', $context, TRUE);
-    # One-time initialization of mkcert
-    self::ssh_wrapper($paragraph_id, 'mkcert -install', $context, TRUE);
+    # Install DDEV
+    self::ssh_wrapper($paragraph_id, 'apt update && apt install -y curl; install -m 0755 -d /etc/apt/keyrings; curl -fsSL https://pkg.ddev.com/apt/gpg.key | gpg --dearmor | tee /etc/apt/keyrings/ddev.gpg > /dev/null; chmod a+r /etc/apt/keyrings/ddev.gpg; echo "deb [signed-by=/etc/apt/keyrings/ddev.gpg] https://pkg.ddev.com/apt/ * *" | tee /etc/apt/sources.list.d/ddev.list >/dev/null; apt update; apt -y install ddev; mkcert -install', $context, TRUE);
   }
 
   /**
