@@ -18,6 +18,9 @@ settings:
       value: ubuntu_package_upgrades
       label: 'Ubuntu package upgrades'
     -
+      value: ssh_config_updates
+      label: 'SSH config updates'
+    -
       value: docker_engine
       label: 'Docker engine'
     -

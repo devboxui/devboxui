@@ -133,7 +133,9 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
     if (array_search('ubuntu_package_upgrades', $tools) !== FALSE) {
       $commands["OS system upgraded (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_upgrade']];
     }
-    $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
+    if (array_search('ssh_config_updates', $tools) !== FALSE) {
+      $commands["SSH configs updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ssh_configs']];
+    }
     if (array_search('oh_my_bash', $tools) !== FALSE) {
       $commands["OhMyBASH! installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ohmybash']];
     }
