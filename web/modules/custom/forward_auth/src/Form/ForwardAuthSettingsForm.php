@@ -35,11 +35,14 @@ class ForwardAuthSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Header name to check when in token mode.'),
     ];
 
+    // BuildForm: load token secret from state.
+    $secret = \Drupal::state()->get('forward_auth.token_secret', '');
+
     $form['token_secret'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Token secret'),
-      '#default_value' => $config->get('token_secret') ?: '',
-      '#description' => $this->t('Shared secret used to validate the token header. Keep this secret and use a long random value.'),
+      '#default_value' => $secret,
+      '#description' => $this->t('Shared secret used to validate the token header. Stored in state, not config.'),
     ];
 
     $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
@@ -81,10 +84,11 @@ class ForwardAuthSettingsForm extends ConfigFormBase {
     $this->config('forward_auth.settings')
       ->set('mode', $values['mode'])
       ->set('token_header', $values['token_header'])
-      ->set('token_secret', $values['token_secret'])
       ->set('allowed_roles', $allowed_roles)
       ->set('login_path', $values['login_path'])
       ->save();
+
+    \Drupal::state()->set('forward_auth.token_secret', $values['token_secret']);
 
     parent::submitForm($form, $form_state);
   }

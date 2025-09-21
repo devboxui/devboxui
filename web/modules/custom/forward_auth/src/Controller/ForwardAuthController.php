@@ -48,7 +48,7 @@ class ForwardAuthController extends ControllerBase {
     if ($mode === 'token') {
       $header_name = $config->get('token_header') ?: 'X-Forward-Auth-Token';
       $provided = $request->headers->get($header_name);
-      $secret = $config->get('token_secret');
+      $secret = \Drupal::state()->get('forward_auth.token_secret');
 
       if (empty($secret) || !is_string($secret)) {
         // Misconfigured - deny.
