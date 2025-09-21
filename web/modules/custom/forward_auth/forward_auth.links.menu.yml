@@ -1,0 +1,6 @@
+forward_auth.settings:
+  title: 'Forward Auth settings'
+  route_name: forward_auth.settings
+  parent: system.admin_config_system
+  description: 'Configure forward auth behaviour (token header or cookie/session-based).'
+  weight: 100

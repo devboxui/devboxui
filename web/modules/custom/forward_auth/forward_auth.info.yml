@@ -1,0 +1,7 @@
+name: Forward Auth
+type: module
+description: 'Provides a Forward-Auth endpoint for reverse proxies (Caddy, Traefik). Supports cookie/session and shared-token modes.'
+core_version_requirement: ^10 || ^11
+package: Custom
+dependencies:
+  - drupal:user

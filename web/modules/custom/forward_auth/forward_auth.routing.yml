@@ -1,0 +1,14 @@
+forward_auth.validate:
+  path: '/forward-auth/validate'
+  defaults:
+    _controller: 'Drupal\forward_auth\Controller\ForwardAuthController::validate'
+  requirements:
+    _access: 'TRUE'
+  methods: [GET, POST]
+forward_auth.settings:
+  path: '/admin/config/system/forward-auth'
+  defaults:
+    _form: '\Drupal\forward_auth\Form\ForwardAuthSettingsForm'
+    _title: 'Forward Auth settings'
+  requirements:
+    _permission: 'administer forward auth settings'
