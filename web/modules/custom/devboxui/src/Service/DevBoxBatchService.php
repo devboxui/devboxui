@@ -204,7 +204,7 @@ class DevBoxBatchService {
   public static function ssh_create_user($step, $paragraph_id, &$context): void {
     $context['message'] = t('@step', ['@step' => $step]);
 
-    $sshUser = str_replace('-', '', entityManage('user', \Drupal::currentUser()->id())->uuid());
+    $sshUser = devboxui_normalize_uuid();
     // Create the user.
     self::ssh_wrapper($paragraph_id, "useradd -m -s /bin/bash $sshUser", $context, TRUE);
     // Create docker group and add the user to it.
@@ -228,7 +228,6 @@ class DevBoxBatchService {
   public static function ssh_ohmybash($step, $paragraph_id, &$context): void {
     $context['message'] = t('@step', ['@step' => $step]);
 
-    $sshUser = str_replace('-', '', entityManage('user', \Drupal::currentUser()->id())->uuid());
     // Install OhMyBash globally.
     self::ssh_wrapper($paragraph_id, 'apt update', $context, TRUE);
     self::ssh_wrapper($paragraph_id, 'apt -y install curl git', $context, TRUE);
@@ -301,7 +300,7 @@ class DevBoxBatchService {
         }
       }
       else {
-        $username = str_replace('-', '', entityManage('user', \Drupal::currentUser()->id())->uuid());
+        $username = devboxui_normalize_uuid();
       }
 
       $ssh = new SSH2($host);
@@ -376,7 +375,7 @@ class DevBoxBatchService {
     }
     $cmd = [
       'docker run -d',
-      '--name=' . str_replace('-', '', $app->uuid()),
+      '--name=' . devboxui_normalize_uuid($app->uuid()),
       !empty($options) ? implode(" \\\n", $options) : '',
     ];
     $command = implode(" \\\n", array_filter($cmd));
@@ -394,8 +393,8 @@ class DevBoxBatchService {
 
     $app = entityManage('paragraph', $paragraph_id);
     $cmd = [
-      'docker stop ' . $app->uuid(),
-      'docker rm ' . $app->uuid(),
+      'docker stop ' . devboxui_normalize_uuid($app->uuid()),
+      'docker rm ' . devboxui_normalize_uuid($app->uuid()),
     ];
     $command = implode(";\n", $cmd);
 
@@ -475,7 +474,7 @@ class DevBoxBatchService {
       else {
         $host = $devbox_paragraph->get('field_server_ip')->getString();
       }
-      $username = str_replace('-', '', entityManage('user', \Drupal::currentUser()->id())->uuid());
+      $username = devboxui_normalize_uuid();
 
       $ssh = new SSH2($host);
       $key = PublicKeyLoader::loadPrivateKey($private_key);

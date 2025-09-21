@@ -827,7 +827,7 @@ function processVpsDetails($provider, $details) {
     $output[] = vps_field_wrapper('status', $details['status']);
     $output[] = vps_field_wrapper('ip', $details['networks']['v4']['0']['ip_address']);
   }
-  $output[] = vps_field_wrapper('user', str_replace('-', '', $user->uuid()));
+  $output[] = vps_field_wrapper('user', devboxui_normalize_uuid());
 
   return implode('', $output);
 }
@@ -865,4 +865,26 @@ function devboxui_views_post_render(\Drupal\views\ViewExecutable $view, array &$
       ],
     ];
   }
+}
+
+/*
+ * 1. Max length of 32 chars.
+ * 2. Must start with a letter.
+ * 3. No dashes.
+ */
+function devboxui_normalize_uuid($uuid = NULL) {
+  if (empty($uuid)) {
+    $uuid = entityManage('user', \Drupal::currentUser()->id())->uuid();
+  }
+
+  return 
+    # First char a letter.
+    substr_replace(
+      # Length 32.
+      substr(
+        # No dashes.
+        str_replace('-', '', $uuid), 
+        0, 32),
+      'a', 0, 1
+    );
 }
