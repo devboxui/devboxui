@@ -183,19 +183,10 @@ class DevBoxBatchService {
 
     $sshUser = devboxui_normalize_uuid();
     // Create the user.
-    self::ssh_wrapper($paragraph_id, "useradd -m -s /bin/bash $sshUser", $context, TRUE);
-    // Create docker group and add the user to it.
-    self::ssh_wrapper($paragraph_id, "
-      groupadd docker;
-      usermod -aG docker $sshUser;
-    ", $context, TRUE);
-    // SSH key.
-    self::ssh_wrapper($paragraph_id, "
-      mkdir /home/$sshUser/.ssh;
-      cp /root/.ssh/authorized_keys /home/$sshUser/.ssh/authorized_keys;
-      chown -R $sshUser:$sshUser /home/$sshUser/.ssh;
-      chmod 600 $sshUser:$sshUser /home/$sshUser/.ssh/authorized_keys;
-    ", $context, TRUE);
+    self::ssh_wrapper($paragraph_id, "useradd -m -s /bin/bash $sshUser; groupadd docker; usermod -aG docker $sshUser; mkdir /home/$sshUser/.ssh; touch /home/$sshUser/.ssh/authorized_keys; chown -R $sshUser:$sshUser /home/$sshUser/.ssh; chmod 600 $sshUser:$sshUser /home/$sshUser/.ssh/authorized_keys", $context, TRUE);
+    // Upload SSH pub key to the user.
+    $userPubKey = entityManage('user', \Drupal::currentUser()->id())->get('field_ssh_public_key')->getString();
+    self::ssh_wrapper($paragraph_id, "echo $userPubKey > /home/$sshUser/.ssh/authorized_keys", $context, TRUE);
   }
 
   /**
