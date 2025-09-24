@@ -44,19 +44,10 @@ class DevBoxBatchService {
         $paragraph_id = key($command);
         $callback = current($command);
         $cmd = next($command);
-        if ($cmd == 'ssh_php_install') {
-          $php_version = end($command);
-          $operations[] = [
-            $callback,
-            [$step, $paragraph_id, $php_version],
-          ];
-        }
-        else {
-          $operations[] = [
-            $callback,
-            [$step, $paragraph_id],
-          ];
-        }
+        $operations[] = [
+          $callback,
+          [$step, $paragraph_id],
+        ];
       }
     }
     $batch = [
@@ -127,8 +118,74 @@ class DevBoxBatchService {
   public static function ssh_docker_install($step, $paragraph_id, &$context): void {
     $context['message'] = t('@step', ['@step' => $step]);
 
-    // Make sure we don't have any conflicting packages.
     self::ssh_wrapper($paragraph_id, 'for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do apt remove $pkg; done; apt update; apt -y install ca-certificates curl; install -m 0755 -d /etc/apt/keyrings; curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc; chmod a+r /etc/apt/keyrings/docker.asc; echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null; apt update; apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin', $context, TRUE);
+  }
+
+  /**
+   * Batch callback for running SSH commands.
+   * Use phpseclib to connect via SSH and run the command(s).
+   */
+  public static function ssh_caddy_install($step, $paragraph_id, &$context): void {
+    $context['message'] = t('@step', ['@step' => $step]);
+
+    self::ssh_wrapper($paragraph_id, 'mkdir -p /root/caddy/sites', $context, TRUE);
+    $email = entityManage('user', \Drupal::currentUser()->id())->get('mail')->getString();
+    $log = self::ssh_wrapper($paragraph_id, <<<BASH
+      cat <<'EOF' > /root/caddy/Caddyfile
+      {
+        # Email for Let's Encrypt certs
+        email $email
+      }
+      import sites/*
+      (auth_protect) {
+        route {
+          forward_auth https://www.devboxui.com {
+            uri /user/login?destination=vhost-auth
+            copy_headers Remote-User Remote-Email Remote-Name
+          }
+        }
+      }
+      EOF
+      BASH
+      , $context, TRUE);
+    $log = self::ssh_wrapper($paragraph_id, "docker rm -f caddy && docker run -d \
+      --name caddy \
+      --restart always \
+      -p 80:80 -p 443:443 \
+      -v /root/caddy:/etc/caddy \
+      -v caddy_data:/data \
+      caddy:2", $context, TRUE);
+  }
+
+  /**
+   * Batch callback for running SSH commands.
+   * Use phpseclib to connect via SSH and run the command(s).
+   */
+  public static function ssh_caddy_vhosts($step, $paragraph_id, &$context): void {
+    $context['message'] = t('@step', ['@step' => $step]);
+
+    $vhost_cmds = [];
+    $paragraph = entityManage('paragraph', $paragraph_id);
+    $vhosts = $paragraph->get('field_virtual_hosts')->getValue();
+    foreach ($vhosts as $vhost) {
+      $vhost_config = entityManage('paragraph', $vhost['target_id']);
+      $host = trim($vhost_config->get('field_domain_subdomain')->getString());
+      $container = trim($vhost_config->get('field_container_name')->getString());
+      $port = self::ssh_wrapper($paragraph_id, 'docker ps --filter "name='.$container.'" --format \'{{json .}}\' | jq -r \'.Ports | split(", ")[] | select(test("->80/")) | capture("(?<host>[^:]+):(?<port>[0-9]+)->80/tcp").port\'', $context, TRUE);
+      $vhost_data = "$host {\n";
+      if ($vhost_config->get('field_locked')->getString()) {
+        $vhost_data .= "    import auth_protect\n";
+      }
+      $vhost_data .= "    reverse_proxy http://127.0.0.1:$port\n";
+      $vhost_data .= "}\n";
+      self::ssh_wrapper($paragraph_id, <<<BASH
+        cat <<'EOF' > /root/caddy/sites/$host.caddy
+        $vhost_data
+        EOF
+        BASH
+        , $context, TRUE);
+      self::ssh_wrapper($paragraph_id, "docker exec caddy caddy reload --config /etc/caddy/Caddyfile", $context, TRUE);
+    }
   }
 
   /**
@@ -157,11 +214,9 @@ class DevBoxBatchService {
    * Batch callback for running SSH commands.
    * Use phpseclib to connect via SSH and run the command(s).
    */
-  public static function ssh_php_install($step, $paragraph_id, $php_version = '8.3', &$context): void {
+  public static function ssh_php_install($step, $paragraph_id, &$context): void {
     $context['message'] = t('@step', ['@step' => $step]);
 
-    self::ssh_wrapper($paragraph_id, 'curl -L https://raw.githubusercontent.com/phpenv/phpenv-installer/master/bin/phpenv-installer | bash', $context);
-    self::ssh_wrapper($paragraph_id, 'phpenv global '.$php_version, $context);
   }
 
   /**
@@ -299,7 +354,6 @@ class DevBoxBatchService {
         sleep(3); // Wait for 3 seconds before retrying
       } while (!$finished); // Continue until finished is true (non-zero)
 
-
       $result = $ssh->exec($command);
 
       \Drupal::logger('devbox')->notice('Executed command: @command on @host:<br> @result', [
@@ -307,6 +361,8 @@ class DevBoxBatchService {
         '@host' => $host,
         '@result' => $result,
       ]);
+
+      return $result;
     }
     catch (\Exception $e) {
       $context['results']['errors'][] = $e->getMessage();

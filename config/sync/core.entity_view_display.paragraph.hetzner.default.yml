@@ -8,8 +8,10 @@ dependencies:
     - field.field.paragraph.hetzner.field_response
     - field.field.paragraph.hetzner.field_server_type
     - field.field.paragraph.hetzner.field_tools
+    - field.field.paragraph.hetzner.field_virtual_hosts
     - paragraphs.paragraphs_type.hetzner
   module:
+    - entity_reference_revisions
     - options
 id: paragraph.hetzner.default
 targetEntityType: paragraph
@@ -45,6 +47,15 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 2
+    region: content
+  field_virtual_hosts:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 4
     region: content
 hidden:
   field_response: true

@@ -1,0 +1,19 @@
+uuid: f6fde422-bbe3-487f-85c8-017b0770c053
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_domain_subdomain
+    - paragraphs.paragraphs_type.virtual_hosts
+id: paragraph.virtual_hosts.field_domain_subdomain
+field_name: field_domain_subdomain
+entity_type: paragraph
+bundle: virtual_hosts
+label: 'Domain (subdomain)'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

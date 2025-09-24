@@ -1,0 +1,10 @@
+uuid: c256ee76-9a14-472b-b2f9-ec80803229d7
+langcode: en
+status: true
+dependencies: {  }
+id: virtual_hosts
+label: 'Virtual Hosts'
+icon_uuid: null
+icon_default: null
+description: 'Use this if you manually start containers (e.g. using DDEV) and not through the App dedicated section.'
+behavior_plugins: {  }

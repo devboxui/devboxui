@@ -92,6 +92,7 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
         if (empty($server_info)) {
           $this->vpsBuildCmds($paragraph, $commands, $pid);
         }
+        $this->vpsConfigCmds($paragraph, $commands, $pid);
       }
 
       $currentIds = array_column($currentValues, 'target_id');
@@ -110,6 +111,7 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
         $pid = $vps_node['target_id'];
         $paragraph = entityManage('paragraph', $pid);
         $this->vpsBuildCmds($paragraph, $commands, $pid);
+        $this->vpsConfigCmds($paragraph, $commands, $pid);
       }
       // Reboot
       #$commands["Reboot (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_reboot']];
@@ -122,11 +124,16 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
 
   private function vpsBuildCmds($paragraph, &$commands, $pid) {
     $type = $paragraph->get('type')->getString();
-    $tools = array_column($paragraph->get('field_tools')->getValue(), 'value');
 
     if ($type != 'manual') {
       $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];
     }
+  }
+
+  private function vpsConfigCmds($paragraph, &$commands, $pid) {
+    $tools = array_column($paragraph->get('field_tools')->getValue(), 'value');
+
+    /*
     if (array_search('ubuntu_package_updates', $tools) !== FALSE) {
       $commands["OS package info updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
     }
@@ -144,11 +151,19 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
     }
     $commands["User created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_create_user']];
     if (array_search('ddev', $tools) !== FALSE) {
+      if (array_search('docker_engine', $tools) === FALSE) {
+        $commands["Docker (required) installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
+      }
       $commands["DDEV installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ddev_install']];
     }
-    if (array_search('composer', $tools) !== FALSE) {
-      #$commands["Composer installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_composer_install']];
+
+    if (array_search('docker_engine', $tools) === FALSE) {
+      $commands["Docker (required) installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
     }
+    */
+    $commands["Caddy server installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_caddy_install']];
+
+    $commands["Virtual hosts updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_caddy_vhosts']];
   }
 
   private function phpVersion($paragraph) {

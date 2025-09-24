@@ -1,0 +1,23 @@
+uuid: 4f8da240-47fa-4140-96f5-eca5c1cbc7f3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_locked
+    - paragraphs.paragraphs_type.virtual_hosts
+id: paragraph.virtual_hosts.field_locked
+field_name: field_locked
+entity_type: paragraph
+bundle: virtual_hosts
+label: Locked
+description: "Closed to the public and accessible only if you are logged in (forward_auth with Caddy server).<br>\r\nYou can add users to your VPS/App and they will also have access."
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: Private
+  off_label: Public
+field_type: boolean

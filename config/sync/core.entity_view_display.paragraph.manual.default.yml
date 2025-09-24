@@ -6,8 +6,10 @@ dependencies:
     - field.field.paragraph.manual.field_name
     - field.field.paragraph.manual.field_server_ip
     - field.field.paragraph.manual.field_tools
+    - field.field.paragraph.manual.field_virtual_hosts
     - paragraphs.paragraphs_type.manual
   module:
+    - entity_reference_revisions
     - options
 id: paragraph.manual.default
 targetEntityType: paragraph
@@ -36,5 +38,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 2
+    region: content
+  field_virtual_hosts:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 4
     region: content
 hidden: {  }

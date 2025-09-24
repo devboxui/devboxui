@@ -1,0 +1,41 @@
+uuid: bef78e6e-c376-4a1b-9749-ab6067788c95
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.virtual_hosts.field_container_name
+    - field.field.paragraph.virtual_hosts.field_domain_subdomain
+    - field.field.paragraph.virtual_hosts.field_locked
+    - paragraphs.paragraphs_type.virtual_hosts
+id: paragraph.virtual_hosts.default
+targetEntityType: paragraph
+bundle: virtual_hosts
+mode: default
+content:
+  field_container_name:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_domain_subdomain:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_locked:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden: {  }
