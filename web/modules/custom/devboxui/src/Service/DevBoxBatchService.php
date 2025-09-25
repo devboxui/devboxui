@@ -136,7 +136,6 @@ class DevBoxBatchService {
       "{",
       "email $email",
       "}",
-      "import sites/*",
       "(auth_protect) {",
       [
         "route {",
@@ -150,8 +149,10 @@ class DevBoxBatchService {
         ],
         "}",
       ],
+      "import sites/*",
       "}",
     ];
+    $l = implode("\n", $auth_block);
 
     $caddyfile = self::caddy_lines_to_string($auth_block);
 
@@ -190,14 +191,14 @@ class DevBoxBatchService {
 
       $vhost_lines = [
         "$host {",
-        $vhost_config->get('field_locked')->getString() ? "import auth_protect" : null,
+        $vhost_config->get('field_locked')->getString() ? "auth_protect" : null,
         ["reverse_proxy web:80"],
         "}",
       ];
 
       // Remove nulls (when not locked).
       $vhost_lines = array_filter($vhost_lines);
-      $vhost_data = self::caddy_lines_to_string($vhost_lines) . "\n";
+      $vhost_data = self::caddy_lines_to_string($vhost_lines);
 
       self::ssh_wrapper($paragraph_id, <<<BASH
         cat <<'EOF' > /root/caddy/sites/$host.caddy
@@ -217,21 +218,25 @@ class DevBoxBatchService {
     $increase_next_indent = false;
 
     foreach ($lines as $line) {
-      if ($line === '{') {
-        $out[] = str_repeat(' ', $indent) . $line;
-        $increase_next_indent = true;
-      } elseif ($line === '}') {
-        $out[] = str_repeat(' ', $indent) . $line;
-        $increase_next_indent = false;
-      } elseif (is_array($line)) {
-        // nested block: increase indent by 8
+      if (is_array($line)) {
         $sub = self::caddy_lines_to_string($line, $indent + 8);
         $out = array_merge($out, explode("\n", $sub));
         $increase_next_indent = false;
       } else {
-        // text line
-        $out[] = str_repeat(' ', $indent + ($increase_next_indent ? 8 : 0)) . $line;
-        $increase_next_indent = false;
+        $trimmed = trim($line);
+
+        if ($trimmed === '{') {
+          $out[] = str_repeat(' ', $indent) . $line;
+          $increase_next_indent = true;
+        } elseif ($trimmed === '}') {
+          $out[] = str_repeat(' ', $indent) . $line;
+          $increase_next_indent = false;
+        } else {
+          $out[] = str_repeat(' ', $indent + ($increase_next_indent ? 8 : 0)) . $line;
+
+          // if this line itself ends with "{", prepare for indent
+          $increase_next_indent = str_ends_with($trimmed, '{');
+        }
       }
     }
 
