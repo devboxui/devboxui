@@ -129,28 +129,43 @@ class DevBoxBatchService {
     $context['message'] = t('@step', ['@step' => $step]);
 
     self::ssh_wrapper($paragraph_id, 'mkdir -p /root/caddy/sites', $context, TRUE);
+
     $email = entityManage('user', \Drupal::currentUser()->id())->get('mail')->getString();
+
+    $auth_block = [
+      "{",
+      "email $email",
+      "}",
+      "import sites/*",
+      "(auth_protect) {",
+      [
+        "route {",
+        [
+          "forward_auth https://www.devboxui.com {",
+          [
+            "uri /user/login?destination=vhost-auth",
+            "copy_headers Remote-User Remote-Email Remote-Name",
+          ],
+          "}",
+        ],
+        "}",
+      ],
+      "}",
+    ];
+
+    $caddyfile = self::caddy_lines_to_string($auth_block);
+
     $log = self::ssh_wrapper($paragraph_id, <<<BASH
       cat <<'EOF' > /root/caddy/Caddyfile
-      {
-        # Email for Let's Encrypt certs
-        email $email
-      }
-      import sites/*
-      (auth_protect) {
-        route {
-          forward_auth https://www.devboxui.com {
-            uri /user/login?destination=vhost-auth
-            copy_headers Remote-User Remote-Email Remote-Name
-          }
-        }
-      }
+      $caddyfile
       EOF
       BASH
       , $context, TRUE);
+
     $log = self::ssh_wrapper($paragraph_id, "docker rm -f caddy && docker run -d \
       --name caddy \
       --restart always \
+      --network ddev_default \
       -p 80:80 -p 443:443 \
       -v /root/caddy:/etc/caddy \
       -v caddy_data:/data \
@@ -171,21 +186,56 @@ class DevBoxBatchService {
       $vhost_config = entityManage('paragraph', $vhost['target_id']);
       $host = trim($vhost_config->get('field_domain_subdomain')->getString());
       $container = trim($vhost_config->get('field_container_name')->getString());
-      $port = self::ssh_wrapper($paragraph_id, 'docker ps --filter "name='.$container.'" --format \'{{json .}}\' | jq -r \'.Ports | split(", ")[] | select(test("->80/")) | capture("(?<host>[^:]+):(?<port>[0-9]+)->80/tcp").port\'', $context, TRUE);
-      $vhost_data = "$host {\n";
-      if ($vhost_config->get('field_locked')->getString()) {
-        $vhost_data .= "    import auth_protect\n";
-      }
-      $vhost_data .= "    reverse_proxy http://127.0.0.1:$port\n";
-      $vhost_data .= "}\n";
+      $port = trim(self::ssh_wrapper($paragraph_id, 'docker ps --filter "name='.$container.'" --format \'{{json .}}\' | jq -r \'.Ports | split(", ")[] | select(test("->80/")) | capture("(?<host>[^:]+):(?<port>[0-9]+)->80/tcp").port\'', $context, TRUE));
+
+      $vhost_lines = [
+        "$host {",
+        $vhost_config->get('field_locked')->getString() ? "import auth_protect" : null,
+        ["reverse_proxy web:80"],
+        "}",
+      ];
+
+      // Remove nulls (when not locked).
+      $vhost_lines = array_filter($vhost_lines);
+      $vhost_data = self::caddy_lines_to_string($vhost_lines) . "\n";
+
       self::ssh_wrapper($paragraph_id, <<<BASH
         cat <<'EOF' > /root/caddy/sites/$host.caddy
         $vhost_data
         EOF
         BASH
         , $context, TRUE);
-      self::ssh_wrapper($paragraph_id, "docker exec caddy caddy reload --config /etc/caddy/Caddyfile", $context, TRUE);
+      # Fix inconsistencies.
+      $log = self::ssh_wrapper($paragraph_id, "docker exec caddy caddy fmt --overwrite /etc/caddy/Caddyfile", $context, TRUE);
+      # Reload caddy.
+      $log = self::ssh_wrapper($paragraph_id, "docker exec caddy caddy reload --config /etc/caddy/Caddyfile", $context, TRUE);
     }
+  }
+
+  private static function caddy_lines_to_string(array $lines, int $indent = 0): string {
+    $out = [];
+    $increase_next_indent = false;
+
+    foreach ($lines as $line) {
+      if ($line === '{') {
+        $out[] = str_repeat(' ', $indent) . $line;
+        $increase_next_indent = true;
+      } elseif ($line === '}') {
+        $out[] = str_repeat(' ', $indent) . $line;
+        $increase_next_indent = false;
+      } elseif (is_array($line)) {
+        // nested block: increase indent by 8
+        $sub = self::caddy_lines_to_string($line, $indent + 8);
+        $out = array_merge($out, explode("\n", $sub));
+        $increase_next_indent = false;
+      } else {
+        // text line
+        $out[] = str_repeat(' ', $indent + ($increase_next_indent ? 8 : 0)) . $line;
+        $increase_next_indent = false;
+      }
+    }
+
+    return implode("\n", $out);
   }
 
   /**

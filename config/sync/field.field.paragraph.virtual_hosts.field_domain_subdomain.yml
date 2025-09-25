@@ -9,7 +9,7 @@ id: paragraph.virtual_hosts.field_domain_subdomain
 field_name: field_domain_subdomain
 entity_type: paragraph
 bundle: virtual_hosts
-label: 'Domain (subdomain)'
+label: 'Hostname (domain/subdomain)'
 description: ''
 required: true
 translatable: false
