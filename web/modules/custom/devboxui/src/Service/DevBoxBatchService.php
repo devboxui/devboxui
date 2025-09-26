@@ -149,8 +149,8 @@ class DevBoxBatchService {
         ],
         "}",
       ],
-      "import sites/*",
       "}",
+      "import sites/*",
     ];
 
     $caddyfile = self::caddy_lines_to_string($auth_block);
