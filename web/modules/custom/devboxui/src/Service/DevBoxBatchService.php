@@ -146,6 +146,7 @@ class DevBoxBatchService {
             "copy_headers Remote-User Remote-Email Remote-Name",
           ],
           "}",
+          "reverse_proxy web:80",
         ],
         "}",
       ],
@@ -190,8 +191,7 @@ class DevBoxBatchService {
 
       $vhost_lines = [
         "$host {",
-        $vhost_config->get('field_locked')->getString() ? "auth_protect" : null,
-        ["reverse_proxy web:80"],
+        $vhost_config->get('field_locked')->getString() ? "import auth_protect" : "reverse_proxy web:80",
         "}",
       ];
 

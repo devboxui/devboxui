@@ -5,3 +5,9 @@ devboxui.vps_pricing_comparison:
     _title: 'VPS Pricing Comparison'
   requirements:
     _access: 'TRUE'
+devboxui.forward_auth:
+  path: '/forward-auth'
+  defaults:
+    _controller: '\Drupal\devboxui\Controller\ForwardAuthController::authCheck'
+  requirements:
+    _access: 'TRUE'
