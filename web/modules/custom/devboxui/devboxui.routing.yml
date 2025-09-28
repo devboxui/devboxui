@@ -8,6 +8,6 @@ devboxui.vps_pricing_comparison:
 devboxui.forward_auth:
   path: '/forward-auth'
   defaults:
-    _controller: '\Drupal\devboxui\Controller\ForwardAuthController::authCheck'
+    _controller: '\Drupal\devboxui\Controller\ForwardAuthController::check'
   requirements:
     _access: 'TRUE'

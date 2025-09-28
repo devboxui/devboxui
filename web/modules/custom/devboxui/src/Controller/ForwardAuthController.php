@@ -2,32 +2,36 @@
 
 namespace Drupal\devboxui\Controller;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Controller\ControllerBase;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
-/**
- * Handles forward-auth requests from Caddy.
- */
 class ForwardAuthController extends ControllerBase {
+  protected $currentUser;
 
-  /**
-   * Endpoint for Caddy forward_auth.
-   *
-   * @return \Symfony\Component\HttpFoundation\Response
-   *   200 with headers if logged in, 401 if not.
-   */
-  public function authCheck(): Response {
-    $user = $this->currentUser();
-
-    if ($user->isAuthenticated()) {
-      $response = new Response('', 200);
-      $response->headers->set('Remote-User', $user->getAccountName());
-      $response->headers->set('Remote-Email', $user->getEmail());
-      $response->headers->set('Remote-Name', $user->getDisplayName());
-      return $response;
-    }
-
-    return new Response('', 401);
+  public function __construct(AccountInterface $current_user) {
+    $this->currentUser = $current_user;
   }
 
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('current_user')
+    );
+  }
+
+  public function check() {
+    if ($this->currentUser->isAnonymous()) {
+      return new JsonResponse(['message' => 'Unauthorized'], 401);
+    }
+
+    return new JsonResponse([
+      'message' => 'OK',
+      'user' => [
+        'id' => $this->currentUser->id(),
+        'name' => $this->currentUser->getDisplayName(),
+        'email' => $this->currentUser->getEmail(),
+      ],
+    ]);
+  }
 }

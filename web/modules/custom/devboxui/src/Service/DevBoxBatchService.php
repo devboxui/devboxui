@@ -136,21 +136,6 @@ class DevBoxBatchService {
       "{",
       "email $email",
       "}",
-      "(auth_protect) {",
-      [
-        "route {",
-        [
-          "forward_auth https://www.devboxui.com {",
-          [
-            "uri /user/login?destination=vhost-auth",
-            "copy_headers Remote-User Remote-Email Remote-Name",
-          ],
-          "}",
-          "reverse_proxy web:80",
-        ],
-        "}",
-      ],
-      "}",
       "import sites/*",
     ];
 
@@ -189,9 +174,34 @@ class DevBoxBatchService {
       $container = trim($vhost_config->get('field_container_name')->getString());
       $port = trim(self::ssh_wrapper($paragraph_id, 'docker ps --filter "name='.$container.'" --format \'{{json .}}\' | jq -r \'.Ports | split(", ")[] | select(test("->80/")) | capture("(?<host>[^:]+):(?<port>[0-9]+)->80/tcp").port\'', $context, TRUE));
 
+      $auth_block = NULL;
+      $auth_redirect_block = NULL;
+      if ($vhost_config->get('field_locked')->getString()) {
+        $auth_block = [ 
+          "forward_auth https://www.devboxui.com {",
+          [
+            "uri /forward-auth",
+            "copy_headers Remote-User Remote-Email Remote-Name",
+          ],
+          "}",
+        ];
+
+        # Intercept 401s and send browser to Drupal login
+        $auth_redirect_block = [ 
+          "handle_errors {",
+          [
+            "@unauth expression {http.error.status_code} == 401",
+            "redir https://www.devboxui.com/user/login?destination={http.request.uri} 302",
+          ],
+          "}",
+        ];
+      }
+
       $vhost_lines = [
         "$host {",
-        $vhost_config->get('field_locked')->getString() ? "import auth_protect" : "reverse_proxy web:80",
+        $auth_block,
+        $auth_redirect_block,
+        ["reverse_proxy $container:80"],
         "}",
       ];
 
@@ -218,7 +228,7 @@ class DevBoxBatchService {
 
     foreach ($lines as $line) {
       if (is_array($line)) {
-        $sub = self::caddy_lines_to_string($line, $indent + 8);
+        $sub = self::caddy_lines_to_string($line, $indent + 4);
         $out = array_merge($out, explode("\n", $sub));
         $increase_next_indent = false;
       } else {
@@ -231,10 +241,10 @@ class DevBoxBatchService {
           $out[] = str_repeat(' ', $indent) . $line;
           $increase_next_indent = false;
         } else {
-          $out[] = str_repeat(' ', $indent + ($increase_next_indent ? 8 : 0)) . $line;
+          $out[] = str_repeat(' ', $indent + ($increase_next_indent ? 4 : 0)) . $line;
 
-          // if this line itself ends with "{", prepare for indent
-          $increase_next_indent = str_ends_with($trimmed, '{');
+          // if this line itself ends with "{" or "}", prepare for indent
+          $increase_next_indent = str_ends_with($trimmed, '{') ? true : (str_ends_with($trimmed, '}') ? true : false);
         }
       }
     }
