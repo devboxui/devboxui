@@ -888,3 +888,13 @@ function devboxui_normalize_uuid($uuid = NULL) {
       'a', 0, 1
     );
 }
+
+function devboxui_user_login(&$edit, $account) {
+  $request = \Drupal::request();
+  $destination = $request->query->get('destination');
+  if ($destination) {
+    $controller = \Drupal::service('class_resolver')->getInstanceFromDefinition(\Drupal\devboxui\Controller\ForwardAuthController::class);
+    $finalUrl = $controller->expandDestination($destination);
+    return new \Symfony\Component\HttpFoundation\RedirectResponse($finalUrl);
+  }
+}

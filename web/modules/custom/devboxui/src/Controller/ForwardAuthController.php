@@ -6,6 +6,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ForwardAuthController extends ControllerBase {
   protected $currentUser;
@@ -33,5 +34,16 @@ class ForwardAuthController extends ControllerBase {
         'email' => $this->currentUser->getEmail(),
       ],
     ]);
+  }
+
+  /**
+   * Expand /__forward__/domain/path back to https://domain/path.
+   */
+  public function expandDestination(string $destination) {
+    if (str_starts_with($destination, '/__forward__/')) {
+      $trimmed = substr($destination, strlen('/__forward__/'));
+      return 'https://' . $trimmed;
+    }
+    return $destination;
   }
 }
