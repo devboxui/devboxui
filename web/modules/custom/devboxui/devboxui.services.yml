@@ -11,3 +11,7 @@ services:
   devboxui.batch:
     class: 'Drupal\devboxui\Service\DevBoxBatchService'
     arguments: ['@plugin.manager.vps_provider']
+  devboxui.forward_auth_redirect_subscriber:
+    class: Drupal\devboxui\EventSubscriber\ForwardAuthRedirectSubscriber
+    tags:
+      - { name: event_subscriber }

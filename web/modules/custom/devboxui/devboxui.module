@@ -889,12 +889,29 @@ function devboxui_normalize_uuid($uuid = NULL) {
     );
 }
 
-function devboxui_user_login(&$edit, $account) {
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+/**
+ * Implements hook_init().
+ *
+ * Runs on every request and normalizes __forward__ destinations.
+ */
+function devboxui_init() {
   $request = \Drupal::request();
   $destination = $request->query->get('destination');
-  if ($destination) {
-    $controller = \Drupal::service('class_resolver')->getInstanceFromDefinition(\Drupal\devboxui\Controller\ForwardAuthController::class);
-    $finalUrl = $controller->expandDestination($destination);
-    return new \Symfony\Component\HttpFoundation\RedirectResponse($finalUrl);
+
+  if ($destination && str_starts_with($destination, '/__forward__/')) {
+    $trimmed = substr($destination, strlen('/__forward__/'));
+    // Replace the query param so Drupal redirects correctly.
+    $new_dest = 'https://' . $trimmed;
+    $request->query->set('destination', $new_dest);
+
+    // If we are literally on /user/login while already authenticated,
+    // redirect immediately to the normalized destination.
+    if (\Drupal::currentUser()->isAuthenticated() && $request->getPathInfo() === '/user/login') {
+      $response = new RedirectResponse($new_dest);
+      $response->send();
+      exit;
+    }
   }
 }
