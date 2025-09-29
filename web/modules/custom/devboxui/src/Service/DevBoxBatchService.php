@@ -128,34 +128,78 @@ class DevBoxBatchService {
   public static function ssh_caddy_install($step, $paragraph_id, &$context): void {
     $context['message'] = t('@step', ['@step' => $step]);
 
-    self::ssh_wrapper($paragraph_id, 'mkdir -p /root/caddy/sites', $context, TRUE);
+    // Ensure Caddy folder exists
+    self::ssh_wrapper($paragraph_id, 'mkdir -p /etc/caddy/sites', $context, TRUE);
 
+    // Install Caddy
+    self::ssh_wrapper($paragraph_id, "apt install -y debian-keyring debian-archive-keyring apt-transport-https curl; curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg; curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list; chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg; chmod o+r /etc/apt/sources.list.d/caddy-stable.list; apt update; apt -y install caddy", $context, TRUE);
+
+    // Get the current user's email for TLS/ACME
     $email = entityManage('user', \Drupal::currentUser()->id())->get('mail')->getString();
 
+    // Build the basic Caddyfile
     $auth_block = [
-      "{",
-      "email $email",
-      "}",
-      "import sites/*",
+        "{",
+        "email $email",
+        "}",
+        "import sites/*",
     ];
-
     $caddyfile = self::caddy_lines_to_string($auth_block);
 
-    $log = self::ssh_wrapper($paragraph_id, <<<BASH
-      cat <<'EOF' > /root/caddy/Caddyfile
+    // Write Caddyfile to /etc/caddy/Caddyfile
+    self::ssh_wrapper($paragraph_id, <<<BASH
+      cat <<'EOF' > /etc/caddy/Caddyfile
       $caddyfile
       EOF
-      BASH
-      , $context, TRUE);
+    BASH, $context, TRUE);
 
-    $log = self::ssh_wrapper($paragraph_id, "docker rm -f caddy && docker run -d \
-      --name caddy \
-      --restart always \
-      --network ddev_default \
-      -p 80:80 -p 443:443 \
-      -v /root/caddy:/etc/caddy \
-      -v caddy_data:/data \
-      caddy:2", $context, TRUE);
+    // Install prerequisites
+    $logs = self::ssh_wrapper($paragraph_id, <<<BASH
+      apt update;
+      apt install -y golang-go git curl debian-keyring debian-archive-keyring apt-transport-https
+    BASH, $context, TRUE);
+
+    // Install xcaddy
+    $logs = self::ssh_wrapper($paragraph_id, <<<BASH
+      export PATH=\$PATH:\$(go env GOPATH)/bin
+      go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+    BASH, $context, TRUE);
+
+    // Build Caddy with forward_auth
+    $logs = self::ssh_wrapper($paragraph_id, <<<BASH
+      export PATH=\$PATH:\$(go env GOPATH)/bin
+      cd /etc/caddy
+      xcaddy build --with github.com/firecow/caddy-forward-auth
+      mv caddy /usr/bin/caddy
+      chown root:root /usr/bin/caddy
+      chmod 755 /usr/bin/caddy
+    BASH, $context, TRUE);
+
+    // Write the systemd service file
+    self::ssh_wrapper($paragraph_id, <<<BASH
+tee /etc/systemd/system/caddy.service > /dev/null <<'EOF'
+[Unit]
+Description=Caddy web server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/caddy run --environ --config /root/caddy/Caddyfile
+ExecReload=/usr/bin/caddy reload --config /root/caddy/Caddyfile
+Restart=on-failure
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+BASH
+    , $context, TRUE);
+
+    // Reload systemd, enable and start service
+    self::ssh_wrapper($paragraph_id, "systemctl daemon-reload", $context, TRUE);
+    self::ssh_wrapper($paragraph_id, "systemctl enable caddy", $context, TRUE);
+    self::ssh_wrapper($paragraph_id, "systemctl start caddy", $context, TRUE);
   }
 
   /**
@@ -191,7 +235,7 @@ class DevBoxBatchService {
           "handle_errors {",
           [
             "@unauth expression {http.error.status_code} == 401",
-            "redir https://www.devboxui.com/user/login?destination={http.request.uri} 302",
+            "redir https://www.devboxui.com/user/login?destination=https://{http.request.host}{http.request.uri} 302",
           ],
           "}",
         ];
@@ -210,15 +254,15 @@ class DevBoxBatchService {
       $vhost_data = self::caddy_lines_to_string($vhost_lines);
 
       self::ssh_wrapper($paragraph_id, <<<BASH
-        cat <<'EOF' > /root/caddy/sites/$host.caddy
+        cat <<'EOF' > /etc/caddy/sites/$host.caddy
         $vhost_data
         EOF
         BASH
         , $context, TRUE);
       # Fix inconsistencies.
-      $log = self::ssh_wrapper($paragraph_id, "docker exec caddy caddy fmt --overwrite /etc/caddy/Caddyfile", $context, TRUE);
+      $log = self::ssh_wrapper($paragraph_id, "caddy fmt --overwrite /etc/caddy/Caddyfile", $context, TRUE);
       # Reload caddy.
-      $log = self::ssh_wrapper($paragraph_id, "docker exec caddy caddy reload --config /etc/caddy/Caddyfile", $context, TRUE);
+      $log = self::ssh_wrapper($paragraph_id, "caddy reload --config /etc/caddy/Caddyfile", $context, TRUE);
     }
   }
 
