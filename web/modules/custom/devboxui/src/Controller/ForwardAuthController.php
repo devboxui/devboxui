@@ -23,9 +23,22 @@ class ForwardAuthController extends ControllerBase {
 
   public function check() {
     if ($this->currentUser->isAnonymous()) {
+      // Pull original URL from headers Caddy provides.
+      $request = \Drupal::request();
+      $origHost = $request->headers->get('X-Original-Host');
+      $origUri  = $request->headers->get('X-Original-Uri');
+
+      if ($origHost && $origUri) {
+        $target = 'https://' . $origHost . $origUri;
+        return new RedirectResponse(
+          '/user/login?destination=' . urlencode($target)
+        );
+      }
+
       return new JsonResponse(['message' => 'Unauthorized'], 401);
     }
 
+    // Authenticated: return headers for Caddy to forward.
     return new JsonResponse([
       'message' => 'OK',
       'user' => [
@@ -34,16 +47,5 @@ class ForwardAuthController extends ControllerBase {
         'email' => $this->currentUser->getEmail(),
       ],
     ]);
-  }
-
-  /**
-   * Expand /__forward__/domain/path back to https://domain/path.
-   */
-  public function expandDestination(string $destination) {
-    if (str_starts_with($destination, '/__forward__/')) {
-      $trimmed = substr($destination, strlen('/__forward__/'));
-      return 'https://' . $trimmed;
-    }
-    return $destination;
   }
 }
