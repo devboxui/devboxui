@@ -245,7 +245,7 @@ BASH
         "$host {",
         $auth_block,
         $auth_redirect_block,
-        ["reverse_proxy $container:80"],
+        ["reverse_proxy http://127.0.0.1:$port"],
         "}",
       ];
 

@@ -124,14 +124,11 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
 
   private function vpsBuildCmds($paragraph, &$commands, $pid) {
     $type = $paragraph->get('type')->getString();
+    $tools = array_column($paragraph->get('field_tools')->getValue(), 'value');
 
     if ($type != 'manual') {
       $commands["VPS created (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'provision_vps']];
     }
-  }
-
-  private function vpsConfigCmds($paragraph, &$commands, $pid) {
-    $tools = array_column($paragraph->get('field_tools')->getValue(), 'value');
 
     if (array_search('ubuntu_package_updates', $tools) !== FALSE) {
       $commands["OS package info updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_system_update']];
@@ -155,12 +152,10 @@ final class DevBoxSaveUpdate extends ActionBase implements ContainerFactoryPlugi
       }
       $commands["DDEV installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_ddev_install']];
     }
+  }
 
-    if (array_search('docker_engine', $tools) === FALSE) {
-      $commands["Docker (required) installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_docker_install']];
-    }
+  private function vpsConfigCmds($paragraph, &$commands, $pid) {
     $commands["Caddy server installed (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_caddy_install']];
-
     $commands["Virtual hosts updated (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'ssh_caddy_vhosts']];
   }
 

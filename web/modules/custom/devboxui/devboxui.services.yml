@@ -13,5 +13,6 @@ services:
     arguments: ['@plugin.manager.vps_provider']
   devboxui.forward_auth_redirect_subscriber:
     class: Drupal\devboxui\EventSubscriber\ForwardAuthRedirectSubscriber
+    arguments: ['@current_user']
     tags:
       - { name: event_subscriber }
