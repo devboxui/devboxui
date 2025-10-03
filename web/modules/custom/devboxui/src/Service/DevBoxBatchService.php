@@ -140,8 +140,9 @@ class DevBoxBatchService {
     $context['message'] = t('@step', ['@step' => $step]);
 
     $caddy_exists = trim(self::ssh_wrapper($paragraph_id, 'which caddy', $context, TRUE));
+    $caddy_status = trim(self::ssh_wrapper($paragraph_id, "systemctl status caddy | grep -i 'active:' | awk '{print $2}'", $context, TRUE));
 
-    if ($caddy_exists != '/usr/bin/caddy') {
+    if ($caddy_exists != '/usr/bin/caddy' && $caddy_status != 'active') {
       // Ensure Caddy folder exists
       self::ssh_wrapper($paragraph_id, 'mkdir -p /etc/caddy/sites', $context, TRUE);
 
@@ -162,10 +163,11 @@ class DevBoxBatchService {
 
       // Write Caddyfile to /etc/caddy/Caddyfile
       self::ssh_wrapper($paragraph_id, <<<BASH
-        cat <<'EOF' > /etc/caddy/Caddyfile
+        tee /etc/caddy/Caddyfile > /dev/null <<'EOF'
         $caddyfile
         EOF
-      BASH, $context, TRUE);
+        BASH
+      , $context, TRUE);
 
       // Install prerequisites
       $logs = self::ssh_wrapper($paragraph_id, <<<BASH
@@ -191,23 +193,23 @@ class DevBoxBatchService {
 
       // Write the systemd service file
       self::ssh_wrapper($paragraph_id, <<<BASH
-  tee /etc/systemd/system/caddy.service > /dev/null <<'EOF'
-  [Unit]
-  Description=Caddy web server
-  After=network.target
+        tee /etc/systemd/system/caddy.service > /dev/null <<'EOF'
+        [Unit]
+        Description=Caddy web server
+        After=network.target
 
-  [Service]
-  Type=simple
-  ExecStart=/usr/bin/caddy run --environ --config /root/caddy/Caddyfile
-  ExecReload=/usr/bin/caddy reload --config /root/caddy/Caddyfile
-  Restart=on-failure
-  User=root
-  Group=root
+        [Service]
+        Type=simple
+        ExecStart=/usr/bin/caddy run --environ --config /etc/caddy/Caddyfile
+        ExecReload=/usr/bin/caddy reload --config /etc/caddy/Caddyfile
+        Restart=on-failure
+        User=root
+        Group=root
 
-  [Install]
-  WantedBy=multi-user.target
-  EOF
-  BASH
+        [Install]
+        WantedBy=multi-user.target
+        EOF
+        BASH
       , $context, TRUE);
 
       // Reload systemd, enable and start service
