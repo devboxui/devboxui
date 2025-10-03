@@ -7,8 +7,10 @@ dependencies:
     - field.field.paragraph.vultr.field_response
     - field.field.paragraph.vultr.field_server_type
     - field.field.paragraph.vultr.field_tools
+    - field.field.paragraph.vultr.field_virtual_hosts
     - paragraphs.paragraphs_type.vultr
   module:
+    - entity_reference_revisions
     - options
 id: paragraph.vultr.default
 targetEntityType: paragraph
@@ -36,6 +38,15 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 2
+    region: content
+  field_virtual_hosts:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 4
     region: content
 hidden:
   field_response: true

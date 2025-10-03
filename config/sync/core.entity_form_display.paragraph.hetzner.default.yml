@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.hetzner.field_delete_protection
     - field.field.paragraph.hetzner.field_name
     - field.field.paragraph.hetzner.field_php_version
     - field.field.paragraph.hetzner.field_response
@@ -13,11 +14,20 @@ dependencies:
   module:
     - conditional_fields
     - paragraphs
+    - paragraphs_ee
+    - paragraphs_features
 id: paragraph.hetzner.default
 targetEntityType: paragraph
 bundle: hetzner
 mode: default
 content:
+  field_delete_protection:
+    type: boolean_checkbox
+    weight: 5
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_name:
     type: string_textfield
     weight: 0
@@ -79,11 +89,25 @@ content:
       closed_mode_threshold: 0
       add_mode: dropdown
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
       features:
+        add_above: '0'
         collapse_edit_all: collapse_edit_all
+        convert: '0'
         duplicate: duplicate
-    third_party_settings: {  }
+    third_party_settings:
+      paragraphs_features:
+        add_in_between: false
+        add_in_between_link_count: 3
+        delete_confirmation: false
+        show_drag_and_drop: true
+        show_collapse_all: true
+      paragraphs_ee:
+        paragraphs_ee:
+          dialog_off_canvas: false
+          dialog_style: tiles
+          drag_drop: false
+          sidebar_disabled: false
 hidden:
   created: true
   field_response: true

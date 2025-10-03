@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.hetzner.field_delete_protection
     - field.field.paragraph.hetzner.field_name
     - field.field.paragraph.hetzner.field_php_version
     - field.field.paragraph.hetzner.field_response
@@ -18,6 +19,16 @@ targetEntityType: paragraph
 bundle: hetzner
 mode: default
 content:
+  field_delete_protection:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 5
+    region: content
   field_name:
     type: string
     label: above

@@ -1,0 +1,23 @@
+uuid: 7d3819dc-9fab-4f8f-96b5-3c369e68d6b3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_delete_protection
+    - paragraphs.paragraphs_type.hetzner
+id: paragraph.hetzner.field_delete_protection
+field_name: field_delete_protection
+entity_type: paragraph
+bundle: hetzner
+label: 'Delete protection'
+description: 'This server cannot be deleted as long as the protection is active.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean
