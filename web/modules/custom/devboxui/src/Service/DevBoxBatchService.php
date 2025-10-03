@@ -139,7 +139,7 @@ class DevBoxBatchService {
   public static function ssh_caddy_install($step, $paragraph_id, &$context): void {
     $context['message'] = t('@step', ['@step' => $step]);
 
-    $caddy_exists = self::ssh_wrapper($paragraph_id, 'which caddy', $context, TRUE);
+    $caddy_exists = trim(self::ssh_wrapper($paragraph_id, 'which caddy', $context, TRUE));
 
     if ($caddy_exists != '/usr/bin/caddy') {
       // Ensure Caddy folder exists
