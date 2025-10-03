@@ -24,6 +24,7 @@ class ForwardAuthController extends ControllerBase {
   public function check() {
     if ($this->currentUser->isAnonymous()) {
       // Pull original URL from headers Caddy provides.
+      /*
       $request = \Drupal::request();
       $origHost = $request->headers->get('X-Original-Host');
       $origUri  = $request->headers->get('X-Original-Uri');
@@ -34,6 +35,7 @@ class ForwardAuthController extends ControllerBase {
           '/user/login?destination=' . urlencode($target)
         );
       }
+      */
 
       return new JsonResponse(['message' => 'Unauthorized'], 401);
     }

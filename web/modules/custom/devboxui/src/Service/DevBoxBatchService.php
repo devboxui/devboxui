@@ -142,7 +142,7 @@ class DevBoxBatchService {
     $caddy_exists = trim(self::ssh_wrapper($paragraph_id, 'which caddy', $context, TRUE));
     $caddy_status = trim(self::ssh_wrapper($paragraph_id, "systemctl status caddy | grep -i 'active:' | awk '{print $2}'", $context, TRUE));
 
-    if ($caddy_exists != '/usr/bin/caddy' && $caddy_status != 'active') {
+    if ($caddy_exists == '/usr/bin/caddy' && $caddy_status != 'active') {
       // Ensure Caddy folder exists
       self::ssh_wrapper($paragraph_id, 'mkdir -p /etc/caddy/sites', $context, TRUE);
 
@@ -163,10 +163,10 @@ class DevBoxBatchService {
 
       // Write Caddyfile to /etc/caddy/Caddyfile
       self::ssh_wrapper($paragraph_id, <<<BASH
-        tee /etc/caddy/Caddyfile > /dev/null <<'EOF'
-        $caddyfile
-        EOF
-        BASH
+tee /etc/caddy/Caddyfile > /dev/null <<'EOF'
+$caddyfile
+EOF
+BASH
       , $context, TRUE);
 
       // Install prerequisites
@@ -192,24 +192,24 @@ class DevBoxBatchService {
       BASH, $context, TRUE);
 
       // Write the systemd service file
-      self::ssh_wrapper($paragraph_id, <<<BASH
-        tee /etc/systemd/system/caddy.service > /dev/null <<'EOF'
-        [Unit]
-        Description=Caddy web server
-        After=network.target
+      $log = self::ssh_wrapper($paragraph_id, <<<BASH
+tee /etc/systemd/system/caddy.service > /dev/null <<'EOF'
+[Unit]
+Description=Caddy web server
+After=network.target
 
-        [Service]
-        Type=simple
-        ExecStart=/usr/bin/caddy run --environ --config /etc/caddy/Caddyfile
-        ExecReload=/usr/bin/caddy reload --config /etc/caddy/Caddyfile
-        Restart=on-failure
-        User=root
-        Group=root
+[Service]
+Type=simple
+ExecStart=/usr/bin/caddy run --environ --config /etc/caddy/Caddyfile
+ExecReload=/usr/bin/caddy reload --config /etc/caddy/Caddyfile
+Restart=on-failure
+User=root
+Group=root
 
-        [Install]
-        WantedBy=multi-user.target
-        EOF
-        BASH
+[Install]
+WantedBy=multi-user.target
+EOF
+BASH
       , $context, TRUE);
 
       // Reload systemd, enable and start service
@@ -233,6 +233,7 @@ class DevBoxBatchService {
       $vhost_config = entityManage('paragraph', $vhost['target_id']);
       $host = trim($vhost_config->get('field_domain_subdomain')->getString());
       $container = trim($vhost_config->get('field_container_name')->getString());
+      $log = self::ssh_wrapper($paragraph_id, 'apt install -y jq', $context, TRUE);
       $port = trim(self::ssh_wrapper($paragraph_id, 'docker ps --filter "name='.$container.'" --format \'{{json .}}\' | jq -r \'.Ports | split(", ")[] | select(test("->80/")) | capture("(?<host>[^:]+):(?<port>[0-9]+)->80/tcp").port\'', $context, TRUE));
 
       $auth_block = NULL;
