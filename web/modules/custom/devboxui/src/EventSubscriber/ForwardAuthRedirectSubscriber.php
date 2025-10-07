@@ -28,19 +28,16 @@ class ForwardAuthRedirectSubscriber implements EventSubscriberInterface {
     // Only act on /user/login
     if ($request->getPathInfo() === '/user/login') {
       if ($this->currentUser->isAuthenticated()) {
-        $destination = $request->query->get('destination');
-        if (empty($destination)) {
-          $destination = $request->headers->get('Destination');
-        }
-        if ($destination) {
-          if (str_starts_with($destination, 'http')) {
-            $event->setResponse(new TrustedRedirectResponse($destination, 302, [], TRUE));
+        $destination = $request->query->get('destination') ?: $request->headers->get('Destination');
+
+        if (!empty($destination)) {
+          // Normalize: if no scheme, prepend https://
+          if (!preg_match('#^https?://#i', $destination)) {
+            $destination = 'https://' . ltrim($destination, '/');
           }
-          else {
-            $destination = 'https://'.$destination;
-            # Why does this not redirect?
-            $event->setResponse(new TrustedRedirectResponse($destination, 302, [], TRUE));
-          }
+
+          // Issue the redirect via Drupal's response
+          $event->setResponse(new TrustedRedirectResponse($destination, 302, [], TRUE));
         }
       }
     }
