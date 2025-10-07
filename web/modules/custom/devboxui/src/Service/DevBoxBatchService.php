@@ -142,7 +142,8 @@ class DevBoxBatchService {
     $caddy_exists = trim(self::ssh_wrapper($paragraph_id, 'which caddy', $context, TRUE));
     $caddy_status = trim(self::ssh_wrapper($paragraph_id, "systemctl status caddy | grep -i 'active:' | awk '{print $2}'", $context, TRUE));
 
-    if ($caddy_exists == '/usr/bin/caddy' && $caddy_status != 'active') {
+    $caddy_installed_enabled = $caddy_exists == '/usr/bin/caddy' && $caddy_status != 'active'; 
+    if (!$caddy_installed_enabled) {
       // Ensure Caddy folder exists
       self::ssh_wrapper($paragraph_id, 'mkdir -p /etc/caddy/sites', $context, TRUE);
 
