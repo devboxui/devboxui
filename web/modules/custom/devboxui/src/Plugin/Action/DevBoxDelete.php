@@ -59,8 +59,16 @@ final class DevBoxDelete extends ActionBase implements ContainerFactoryPluginInt
 
       $commands = [];
       foreach ($vps_nodes as $vps_node) {
+        if (isset($vps_node['target_id'])) {
+          $vps_node = entityManage('paragraph', $vps_node['target_id']);
+        }
         if ($vps_node->getType() != 'manual') {
-          $pid = $vps_node['target_id'];
+          if (is_object($vps_node)) {
+            $pid = $vps_node->id();
+          }
+          else {
+            $pid = $vps_node['target_id'];
+          }
           # TO DO: wipe VPS filesystem before deleting.
           $commands["VPS deleted (id: $pid)"] = [$pid => [DevBoxBatchService::class, 'delete_vps']];
         }
