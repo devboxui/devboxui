@@ -36,6 +36,7 @@
         "drupal/eca": "^2.1",
         "drupal/eca_tamper": "^2.0",
         "drupal/editor_advanced_link": "^2.3",
+        "drupal/email_registration": "^2.0@RC",
         "drupal/examples": "^4.0",
         "drupal/field_group": "^4.0",
         "drupal/gin": "^5.0",

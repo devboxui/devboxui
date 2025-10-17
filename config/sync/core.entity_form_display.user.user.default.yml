@@ -93,6 +93,7 @@ third_party_settings:
         - field_vps_vultr
         - field_vps_akamai_cloud_linode
         - field_vps_digitalocean
+        - field_vps_scaleway
       label: 'VPS Providers'
       region: content
       parent_name: group_tabs
@@ -170,6 +171,14 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_vps_scaleway:
+    type: string_textfield
+    weight: 26
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_vps_vultr:
     type: string_textfield
     weight: 23
@@ -205,7 +214,6 @@ hidden:
   field_vps_netcup: true
   field_vps_ovhcloud: true
   field_vps_ovhcloud_us: true
-  field_vps_scaleway: true
   field_vps_servers_com: true
   field_vps_upcloud: true
   langcode: true

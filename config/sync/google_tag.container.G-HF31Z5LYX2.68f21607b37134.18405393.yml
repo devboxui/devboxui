@@ -1,0 +1,32 @@
+uuid: 47f866af-89b2-4a62-8063-1b476ff4e815
+langcode: en
+status: true
+dependencies:
+  module:
+    - user
+id: G-HF31Z5LYX2.68f21607b37134.18405393
+label: G-HF31Z5LYX2
+weight: 0
+tag_container_ids:
+  - G-HF31Z5LYX2
+  - GT-5R82KMSW
+advanced_settings:
+  consent_mode: true
+dimensions_metrics: {  }
+conditions:
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      anonymous: anonymous
+events:
+  generate_lead:
+    value: ''
+    currency: ''
+  sign_up:
+    method: CMS
+  custom: {  }
+  login:
+    method: CMS
