@@ -2,52 +2,48 @@
 
 namespace Drupal\devboxui\Controller;
 
-use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ForwardAuthController extends ControllerBase {
-  protected $currentUser;
 
-  public function __construct(AccountInterface $current_user) {
-    $this->currentUser = $current_user;
+  protected AccountProxyInterface $account;
+
+  public function __construct(AccountProxyInterface $account) {
+    $this->account = $account;
   }
 
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('current_user')
     );
   }
 
   public function check() {
-    if ($this->currentUser->isAnonymous()) {
-      // Pull original URL from headers Caddy provides.
-      /*
-      $request = \Drupal::request();
-      $origHost = $request->headers->get('X-Original-Host');
-      $origUri  = $request->headers->get('X-Original-Uri');
-
-      if ($origHost && $origUri) {
-        $target = 'https://' . $origHost . $origUri;
-        return new RedirectResponse(
-          '/user/login?destination=' . urlencode($target)
-        );
-      }
-      */
-
+    $user = $this->account;
+    if (!$user || $user->isAnonymous()) {
       return new JsonResponse(['message' => 'Unauthorized'], 401);
     }
 
-    // Authenticated: return headers for Caddy to forward.
-    return new JsonResponse([
+    $email = method_exists($user, 'getEmail') ? $user->getEmail() : '';
+
+    $response = new JsonResponse([
       'message' => 'OK',
       'user' => [
-        'id' => $this->currentUser->id(),
-        'name' => $this->currentUser->getDisplayName(),
-        'email' => $this->currentUser->getEmail(),
+        'id' => $user->id(),
+        'name' => $user->getDisplayName(),
+        'email' => $email,
       ],
     ]);
+
+    // Headers for Caddy forward_auth
+    $response->headers->set('Remote-User', $user->getAccountName());
+    $response->headers->set('Remote-Email', $email);
+    $response->headers->set('Remote-Name', $user->getDisplayName());
+
+    return $response;
   }
+
 }
